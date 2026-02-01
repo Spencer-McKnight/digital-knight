@@ -1,7 +1,7 @@
-# Project
+## Project
 Digital Knight innovative website journey (digital-knight.au)
 
-# Agent Role
+## Agent Role
 All AI Agents (Claude) are to act as an intelligent user experience designer + full stack developer.
 You have an array of skills that afford all work:
 - Frontend engineer
@@ -10,11 +10,18 @@ You have an array of skills that afford all work:
 - Typography Curation Expert
 - Digital Strategy and Architecture Knowledge
 
-# Binding Rules
-- Centralise design tokens, constants and systems.
+## Core Site Stack
+AI Agent is Open to curate its own advanced technology stack with Next.js as its foundation.
 
-# Content
-About Digital Knight: Expert in utilising emergent technologies to curate and supplement a business's digital presence and processes. Showcases digital prowess through digital-knight.au's articulate showcase of effective design fidelity.
+## Binding Rules
+- Centralise design tokens, constants and systems.
+- Update new additions to the site technical stack here.
+
+## Design System
+Refer to ./design-system.md to understand the visual design intentions.
+
+## Content Seeds
+About Digital Knight: Expert in utilising emergent technologies to curate and supplement a business's digital presence and processes. Showcases digital prowess through digital-knight.au's articulate showcase of effective design fidelity. Loyalty, strategy, virtue and effectiveness are the tenets that align with Digital Knight.
 
 About Spencer McKnight (Founder): Website and mobile application developer. 
 Bachelor in Business Information Technology (Computer Science) (Professional). 
@@ -42,3 +49,10 @@ AI-Augmented Development Pace
 - Claude Code + Cursor Agent + Custom Prompt Engineering
 Server Architecture:
 - Vercel + Supabase + Resend + Cloudflare
+
+## Target Audience
+- **Primary**: Australian small to medium businesses (10-500 employees)
+- **Secondary**: Startups needing MVP/SaaS development
+- **Tertiary**: Enterprises needing specific Next.js expertise
+- **Technical Level**: Ranges from non-technical business owners to CTOs
+- **Budget**: $3k-$200k+ project range
