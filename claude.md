@@ -16,13 +16,12 @@ AI Agent is Open to curate its own advanced technology stack with Next.js as its
 ## Binding Rules
 - Centralise design tokens, constants and systems.
 - Update new additions to the site technical stack here.
+- Single-page application /
 
 ## Design System
-Refer to ./design-system.md to understand the visual design intentions.
-Pages are:
-- /
-- Technology /tech
-- Hire contact form /hire
+Select a theme and curate an innovative design system. Break free from corporate minimalism, generic website expression constraints. Embrace maximalist expressionism. Design is not neutral—it's a statement. Create interfaces that pulse with energy, that feel alive, that demand attention without apology.
+
+Update any established design tokens and ideas in the design-system.md document and associated constant declarations.
 
 ## Content Seeds
 About Digital Knight: Expert in utilising emergent technologies to curate and supplement a business's digital presence and processes. Showcases digital prowess through digital-knight.au's articulate showcase of effective design fidelity. Loyalty, strategy, virtue and effectiveness are the tenets that align with Digital Knight.
