@@ -19,6 +19,10 @@ AI Agent is Open to curate its own advanced technology stack with Next.js as its
 
 ## Design System
 Refer to ./design-system.md to understand the visual design intentions.
+Pages are:
+- /
+- Technology /tech
+- Hire contact form /hire
 
 ## Content Seeds
 About Digital Knight: Expert in utilising emergent technologies to curate and supplement a business's digital presence and processes. Showcases digital prowess through digital-knight.au's articulate showcase of effective design fidelity. Loyalty, strategy, virtue and effectiveness are the tenets that align with Digital Knight.
