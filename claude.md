@@ -1,0 +1,2 @@
+- [soul.md](soul.md) — project vision and what the site is for
+- [project.md](project.md) — pitch, pages, and product narrative

@@ -16,8 +16,7 @@ Digital Knight strives to shatter the norm with its most astonishing ideas, with
 ## Designing the website
 
 - Each page is bespoke. Each journey is intentional, and matching.
-- Research then consider every single technology being installed. What is bleeding edge? What is a core pillar? How does this showcase the true depth of your entire intelligence?
-- Opportunities for 'sick' imagery should always be identified and source image files requested for.
+- Research then consider technologies being installed. Also consider what should be best practice and request that we use that if it fits.
 - Font stylism and motion should be an important focus.
 - Clean code wins. Not short code that doesn't achieve, but achieving code that is an awesome and comprehensive implementation example.
 - Composability is important with styling classes, but componentry should remain fluid, minimally abstracted (unless reused) and unique to its exact idea for that area.
@@ -25,7 +24,7 @@ Digital Knight strives to shatter the norm with its most astonishing ideas, with
 ## Content Guidelines
 
 - Be direct and short. Clients don't want to read paragraphs. They want to know what Digital Knight offers, right away, and exactly to the mark.
-- Be consistently specifically descriptive. Each sentence means something and directly contributes to the known. For example, instead of "We are a digital partner", we might frame it as "Loyal friend that will refine processes and deliver new online experiences to improve your income generator."
+- Be consistently specifically descriptive. Each sentence means something and directly contributes to the known.
 
 ## Behaviour
 
