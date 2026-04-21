@@ -1,0 +1,15 @@
+// =============================================================================
+// STYLES — single entry point
+// -----------------------------------------------------------------------------
+// The only file `app/globals.scss` should import. Order matters:
+//
+//   1. Tokens  — every :root custom property declared once.
+//   2. Reset   — neutralise browser defaults.
+//   3. Base    — document-level authored defaults (background, type, focus).
+//
+// Components never @use this file — they @use 'mixins' as *.
+// =============================================================================
+
+@forward 'tokens';
+@forward 'reset';
+@forward 'base';

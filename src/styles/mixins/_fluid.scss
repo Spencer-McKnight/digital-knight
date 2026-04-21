@@ -1,0 +1,39 @@
+// =============================================================================
+// FUNCTION — fluid($min, $max, $from: 23.4375rem, $to: 90rem)
+// -----------------------------------------------------------------------------
+// Generates a CSS `clamp()` that interpolates linearly between two rem values
+// across a viewport-width range. Values must be in `rem` — the math assumes
+// 1rem = 16px for vw conversion.
+//
+//   .lede { margin-block: fluid(1.5rem, 4rem); }
+//
+// Produces a clamp that matches $min at the narrow end, $max at the wide end,
+// and interpolates continuously in between.
+//
+// ⚑ ITERATE: the defaults mirror `design.md`'s 375 → 1440 reference window.
+//   Override `$from` / `$to` only for one-off overrides (hero-width title
+//   scaling, etc.) — the type tokens already cover the 80% case.
+// =============================================================================
+
+@use 'sass:math';
+
+@function strip-unit($value) {
+  @return math.div($value, ($value * 0 + 1));
+}
+
+@function fluid($min, $max, $from: 23.4375rem, $to: 90rem) {
+  $min-rem:  strip-unit($min);
+  $max-rem:  strip-unit($max);
+  $from-rem: strip-unit($from);
+  $to-rem:   strip-unit($to);
+
+  $slope:      math.div($max-rem - $min-rem, $to-rem - $from-rem);
+  $intercept:  $min-rem - $slope * $from-rem;
+  $vw-portion: $slope * 100;
+
+  @return clamp(
+    #{$min}#{''},
+    #{$vw-portion}vw + #{$intercept}rem,
+    #{$max}#{''}
+  );
+}

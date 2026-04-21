@@ -4,9 +4,13 @@ A reference of the technical decisions underpinning the build. Every choice is a
 
 ---
 
-## Framework — Next.js 15 (App Router)
+## Framework — Next.js 16 (App Router)
 
-**Version:** `next@15` · `react@19` · `typescript@5`
+**Version:** `next@16` · `react@19` · `typescript@6`
+
+> **Note.** Greenfield install resolved to the current stable (`next@16.2`,
+> `typescript@6`). App Router semantics are identical to the 15-era argument
+> below; the prose was authored against Next 15 but the rationale holds.
 
 App Router is the right model for this site. Each page is a distinct film — Server Components deliver the shell instantly, Client Components take over for animation and interactivity. Turbopack handles dev HMR. Route segments map cleanly to the four pages (`/`, `/services`, `/method`, `/talk`).
 
@@ -205,8 +209,8 @@ src/
 
 | Layer | Choice | Version |
 |---|---|---|
-| Framework | Next.js App Router | 15 |
-| Language | TypeScript | 5 |
+| Framework | Next.js App Router | 16 |
+| Language | TypeScript | 6 |
 | React | React | 19 |
 | Styling | SCSS + CSS Modules | Dart Sass latest |
 | Animation | GSAP + ScrollTrigger | 3 |

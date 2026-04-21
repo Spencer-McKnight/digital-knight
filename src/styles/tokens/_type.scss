@@ -1,0 +1,56 @@
+// =============================================================================
+// TOKENS — TYPOGRAPHY
+// -----------------------------------------------------------------------------
+// Five type roles by intent: monument, hero, section, lede, body, meta.
+// All scales are fluid (clamp, 375px → 1440px). Ship only Light (display only),
+// Regular, Medium, Bold. No italics anywhere — weight, size or ember carries
+// emphasis (`design.md` §3).
+//
+// The font-family var is wired in `src/app/fonts.ts` — `next/font/local`
+// exposes a variable `--t-family-source` which we alias into `--t-family`
+// from `layout.tsx`.
+//
+// ⚑ ITERATE: if a sixth role is proposed, justify it against an existing
+//   role. More roles = less discipline, not more.
+// =============================================================================
+
+// ── Layer 1 ──────────────────────────────────────────────────────────────────
+$t-monument: clamp(4.5rem,   7vw   + 2.900rem, 9rem);
+$t-hero:     clamp(2.75rem,  4vw   + 1.780rem, 5.5rem);
+$t-section:  clamp(1.875rem, 1.7vw + 1.475rem, 3rem);
+$t-lede:     clamp(1.25rem,  0.75vw + 1.075rem, 1.75rem);
+$t-body:     clamp(1rem,     0.2vw + 0.953rem,  1.125rem);
+$t-meta:     clamp(0.6875rem, 0.1vw + 0.625rem, 0.75rem);
+
+$t-leading-tight: 0.95;
+$t-leading-body:  1.55;
+$t-tracking-tight: -0.03em;
+$t-tracking-meta:  0.12em;
+
+$t-weight-light:   300;
+$t-weight-regular: 400;
+$t-weight-medium:  500;
+$t-weight-bold:    700;
+
+// ── Layer 2 ──────────────────────────────────────────────────────────────────
+:root {
+  // Family — resolved from next/font/local at the <html> root.
+  --t-family: 'Aeonik', system-ui, -apple-system, Segoe UI, sans-serif;
+
+  --t-monument: #{$t-monument};
+  --t-hero:     #{$t-hero};
+  --t-section:  #{$t-section};
+  --t-lede:     #{$t-lede};
+  --t-body:     #{$t-body};
+  --t-meta:     #{$t-meta};
+
+  --t-leading-tight:   #{$t-leading-tight};
+  --t-leading-body:    #{$t-leading-body};
+  --t-tracking-tight:  #{$t-tracking-tight};
+  --t-tracking-meta:   #{$t-tracking-meta};
+
+  --t-weight-light:    #{$t-weight-light};
+  --t-weight-regular:  #{$t-weight-regular};
+  --t-weight-medium:   #{$t-weight-medium};
+  --t-weight-bold:     #{$t-weight-bold};
+}

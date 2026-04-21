@@ -1,0 +1,17 @@
+@use 'mixins' as *;
+
+.root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+
+  @media (pointer: coarse) {
+    display: none;
+  }
+}
