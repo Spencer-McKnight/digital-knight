@@ -170,6 +170,7 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
   const groupRef = useRef<Group>(null);
   const sealRef = useRef<Mesh>(null);
   const ringRef = useRef<Mesh>(null);
+  const innerRingRef = useRef<Mesh>(null);
   const { viewport, gl } = useThree();
 
   // Hover flag — true only when R3F's raycaster reports a hit on the seal
@@ -406,11 +407,19 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
     const g = groupRef.current;
     const s = sealRef.current;
     const r = ringRef.current;
-    if (!g || !s || !r) return;
+    const ir = innerRingRef.current;
+    if (!g || !s || !r || !ir) return;
 
     // Ember ring — original behaviour: a quiet, constant Z-orbit, independent
-    // of what the user is doing to the seal itself.
-    r.rotation.z += delta * 0.35;
+    // of what the user is doing to the seal itself. Plus a very subtle Y
+    // drift so the ring's tilt breathes over time.
+    r.rotation.z += delta * 0.245;
+    r.rotation.y += delta * 0.028;
+
+    // Inner iron ring — complementary counter-drift. Equally subtle, opposite
+    // sign, so the two rings quietly circle past each other.
+    ir.rotation.y -= delta * 0.028;
+    ir.rotation.z -= delta * 0.035;
 
     // Hoist the per-frame exponent once. Math.pow isn't expensive but this
     // is the cheapest the arithmetic can be and reads more clearly.
@@ -449,12 +458,12 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
       Math.abs(motion.wheelBoost) < EPS;
 
     if (stillIdle) {
-      s.rotation.y += 0.25 * delta;
-      s.rotation.x += 0.08 * delta;
+      s.rotation.y += 0.175 * delta;
+      s.rotation.x += 0.056 * delta;
     } else {
       const idleMix = Math.min(1, motion.idleTime / 1.2);
-      const baseX = 0.08 * idleMix;
-      const baseY = 0.25 * idleMix;
+      const baseX = 0.056 * idleMix;
+      const baseY = 0.175 * idleMix;
       s.rotation.y += (baseY + motion.vy) * delta + motion.wheelBoost * delta * 0.9;
       s.rotation.x += (baseX + motion.vx) * delta;
       s.rotation.z += motion.vz * delta;
@@ -507,14 +516,14 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
           raycasting so it doesn't block hover detection on the gem behind
           it or independently trigger the grab cursor itself. */}
       <mesh ref={ringRef} rotation={[0.6, 0.3, 0]} raycast={() => null}>
-        <torusGeometry args={[1.55, 0.012, 16, 220]} />
+        <torusGeometry args={[1.4, 0.012, 16, 220]} />
         <meshBasicMaterial color="#DD6637" />
       </mesh>
 
       {/* A second, tighter iron ring at a counter angle for depth. */}
-      <mesh rotation={[-0.35, 1.1, 0.2]} raycast={() => null}>
-        <torusGeometry args={[1.28, 0.004, 12, 180]} />
-        <meshBasicMaterial color="#FFEDD7" transparent opacity={0.25} />
+      <mesh ref={innerRingRef} rotation={[-0.35, 1.1, 0.2]} raycast={() => null}>
+        <torusGeometry args={[1.28, 0.01, 12, 180]} />
+        <meshBasicMaterial color="#FFEDD7" transparent opacity={0.55} />
       </mesh>
     </group>
   );
