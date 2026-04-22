@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import { aeonik } from './fonts';
 import './globals.scss';
+import { Loader } from '@/components/Loader';
+import { Nav } from '@/components/Nav';
+import { Footer } from '@/components/Footer';
+import { Cursor } from '@/components/Cursor';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://digitalknight.com'),
@@ -38,14 +42,20 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#FFEDD7' },
-    { media: '(prefers-color-scheme: dark)',  color: '#403D39' },
+    { media: '(prefers-color-scheme: dark)', color: '#403D39' },
   ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={aeonik.variable}>
-      <body>{children}</body>
+      <body>
+        <Loader />
+        <Nav />
+        <Cursor />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }

@@ -1,8 +1,131 @@
 @use 'mixins' as *;
 
 .root {
-  // Placeholder frame. Authored in a follow-up pass.
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 10;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+
+  padding-inline: var(--grid-margin);
+  padding-block: var(--space-4);
+
+  color: var(--ink-iron);
+  background: transparent;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition:
+    opacity var(--dur-scene) var(--ease-house),
+    transform var(--dur-scene) var(--ease-house),
+    padding-block var(--dur-element) var(--ease-house),
+    background-color var(--dur-element) var(--ease-house);
+
+  &[data-loaded='true'] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &[data-shrunk='true'] {
+    padding-block: var(--space-3);
+    background: color-mix(in oklab, var(--ink-page) 80%, transparent);
+    backdrop-filter: saturate(140%) blur(8px);
+  }
+}
+
+// Ember hairline beneath the nav — persists, echoed at the top of the footer.
+.hairline {
+  position: absolute;
+  left: var(--grid-margin);
+  right: var(--grid-margin);
+  bottom: 0;
+  height: 1px;
+  background: var(--ink-ember);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-scene) var(--ease-house) 200ms;
+
+  [data-loaded='true'] & {
+    transform: scaleX(1);
+  }
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: inherit;
+  text-decoration: none;
+  font-weight: var(--t-weight-medium);
+  letter-spacing: 0.18em;
+  font-size: var(--t-meta);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.word {
+  display: inline-block;
+  transition: opacity var(--dur-element) var(--ease-house);
+
+  [data-shrunk='true'] & {
+    @include respond-below(md) {
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+    }
+  }
+}
+
+.mark {
+  display: none;
+  font-weight: var(--t-weight-bold);
+  letter-spacing: 0.04em;
+  font-size: var(--t-meta);
+
+  [data-shrunk='true'] & {
+    @include respond-below(md) {
+      display: inline-block;
+    }
+  }
+}
+
+.links {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(var(--space-3), 1.6vw, var(--space-5));
+
+  @include respond-below(sm) {
+    display: none;
+  }
+}
+
+.link {
+  @include type(meta);
+  position: relative;
+  display: inline-block;
+  padding: var(--space-2) 0;
+  color: inherit;
+  text-decoration: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--ink-ember);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-element) var(--ease-house);
+  }
+
+  &:hover::after,
+  &:focus-visible::after,
+  &[data-active]::after {
+    transform: scaleX(1);
+  }
 }

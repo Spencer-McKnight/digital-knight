@@ -1,0 +1,60 @@
+// =============================================================================
+// MIXIN — layout
+// -----------------------------------------------------------------------------
+// Two small verbs used across every section:
+//
+//   container()   — maps the max canvas + fluid inline padding to an element.
+//                   Never declare `max-width` or `padding-inline` in a section
+//                   by hand; reach for this.
+//
+//   section-pad($size) — the block-level breathing room between acts. Four
+//                        sizes: sm / md / lg / xl, keyed to `--space-*`.
+//                        `hero` is reserved for the Entry beat only.
+//
+//   hairline($side: 'top')  — single-rule divider. Side-agnostic, uses
+//                             --ink-rule so it adapts across grounds.
+//
+// ⚑ ITERATE: a new variant only lands here when two sections need it. One-off
+//   geometries stay local.
+// =============================================================================
+
+@mixin container {
+  width: 100%;
+  max-width: var(--grid-max);
+  margin-inline: auto;
+  padding-inline: var(--grid-margin);
+}
+
+@mixin section-pad($size: md) {
+  @if $size == sm {
+    padding-block: var(--space-7);
+  } @else if $size == md {
+    padding-block: var(--space-8);
+  } @else if $size == lg {
+    padding-block: var(--space-9);
+  } @else if $size == xl {
+    padding-block: var(--space-10);
+  } @else if $size == hero {
+    padding-block: clamp(6rem, 12vw, 12rem);
+  } @else {
+    @error "section-pad: unknown size `#{$size}`. Use sm|md|lg|xl|hero.";
+  }
+}
+
+@mixin hairline($side: top) {
+  @if $side == top {
+    border-top: 1px solid var(--ink-rule);
+  } @else if $side == bottom {
+    border-bottom: 1px solid var(--ink-rule);
+  } @else {
+    @error "hairline: unknown side `#{$side}`. Use top|bottom.";
+  }
+}
+
+@mixin ember-hairline($side: top) {
+  @if $side == top {
+    box-shadow: inset 0 1px 0 0 var(--ink-ember);
+  } @else if $side == bottom {
+    box-shadow: inset 0 -1px 0 0 var(--ink-ember);
+  }
+}

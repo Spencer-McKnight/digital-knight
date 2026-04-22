@@ -4,14 +4,52 @@
   position: fixed;
   top: 0;
   left: 0;
+  width: 0;
+  height: 0;
   z-index: 1000;
-  width: 24px;
-  height: 24px;
   pointer-events: none;
-  transform: translate(-50%, -50%);
   mix-blend-mode: difference;
 
   @media (pointer: coarse) {
     display: none;
   }
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  top: -12px;
+  left: -12px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--ink-page);
+  border-radius: 999px;
+  transform-origin: center;
+  transition:
+    width var(--dur-element) var(--ease-house),
+    height var(--dur-element) var(--ease-house),
+    top var(--dur-element) var(--ease-house),
+    left var(--dur-element) var(--ease-house),
+    background-color var(--dur-element) var(--ease-house),
+    border-color var(--dur-element) var(--ease-house),
+    opacity var(--dur-state) var(--ease-house);
+}
+
+.root[data-variant='interactive'] .ring {
+  width: 38px;
+  height: 38px;
+  top: -19px;
+  left: -19px;
+  background: var(--ink-ember);
+  border-color: var(--ink-ember);
+  mix-blend-mode: normal;
+}
+
+.root[data-variant='ember'] .ring {
+  background: var(--ink-ember);
+  border-color: var(--ink-ember);
+}
+
+.root[data-variant='hidden'] .ring {
+  opacity: 0;
 }

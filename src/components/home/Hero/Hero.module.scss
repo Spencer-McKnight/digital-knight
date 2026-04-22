@@ -1,0 +1,230 @@
+@use 'mixins' as *;
+
+.root {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  align-items: center;
+  overflow: hidden;
+  padding-top: clamp(6rem, 10vh, 9rem);
+  padding-bottom: var(--space-5);
+}
+
+// The 3D seal lives beneath, bleeds slightly off the right edge on wide
+// viewports so the composition feels forged, not framed.
+.ground {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  &::after {
+    // A paper vignette to help the copy stay crisp against the seal.
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 80% 90% at 20% 45%,
+      var(--ink-page) 0%,
+      var(--ink-page) 28%,
+      color-mix(in oklab, var(--ink-page) 75%, transparent) 55%,
+      transparent 75%
+    );
+    pointer-events: none;
+  }
+
+  @include respond-to(md) {
+    left: auto;
+    right: -8%;
+    width: 72%;
+
+    &::after {
+      background: radial-gradient(
+        ellipse 70% 80% at 10% 50%,
+        var(--ink-page) 0%,
+        transparent 70%
+      );
+    }
+  }
+
+  @include respond-below(md) {
+    opacity: 0.45;
+  }
+}
+
+.grid {
+  @include container;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-5);
+  align-content: center;
+  justify-items: start;
+
+  @include respond-to(md) {
+    grid-column-gap: var(--space-6);
+    max-width: calc(var(--grid-max) - 0px);
+    // Leave canvas room for the seal on the right.
+    padding-right: clamp(0px, 20vw, 22rem);
+  }
+}
+
+.eyebrow {
+  @include type(meta);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-iron);
+}
+
+.eyebrowDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink-ember);
+  display: inline-block;
+}
+
+.eyebrowSlash {
+  opacity: 0.45;
+  padding-inline: 0.25ch;
+}
+
+.title {
+  @include type(hero);
+  font-size: clamp(2.75rem, 5.6vw + 1rem, 7rem);
+  font-weight: var(--t-weight-medium);
+  letter-spacing: var(--t-tracking-tight);
+  line-height: 0.96;
+  max-width: 20ch;
+  color: var(--ink-iron);
+}
+
+.line {
+  display: inline;
+
+  &:not(:last-child)::after {
+    content: '';
+  }
+}
+
+.word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.wordEmber {
+  display: inline-block;
+  position: relative;
+  will-change: transform, opacity;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.12em;
+    height: 2px;
+    background: var(--ink-ember);
+    transform-origin: left center;
+    transform: scaleX(0);
+    animation: draw-ember 900ms var(--ease-house) 1600ms forwards;
+  }
+}
+
+.stop {
+  color: var(--ink-ember);
+}
+
+@keyframes draw-ember {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.lede {
+  @include type(lede);
+  max-width: 48ch;
+  color: var(--ink-iron);
+  opacity: 0.82;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+// Four ideals row — meta, numbered, ends the Entry fold.
+.ideals {
+  @include container;
+  position: relative;
+  z-index: 1;
+  @include hairline(top);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.ideal {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.idealIndex {
+  @include type(meta);
+  color: var(--ink-iron);
+  opacity: 0.45;
+  font-variant-numeric: tabular-nums;
+}
+
+.idealLabel {
+  @include type(meta);
+  color: var(--ink-iron);
+}
+
+.scrollHint {
+  @include container;
+  @include type(meta);
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  color: var(--ink-iron);
+  opacity: 0.55;
+
+  @include respond-below(md) {
+    display: none;
+  }
+}
+
+.scrollRule {
+  display: inline-block;
+  width: 48px;
+  height: 1px;
+  background: var(--ink-iron);
+  opacity: 0.45;
+  animation: scroll-rule 2.4s var(--ease-house) infinite;
+}
+
+@keyframes scroll-rule {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translateY(4px);
+    opacity: 0.85;
+  }
+}
