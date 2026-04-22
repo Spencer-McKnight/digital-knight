@@ -108,12 +108,9 @@
 }
 
 .rowTitle {
-  font-size: clamp(1.75rem, 2.8vw + 0.7rem, 3rem);
-  font-weight: var(--t-weight-medium);
-  line-height: 1.05;
-  letter-spacing: var(--t-tracking-tight);
-  color: var(--ink-iron);
+  @include type(section);
   max-width: 22ch;
+  color: var(--ink-iron);
 }
 
 .emberWord {

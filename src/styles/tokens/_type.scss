@@ -1,42 +1,68 @@
 // =============================================================================
 // TOKENS — TYPOGRAPHY
 // -----------------------------------------------------------------------------
-// Five type roles by intent: monument, hero, section, lede, body, meta.
-// All scales are fluid (clamp, 375px → 1440px). Ship only Light (display only),
-// Regular, Medium, Bold. No italics anywhere — weight, size or ember carries
-// emphasis (`design.md` §3).
+// Six canonical type roles by intent, plus three variant roles for controlled
+// flexibility. All scales are fluid (clamp, 375px → 1440px).
+//
+// CANONICAL ROLES (6):
+//   monument  — sparingly, cinematic
+//   hero      — primary page title
+//   section   — act headers
+//   lede      — opening sentence, pull copy
+//   body      — reading
+//   meta      — eyebrows, captions, labels (uppercase only)
+//
+// VARIANT ROLES (3):
+//   hero-display — larger hero for showcase headings (Hero, Loader)
+//   subsection   — between lede and section for sub-headings
+//   ui           — meta-scale, sentence-case, for nav/buttons/chips
+//
+// Ship only Light (display only), Regular, Medium, Bold. No italics anywhere —
+// weight, size or ember carries emphasis (`design.md` §3).
 //
 // The font-family var is wired in `src/app/fonts.ts` — `next/font/local`
-// exposes a variable `--t-family-source` which we alias into `--t-family`
-// from `layout.tsx`.
-//
-// ⚑ ITERATE: if a sixth role is proposed, justify it against an existing
-//   role. More roles = less discipline, not more.
+// exposes `--t-family-source` which we alias into `--t-family` from `layout.tsx`.
 // =============================================================================
 
-// ── Layer 1 ──────────────────────────────────────────────────────────────────
-$t-monument: clamp(4.5rem,   7vw   + 2.900rem, 9rem);
-$t-hero:     clamp(2.75rem,  4vw   + 1.780rem, 5.5rem);
+// ── Layer 1: SCSS Primitives ─────────────────────────────────────────────────
+// Compile-time values. Used inside mixins for computed values.
+// Components never reference these directly — they read CSS custom properties.
+
+// Scale (canonical)
+$t-monument: clamp(4.5rem, 7vw + 2.9rem, 9rem);
+$t-hero:     clamp(2.75rem, 4vw + 1.78rem, 5.5rem);
 $t-section:  clamp(1.875rem, 1.7vw + 1.475rem, 3rem);
-$t-lede:     clamp(1.25rem,  0.75vw + 1.075rem, 1.75rem);
-$t-body:     clamp(1rem,     0.2vw + 0.953rem,  1.125rem);
+$t-lede:     clamp(1.25rem, 0.75vw + 1.075rem, 1.75rem);
+$t-body:     clamp(1rem, 0.2vw + 0.953rem, 1.125rem);
 $t-meta:     clamp(0.6875rem, 0.1vw + 0.625rem, 0.75rem);
 
+// Scale (variants)
+$t-hero-display: clamp(2.75rem, 5.6vw + 1rem, 7rem);
+$t-subsection:   clamp(1.5rem, 1.4vw + 1.1rem, 2.25rem);
+$t-ui:           clamp(0.8125rem, 0.12vw + 0.78rem, 0.9rem);
+
+// Leading (line-height)
 $t-leading-tight: 0.95;
 $t-leading-body:  1.55;
+
+// Tracking (letter-spacing)
 $t-tracking-tight: -0.03em;
 $t-tracking-meta:  0.12em;
+$t-tracking-ui:    0.04em;
 
+// Weight
 $t-weight-light:   300;
 $t-weight-regular: 400;
 $t-weight-medium:  500;
 $t-weight-bold:    700;
 
-// ── Layer 2 ──────────────────────────────────────────────────────────────────
+// ── Layer 2: CSS Custom Properties ───────────────────────────────────────────
+// Runtime semantic tokens. The only layer components touch.
 :root {
   // Family — resolved from next/font/local at the <html> root.
   --t-family: 'Aeonik', system-ui, -apple-system, Segoe UI, sans-serif;
 
+  // Scale (canonical)
   --t-monument: #{$t-monument};
   --t-hero:     #{$t-hero};
   --t-section:  #{$t-section};
@@ -44,13 +70,23 @@ $t-weight-bold:    700;
   --t-body:     #{$t-body};
   --t-meta:     #{$t-meta};
 
-  --t-leading-tight:   #{$t-leading-tight};
-  --t-leading-body:    #{$t-leading-body};
-  --t-tracking-tight:  #{$t-tracking-tight};
-  --t-tracking-meta:   #{$t-tracking-meta};
+  // Scale (variants)
+  --t-hero-display: #{$t-hero-display};
+  --t-subsection:   #{$t-subsection};
+  --t-ui:           #{$t-ui};
 
-  --t-weight-light:    #{$t-weight-light};
-  --t-weight-regular:  #{$t-weight-regular};
-  --t-weight-medium:   #{$t-weight-medium};
-  --t-weight-bold:     #{$t-weight-bold};
+  // Leading
+  --t-leading-tight: #{$t-leading-tight};
+  --t-leading-body:  #{$t-leading-body};
+
+  // Tracking
+  --t-tracking-tight: #{$t-tracking-tight};
+  --t-tracking-meta:  #{$t-tracking-meta};
+  --t-tracking-ui:    #{$t-tracking-ui};
+
+  // Weight
+  --t-weight-light:   #{$t-weight-light};
+  --t-weight-regular: #{$t-weight-regular};
+  --t-weight-medium:  #{$t-weight-medium};
+  --t-weight-bold:    #{$t-weight-bold};
 }

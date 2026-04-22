@@ -5,6 +5,7 @@ import { Environment, Float } from '@react-three/drei';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Group, Mesh, RectAreaLight } from 'three';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
+import { useUiStore } from '@/store/ui';
 import styles from './ForgeSeal.module.scss';
 
 // RectAreaLight needs its uniforms primed once before any area light can
@@ -79,7 +80,7 @@ export function ForgeSeal() {
   const active = inView && !reduced;
 
   return (
-    <div ref={rootRef} className={styles.root} data-cursor="grab" aria-hidden>
+    <div ref={rootRef} className={styles.root} aria-hidden>
       <Canvas
         // Capping DPR at 1.75 costs almost nothing perceptually on retina
         // screens while cutting roughly a quarter of the fragments shaded.
@@ -171,6 +172,12 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
   const ringRef = useRef<Mesh>(null);
   const { viewport, gl } = useThree();
 
+  // Hover flag — true only when R3F's raycaster reports a hit on the seal
+  // group (the icosahedron or either ring). Drives both the cursor state
+  // and whether pointerdown is allowed to start a drag. Empty canvas area
+  // stays a plain arrow and accepts no gesture input.
+  const hovered = useRef(false);
+
   // Eased parallax target. useRef rather than useMemo — these are mutable
   // values that never feed React's diffing, so useRef is the canonical
   // container and makes intent obvious at a glance.
@@ -205,6 +212,35 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
     pointerId: -1,
   }).current;
 
+  // Single source of truth for the cursor treatment over the seal. The
+  // native `cursor` property is a no-op here — `_base.scss` globally
+  // suppresses the system cursor and the custom `<Cursor>` component
+  // paints every variant itself. That component resolves its variant
+  // from (a) `data-cursor="grab"` on an ancestor of the event target
+  // and (b) the pressed state, so we need to keep both that attribute
+  // and the zustand-backed variant in lockstep with hover + drag:
+  //
+  //   grabbing   · a drag is in progress (even if the cursor has left
+  //                the gem — the user is still holding it)
+  //   grab       · hovering the gem, no drag yet
+  //   default    · empty canvas, no interaction affordance
+  //
+  // The `data-cursor` attribute only lives on the canvas while we
+  // actually want that treatment — otherwise the seal's canvas would
+  // broadcast "grab" across its entire bounding box, which is larger
+  // than the gem itself.
+  const syncCursor = () => {
+    const el = gl.domElement as HTMLCanvasElement | undefined;
+    if (!el) return;
+    const wantsGrab = motion.dragging || hovered.current;
+    if (wantsGrab) el.setAttribute('data-cursor', 'grab');
+    else el.removeAttribute('data-cursor');
+    const { setCursorVariant } = useUiStore.getState();
+    if (motion.dragging) setCursorVariant('grabbing');
+    else if (hovered.current) setCursorVariant('grab');
+    else setCursorVariant('default');
+  };
+
   // Drag / wheel / double-tap handlers attached to the canvas element.
   useEffect(() => {
     const el = gl.domElement as HTMLCanvasElement;
@@ -228,6 +264,10 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
     };
 
     const onDown = (e: PointerEvent) => {
+      // Pointerdown on empty canvas is a no-op — the seal is only
+      // grabbable when the cursor is actually over it (as determined by
+      // R3F's raycaster via the group-level pointer events below).
+      if (!hovered.current) return;
       releaseIfHeld();
       motion.dragging = true;
       motion.moved = 0;
@@ -241,6 +281,7 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
       } catch {
         // Older browsers without capture support — interactions still work.
       }
+      syncCursor();
     };
 
     const onMove = (e: PointerEvent) => {
@@ -306,6 +347,7 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
           lastTapT = now;
         }
       }
+      syncCursor();
     };
 
     const onUp = (e: PointerEvent) => endGesture(e, 'up');
@@ -343,6 +385,13 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
       el.removeEventListener('wheel', onWheel);
       window.removeEventListener('blur', onWindowBlur);
       releaseIfHeld();
+      // Make sure we don't leave a stale grab/grabbing treatment behind on
+      // unmount or when the component re-effects — strip the attribute the
+      // custom cursor resolves from and reset the store-backed variant.
+      el.removeAttribute('data-cursor');
+      hovered.current = false;
+      motion.dragging = false;
+      useUiStore.getState().setCursorVariant('default');
     };
   }, [gl, motion]);
 
@@ -430,7 +479,21 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
 
   return (
     <group ref={groupRef}>
-      <mesh ref={sealRef}>
+      {/* The central gem is the only part of the scene that can be grabbed.
+          R3F raycasts against just this mesh (the rings below opt out with
+          raycast={() => null}), so hover / grab / drag all fire only when
+          the pointer is truly over the faceted body. */}
+      <mesh
+        ref={sealRef}
+        onPointerOver={() => {
+          hovered.current = true;
+          syncCursor();
+        }}
+        onPointerOut={() => {
+          hovered.current = false;
+          syncCursor();
+        }}
+      >
         <icosahedronGeometry args={[1, 0]} />
         <meshStandardMaterial
           color="#1B1B1A"
@@ -440,14 +503,16 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
         />
       </mesh>
 
-      {/* Orbiting ember ring — the one chromatic voice. */}
-      <mesh ref={ringRef} rotation={[0.6, 0.3, 0]}>
+      {/* Orbiting ember ring — the one chromatic voice. Opted out of
+          raycasting so it doesn't block hover detection on the gem behind
+          it or independently trigger the grab cursor itself. */}
+      <mesh ref={ringRef} rotation={[0.6, 0.3, 0]} raycast={() => null}>
         <torusGeometry args={[1.55, 0.012, 16, 220]} />
         <meshBasicMaterial color="#DD6637" />
       </mesh>
 
       {/* A second, tighter iron ring at a counter angle for depth. */}
-      <mesh rotation={[-0.35, 1.1, 0.2]}>
+      <mesh rotation={[-0.35, 1.1, 0.2]} raycast={() => null}>
         <torusGeometry args={[1.28, 0.004, 12, 180]} />
         <meshBasicMaterial color="#FFEDD7" transparent opacity={0.25} />
       </mesh>

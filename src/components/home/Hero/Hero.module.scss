@@ -72,14 +72,9 @@
 }
 
 .title {
-  @include type(hero);
-  font-size: clamp(2.75rem, 5.6vw + 1rem, 7rem);
-  font-weight: var(--t-weight-medium);
-  letter-spacing: var(--t-tracking-tight);
-  line-height: 0.96;
+  @include type(hero-display);
   max-width: 20ch;
   color: var(--ink-iron);
-  background: transparent;
 }
 
 .line {

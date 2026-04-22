@@ -47,10 +47,6 @@
 
 .title {
   @include type(hero);
-  font-size: clamp(2.25rem, 4vw + 1rem, 5rem);
-  font-weight: var(--t-weight-medium);
-  line-height: 0.98;
-  letter-spacing: var(--t-tracking-tight);
   color: var(--ink-iron);
 }
 
@@ -101,12 +97,9 @@
 }
 
 .sectionTitle {
-  font-size: clamp(1.25rem, 1.2vw + 0.9rem, 1.75rem);
-  font-weight: var(--t-weight-medium);
-  line-height: 1.15;
-  letter-spacing: var(--t-tracking-tight);
-  color: var(--ink-iron);
+  @include type(subsection);
   max-width: 26ch;
+  color: var(--ink-iron);
 }
 
 .list {
@@ -154,9 +147,7 @@
 }
 
 .metaValue {
-  font-size: var(--t-body);
-  text-transform: none;
-  letter-spacing: 0;
+  @include type(ui);
   font-weight: var(--t-weight-regular);
 }
 

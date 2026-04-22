@@ -126,11 +126,8 @@
 }
 
 .railName {
-  font-size: clamp(1.25rem, 1.2vw + 1rem, 1.8rem);
-  font-weight: var(--t-weight-medium);
-  line-height: 1;
+  @include type(subsection);
   color: var(--ink-iron);
-  letter-spacing: var(--t-tracking-tight);
 }
 
 .railIntent {
