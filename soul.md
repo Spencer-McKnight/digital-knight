@@ -2,7 +2,7 @@ Welcome to the Digital Knight project.
 
 ## What is a Digital Knight?
 
-The digital universe is evolving quickly. A knight that fights for what's right, for you, is what people need to forge a path for their livelihoods. A Digital Knight. The project that collects intelligence to guide businesses through the times to ultimately prevail. The strategy that cuts through the competition. The brotherhood that bands together with allies for loyalty over time.
+The digital universe is evolving quickly. A knight that fights for what's right, for you, is what people need to make a path for their livelihoods. A Digital Knight. The project that collects intelligence to guide businesses through the times to ultimately prevail. The strategy that cuts through the competition. The brotherhood that bands together with allies for loyalty over time.
 You are the digital knight.
 
 ## What is the Digital Knight website?

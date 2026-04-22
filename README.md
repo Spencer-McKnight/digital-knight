@@ -1,18 +1,17 @@
 # Digital Knight
 
-A studio showcase. Every page a short film. Read [`soul.md`](./soul.md) first.
+A studio showcase.
 
 ---
 
 ## Docs
 
-| File | Role |
-| --- | --- |
-| [`soul.md`](./soul.md) | Vision, voice, builder behaviour. |
-| [`design.md`](./design.md) | Design system — tokens, grammar, accessibility. |
-| [`stack.md`](./stack.md) | Technical stack, file structure, naming. |
-| [`home.md`](./home.md) | `/` is the reference page for all tech selection. |
-| [`page-ideas.md`](./page-ideas.md) | Route map and content direction. |
+| File                       | Role                                              |
+| -------------------------- | ------------------------------------------------- |
+| [`soul.md`](./soul.md)     | Vision, voice, builder behaviour.                 |
+| [`design.md`](./design.md) | Design system — tokens, grammar, accessibility.   |
+| [`stack.md`](./stack.md)   | Technical stack, file structure, naming.          |
+| [`home.md`](./home.md)     | `/` is the reference page for all tech selection. |
 
 ---
 
@@ -27,15 +26,15 @@ Visit [http://localhost:3000](http://localhost:3000). Dev uses Turbopack.
 
 ### Scripts
 
-| Script | What it does |
-| --- | --- |
-| `pnpm dev` | Start Next.js with Turbopack. |
-| `pnpm build` | Production build. |
-| `pnpm start` | Serve the production build. |
-| `pnpm lint` | ESLint via `next lint`. |
-| `pnpm typecheck` | `tsc --noEmit` over the whole tree. |
-| `pnpm format` | Prettier write. |
-| `pnpm format:check` | Prettier check, no writes. |
+| Script              | What it does                        |
+| ------------------- | ----------------------------------- |
+| `pnpm dev`          | Start Next.js with Turbopack.       |
+| `pnpm build`        | Production build.                   |
+| `pnpm start`        | Serve the production build.         |
+| `pnpm lint`         | ESLint via `next lint`.             |
+| `pnpm typecheck`    | `tsc --noEmit` over the whole tree. |
+| `pnpm format`       | Prettier write.                     |
+| `pnpm format:check` | Prettier check, no writes.          |
 
 ---
 
