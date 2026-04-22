@@ -27,19 +27,20 @@ Week view default
 No year or month selector, only into the next or prev week
 One click creates appointment
 Hover shows timeslot
+Once booked, option to add to google, outlook or apple calendar.
 
-Content to sample:
-Free 30 minute digital strategy meeting
+Content to sample (not form fields):
+Free 30 minute digital strategy meeting.
 
-You tell me about your business
+First, tell me about the business
 
 - Project goals and ideals
 - Pain points
 - Questions about digital
 
-I compose:
+You recieve:
 
-- An idea to align your website or digital tooling with your strategy
+- Ideas to align your website or digital tooling with your strategy
 - Recommendations and plans
 - Future scoping opportunities
 

@@ -81,11 +81,18 @@ Aeonik is self-hosted from `/aeonik-font`. `next/font/local` handles subsetting,
 
 ---
 
-## Booking — Cal.com Embed
+## Booking — Custom (Supabase · Resend · ICS)
 
-**Package:** `@calcom/embed-react`
+**Packages:** `@supabase/supabase-js` · `resend` · `@react-email/components` · `ics` · `@internationalized/date`
 
-`/talk` needs direct-to-calendar booking with timezone detection. Cal.com's embed component is the cleanest integration: self-hostable if needed, handles timezone automatically, and renders inline without a redirect. Styled to match the design system via Cal's `theme` and `styles` props.
+The Let's Talk block (`home.md:16-30`) is a bespoke week-grid booking UI — no month selector, one-click slot creation, brand-themed end to end. Hosted schedulers (Cal.com embed, Atoms) either impose their UI or still require custom wrapper components, so we own the full surface instead. The backend is deliberately small: a single `bookings` table, one write route, one confirmation email.
+
+- **Supabase** — Postgres row with a unique constraint on `start_at` is the concurrency guard; Row Level Security locks writes to a server-only key. Availability is read via a typed RPC that returns the current week's booked slots.
+- **Resend + React Email** — transactional confirmation, templated as React so the branded layout lives in the same mental model as the rest of the site.
+- **`ics`** — generates the `.ics` file for Apple Calendar on the confirmation response. Google and Outlook receive plain URL deep-links (no dependency needed).
+- **`@internationalized/date`** — timezone-safe week arithmetic without the `date-fns` + `date-fns-tz` split. `ZonedDateTime` serializes cleanly across the server/client boundary.
+
+Full architecture, schema, API contract, and component tree are specified in `talk.md`. Spam protection is intentionally deferred — it will be layered in later as a custom solution, not a third-party widget.
 
 ---
 
@@ -217,6 +224,9 @@ src/
 | 3D | React Three Fiber + Drei | latest |
 | State | Zustand | 5 |
 | Font loading | next/font (localFont) | built-in |
-| Booking | Cal.com Embed | latest |
+| Booking — data | Supabase (Postgres) | latest |
+| Booking — email | Resend + React Email | latest |
+| Booking — ICS | `ics` | latest |
+| Booking — dates | `@internationalized/date` | latest |
 | Package manager | pnpm | latest |
 | Deployment | Vercel | — |

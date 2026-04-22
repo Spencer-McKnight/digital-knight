@@ -6,3 +6,4 @@
 | [design.md](design.md) | Full design system. §§1–8,10,11,13 locked; §§9,14 open canvas | Any visual/layout work |
 | [home.md](home.md) | `/` is the reference page for all tech selection | Choosing or evaluating tech |
 | [page-ideas.md](page-ideas.md) | Content concepts. Draft — refine, don't transcribe | Building any section |
+| [talk.md](talk.md) | Let's Talk booking — architecture, data model, contracts | Building or modifying the booking block |
