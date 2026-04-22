@@ -1,14 +1,14 @@
 # Digital Knight — Design System
 
-Rails, not recipes. This document defines the frame. What goes inside the frame is designed per-page, per-moment, by the hand holding the pen.
+Rails, not recipes. This document defines the frame. What goes inside the frame is designed per-section, per-moment, by the hand holding the pen.
 
 ---
 
 ## 0. Directive (read first)
 
-> Digital Knight is not a product page — it is a studio's own showcase. The site must *feel* before it *reads*. Every page is a short film with a promise, a proof, and a landing. The home is atmosphere; the interior pages earn their clarity. The site's argument is the site itself: if we can't make this feel considered, we can't be trusted to make anyone else's work feel considered.
+> Digital Knight is not a product page — it is a studio's own showcase. The site must _feel_ before it _reads_. A short film with a promise, a proof, and a landing. The site's argument is the site itself: if we can't make this feel considered, we can't be trusted to make anyone else's work feel considered.
 >
-> Design with restraint on the page and generosity in the moments. One hero per fold. One ember per view. One surprise per page.
+> Design with restraint on the page and generosity in the moments. One hero per fold. One ember per view.
 >
 > When in doubt: fewer words, larger type, darker ground, quieter motion, sharper edge.
 
@@ -20,11 +20,11 @@ A modern forge. Antique paper, charcoal stone, blackened steel, one ember of ora
 
 **Three inherited instincts, used as seasoning, not recipe:**
 
-- *Lusion* — cinema. Restraint, atmosphere, the reel is the argument.
-- *Oryzo* — wit. Each section is its own small demonstration of craft.
-- *Supernova* — clarity. Numbered, structured, trustable — saved for interior pages.
+- _Lusion_ — cinema. Restraint, atmosphere, the reel is the argument.
+- _Oryzo_ — wit. Each section is its own small demonstration of craft.
+- _Supernova_ — clarity. Numbered, structured, trustable.
 
-The home leans cinema + wit. Interior pages lean clarity + wit. Nothing should feel generic-enterprise, and nothing should feel try-hard-3D.
+Lean cinema + wit. Nothing should feel generic-enterprise, and nothing should feel try-hard-3D.
 
 ---
 
@@ -32,11 +32,11 @@ The home leans cinema + wit. Interior pages lean clarity + wit. Nothing should f
 
 Four anchors. Everything else is a mix of these four.
 
-| Token | Hex | Role |
-| --- | --- | --- |
-| `--ink-page` | `#FFEDD7` | Antique page. Primary canvas. |
-| `--ink-stone` | `#403D39` | Charcoal. Inversion zones, footer ground. |
-| `--ink-iron` | `#1B1B1A` | Near-black. All text and UI definition. |
+| Token         | Hex       | Role                                       |
+| ------------- | --------- | ------------------------------------------ |
+| `--ink-page`  | `#FFEDD7` | Antique page. Primary canvas.              |
+| `--ink-stone` | `#403D39` | Charcoal. Inversion zones, footer ground.  |
+| `--ink-iron`  | `#1B1B1A` | Near-black. All text and UI definition.    |
 | `--ink-ember` | `#DD6637` | Accent only. Interaction, single emphasis. |
 
 **Rails**
@@ -57,7 +57,7 @@ Four anchors. Everything else is a mix of these four.
 
 **Scale.** Fluid, clamp-based. Five roles, named by intent:
 
-- `--t-monument` — once-per-page, if at all. Cinematic.
+- `--t-monument` — sparingly, if at all. Cinematic.
 - `--t-hero` — primary page title.
 - `--t-section` — act headers.
 - `--t-lede` — opening sentence, pull copy.
@@ -71,7 +71,7 @@ Four anchors. Everything else is a mix of these four.
 - Paragraphs cap at ~62ch.
 - Tabular numerals everywhere numbers appear in rows.
 
-**Headers move.** Every hero and section head has *one* kinetic treatment — a reveal, a weight-shift, or a track-widen — chosen per page, never mixed inside a block. Body type is still. Motion is a privilege.
+**Headers move.** Every hero and section head has _one_ kinetic treatment — a reveal, a weight-shift, or a track-widen — never mixed inside a block. Body type is still. Motion is a privilege.
 
 ---
 
@@ -87,9 +87,7 @@ Four anchors. Everything else is a mix of these four.
 
 Locked as a beat, open as an execution. The beat:
 
-`DK` appears centered → expands into `DIGITAL KNIGHT` at monument scale → holds → contracts and settles to the top-left nav position → an ember hairline draws beneath the nav and persists as the active-route marker, echoed again at the top of the footer.
-
-First visit only; session revisits skip to the settle.
+`DK` appears centered → expands into `DIGITAL KNIGHT` at monument scale → holds → smooth element transition and settles to the top-left nav position → an ember hairline draws beneath the nav, echoed again at the top of the footer.
 
 ---
 
@@ -100,7 +98,7 @@ First visit only; session revisits skip to the settle.
 **Rails**
 
 - One house easing curve, used everywhere except infinite marquees.
-- Four speeds by role: *state* (instant feedback), *element* (object-level), *scene* (section-level), *epic* (used at most once per page).
+- Four speeds by role: _state_ (instant feedback), _element_ (object-level), _scene_ (section-level), _epic_ (sparingly).
 - Parallax is permitted on imagery only, and never loud.
 - `prefers-reduced-motion` collapses scene/epic to short opacity fades; element feedback is kept.
 
@@ -115,10 +113,8 @@ First visit only; session revisits skip to the settle.
 
 ## 7. Layout
 
-- 12-column grid, fluid gutters, soft-centered max canvas.
-- Outer margins breathe with viewport; content columns rarely exceed 10 of 12.
 - Vertical rhythm built from an 8-point scale. Sections breathe generously between them.
-- The page alternates Page → Stone → Page grounds to mark acts. The change of ground *is* the transition.
+- The page alternates Page → Stone → Page grounds to mark acts. The change of ground _is_ the transition.
 - **One hero per fold.** Each viewport-height has one dominant element. No fold competes with itself.
 
 ---
@@ -128,7 +124,7 @@ First visit only; session revisits skip to the settle.
 The library is intentionally small. Locked shapes; open contents.
 
 - **Button.** Square corners, 1px stroke, no rounding, no shadow. Primary (solid), Secondary (outline), Ghost (label + arrow). Inverts cleanly on Stone. Hover and press states are felt, not loud.
-- **Navigation.** Top-left wordmark, top-right links in meta type. Transparent over Page; hairline over Stone. Shrinks on scroll-down, restores on scroll-up. Ember hairline marks the active route.
+- **Navigation.** Top-left wordmark, top-right links in meta type. Transparent over Page; hairline over Stone. Shrinks on scroll-down, restores on scroll-up. Ember hairline marks the active section.
 - **Scrollbar.** Custom, thin, right-edge inset. Invisible unless scrolling or approached. Never reserves layout space.
 - **Footer.** Stone ground. Locks to the bottom once fully in view — a landing, not a sticky bar. Mirrors the nav's ember hairline at its top edge.
 - **Card / Tile.** Defined by hairlines, not fills. Hover: slight lift, hairline becomes ember. Interior layout is free — cards are a bespoke canvas.
@@ -137,23 +133,22 @@ The library is intentionally small. Locked shapes; open contents.
 - **Figure.** Edge-to-edge inside its container. Optional meta caption sits below-left under a short hairline. Imagery enters in a stone duotone and resolves to full color once in view — the site's visual signature.
 - **Stat.** Tabular Bold numerals, meta label above. Counts up once on enter.
 
-Anything not listed is built per-page and returns to these primitives for its edges.
+Anything not listed is built per-section and returns to these primitives for its edges.
 
 ---
 
 ## 9. Page Grammar
 
-Every page is a short film in six beats:
+The page is a short film in six beats:
 
 1. **Entry** — a monumental promise. Almost no other content.
 2. **Proof** — one figure or interaction that demonstrates the promise.
 3. **Acts** — 3–6 sections alternating grounds, each with one idea and one hero element.
 4. **Turn** — one section that breaks the pattern. A toy, a diagram, a pull-quote, a live demo. The place invention is expected.
-5. **Call** — one section header pointing to `/talk` and a primary button.
+5. **Call** — one section header and a primary button.
 6. **Landing** — the footer.
 
-Home leans cinema: large Entry, restrained Acts, a strong Turn, quiet Call.  
-Interior pages lean structure: shorter Entry, clearer Acts (Supernova-style numbering is permitted here), still one Turn.
+Lean cinema: large Entry, restrained Acts, a strong Turn, quiet Call.
 
 ---
 
@@ -168,7 +163,7 @@ Interior pages lean structure: shorter Entry, clearer Acts (Supernova-style numb
 
 ## 11. Iconography
 
-Custom line icons, consistent stroke, square terminals, no flourish. A small size grid only. Icons are monochrome by default; ember only when they *are* the interaction.
+Custom line icons, consistent stroke, square terminals, no flourish. A small size grid only. Icons are monochrome by default; ember only when they _are_ the interaction.
 
 ---
 
@@ -194,11 +189,11 @@ Custom line icons, consistent stroke, square terminals, no flourish. A small siz
 
 ## 14. What's Deliberately Open
 
-These are the canvas areas — design them fresh per page:
+These are the canvas areas — design them fresh per section:
 
 - The content and layout of each **Act**.
-- Each page's **Proof** figure.
-- Each page's **Turn** — the surprise is the point.
+- The **Proof** figure.
+- The **Turn** — the surprise is the point.
 - The count and rhythm of sections, so long as ground-inversion alternates and the grammar of §9 holds.
 - Interior composition of **cards** and **figures**.
 - Copy voice within the constraints of `soul.md`.
@@ -219,15 +214,15 @@ Sections §§1–8, §10–§13 are the frame. Sections §9 and §14 are the pai
 
 ### Colors — `--ink-*`
 
-| Token | Value | Role |
-|---|---|---|
-| `--ink-page` | `#FFEDD7` | Primary canvas |
-| `--ink-stone` | `#403D39` | Inversion ground |
-| `--ink-iron` | `#1B1B1A` | Text and UI definition |
-| `--ink-ember` | `#DD6637` | Single accent |
-| `--ink-rule` | `rgba(27,27,26, 0.12)` | Hairlines on Page |
-| `--ink-rule-inv` | `rgba(255,237,215, 0.20)` | Hairlines on Stone |
-| `--ink-shadow` | `rgba(64,61,57, 0.18)` | Shadows on Page |
+| Token            | Value                     | Role                   |
+| ---------------- | ------------------------- | ---------------------- |
+| `--ink-page`     | `#FFEDD7`                 | Primary canvas         |
+| `--ink-stone`    | `#403D39`                 | Inversion ground       |
+| `--ink-iron`     | `#1B1B1A`                 | Text and UI definition |
+| `--ink-ember`    | `#DD6637`                 | Single accent          |
+| `--ink-rule`     | `rgba(27,27,26, 0.12)`    | Hairlines on Page      |
+| `--ink-rule-inv` | `rgba(255,237,215, 0.20)` | Hairlines on Stone     |
+| `--ink-shadow`   | `rgba(64,61,57, 0.18)`    | Shadows on Page        |
 
 `--ink-rule` and `--ink-rule-inv` are derived; they are set in `:root` using SCSS primitives and also redeclared inside `ground-invert()`.
 
@@ -237,24 +232,24 @@ Sections §§1–8, §10–§13 are the frame. Sections §9 and §14 are the pai
 
 **Scale** (fluid, clamp-based, 375px → 1440px):
 
-| Token | Value |
-|---|---|
-| `--t-monument` | `clamp(4.5rem, 7vw + 2.9rem, 9rem)` |
-| `--t-hero` | `clamp(2.75rem, 4vw + 1.78rem, 5.5rem)` |
-| `--t-section` | `clamp(1.875rem, 1.7vw + 1.475rem, 3rem)` |
-| `--t-lede` | `clamp(1.25rem, 0.75vw + 1.075rem, 1.75rem)` |
-| `--t-body` | `clamp(1rem, 0.2vw + 0.953rem, 1.125rem)` |
-| `--t-meta` | `clamp(0.6875rem, 0.1vw + 0.625rem, 0.75rem)` |
+| Token          | Value                                         |
+| -------------- | --------------------------------------------- |
+| `--t-monument` | `clamp(4.5rem, 7vw + 2.9rem, 9rem)`           |
+| `--t-hero`     | `clamp(2.75rem, 4vw + 1.78rem, 5.5rem)`       |
+| `--t-section`  | `clamp(1.875rem, 1.7vw + 1.475rem, 3rem)`     |
+| `--t-lede`     | `clamp(1.25rem, 0.75vw + 1.075rem, 1.75rem)`  |
+| `--t-body`     | `clamp(1rem, 0.2vw + 0.953rem, 1.125rem)`     |
+| `--t-meta`     | `clamp(0.6875rem, 0.1vw + 0.625rem, 0.75rem)` |
 
 **Settings:**
 
-| Token | Value | Used for |
-|---|---|---|
-| `--t-family` | `'Aeonik', system-ui, sans-serif` | All type |
-| `--t-leading-tight` | `0.95` | Monument, hero, section |
-| `--t-leading-body` | `1.55` | Body, lede |
-| `--t-tracking-tight` | `-0.03em` | Monument, hero |
-| `--t-tracking-meta` | `0.12em` | Meta — uppercase only |
+| Token                | Value                             | Used for                |
+| -------------------- | --------------------------------- | ----------------------- |
+| `--t-family`         | `'Aeonik', system-ui, sans-serif` | All type                |
+| `--t-leading-tight`  | `0.95`                            | Monument, hero, section |
+| `--t-leading-body`   | `1.55`                            | Body, lede              |
+| `--t-tracking-tight` | `-0.03em`                         | Monument, hero          |
+| `--t-tracking-meta`  | `0.12em`                          | Meta — uppercase only   |
 
 ---
 
@@ -262,42 +257,31 @@ Sections §§1–8, §10–§13 are the frame. Sections §9 and §14 are the pai
 
 8-point base. Steps 1–2 are the 4pt half-step for tight UI gaps.
 
-| Token | Value | Typical use |
-|---|---|---|
-| `--space-1` | `0.25rem` / 4px | Icon padding, hairline offset |
-| `--space-2` | `0.5rem` / 8px | Inline gap, tight pad |
-| `--space-3` | `1rem` / 16px | Base gap |
-| `--space-4` | `1.5rem` / 24px | |
-| `--space-5` | `2rem` / 32px | |
-| `--space-6` | `3rem` / 48px | |
-| `--space-7` | `4rem` / 64px | |
-| `--space-8` | `6rem` / 96px | |
-| `--space-9` | `8rem` / 128px | Section breathing room |
-| `--space-10` | `12rem` / 192px | Hero vertical padding |
+| Token        | Value           | Typical use                   |
+| ------------ | --------------- | ----------------------------- |
+| `--space-1`  | `0.25rem` / 4px | Icon padding, hairline offset |
+| `--space-2`  | `0.5rem` / 8px  | Inline gap, tight pad         |
+| `--space-3`  | `1rem` / 16px   | Base gap                      |
+| `--space-4`  | `1.5rem` / 24px |                               |
+| `--space-5`  | `2rem` / 32px   |                               |
+| `--space-6`  | `3rem` / 48px   |                               |
+| `--space-7`  | `4rem` / 64px   |                               |
+| `--space-8`  | `6rem` / 96px   |                               |
+| `--space-9`  | `8rem` / 128px  | Section breathing room        |
+| `--space-10` | `12rem` / 192px | Hero vertical padding         |
 
 ---
 
 ### Motion — `--dur-*`, `--ease-*`
 
-| Token | Value | Role |
-|---|---|---|
-| `--dur-state` | `80ms` | Hover, focus — immediate |
-| `--dur-element` | `220ms` | Card lift, cursor fill, button |
-| `--dur-scene` | `500ms` | Section entrance, nav shrink |
-| `--dur-epic` | `1200ms` | Loader, once-per-page sequences |
-| `--ease-house` | `cubic-bezier(0.16, 1, 0.3, 1)` | Fast-out-slow-in. Everywhere except marquees. |
-| `--ease-linear` | `linear` | Infinite marquees only |
-
----
-
-### Grid — `--grid-*`
-
-| Token | Value |
-|---|---|
-| `--grid-columns` | `12` |
-| `--grid-gutter` | `clamp(1rem, 2.5vw, 2rem)` |
-| `--grid-margin` | `clamp(1.25rem, 5vw, 4rem)` |
-| `--grid-max` | `90rem` (1440px) |
+| Token           | Value                           | Role                                          |
+| --------------- | ------------------------------- | --------------------------------------------- |
+| `--dur-state`   | `80ms`                          | Hover, focus — immediate                      |
+| `--dur-element` | `220ms`                         | Card lift, cursor fill, button                |
+| `--dur-scene`   | `500ms`                         | Section entrance, nav shrink                  |
+| `--dur-epic`    | `1200ms`                        | Loader, sparingly used sequences              |
+| `--ease-house`  | `cubic-bezier(0.16, 1, 0.3, 1)` | Fast-out-slow-in. Everywhere except marquees. |
+| `--ease-linear` | `linear`                        | Infinite marquees only                        |
 
 ---
 
@@ -307,10 +291,10 @@ Stone-ground sections redeclare `--ink-*` at the section root. Components never 
 
 ```scss
 // Applied at the section root via @include ground-invert()
---ink-page:     #{$ink-stone};
---ink-iron:     #{$ink-page-value};
---ink-rule:     #{$ink-rule-inv-value};
---ink-shadow:   rgba(27,27,26, 0.30);
+--ink-page: #{$ink-stone};
+--ink-iron: #{$ink-page-value};
+--ink-rule: #{$ink-rule-inv-value};
+--ink-shadow: rgba(27, 27, 26, 0.3);
 background: var(--ink-stone);
 color: var(--ink-iron);
 ```
