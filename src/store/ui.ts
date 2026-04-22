@@ -4,7 +4,15 @@ import { create } from 'zustand';
  * Cursor variants — declared as a const tuple so the type stays exhaustive
  * and CSS data-attributes map one-to-one.
  */
-export const CURSOR_VARIANTS = ['default', 'interactive', 'ember', 'hidden'] as const;
+export const CURSOR_VARIANTS = [
+  'default',
+  'interactive',
+  'grab',
+  'grabbing',
+  'text',
+  'ember',
+  'hidden',
+] as const;
 export type CursorVariant = (typeof CURSOR_VARIANTS)[number];
 
 interface UiState {

@@ -17,13 +17,5 @@
     // touch-action is also set imperatively on mount (Firefox parity), but
     // declaring here reserves vertical page scroll from first paint.
     touch-action: pan-y;
-    // Cursor lives in CSS — :active is driven by the browser's pointer
-    // pipeline, which means the grabbing state can never desync from the
-    // actual input state between repeated gestures.
-    cursor: grab;
-
-    &:active {
-      cursor: grabbing;
-    }
   }
 }

@@ -38,6 +38,20 @@ body {
   border-radius: 1px;
 }
 
+// The custom Cursor component (`components/Cursor`) is the *only* cursor
+// treatment on pointer-fine devices — anything the system would otherwise
+// draw (the default arrow, `grab`, `pointer`, `text`, `crosshair` …) is
+// suppressed here so it never shows alongside or through the ring. Each
+// affordance those native cursors once carried is re-expressed as a
+// distinct variant of the custom cursor. Touch devices fall through.
+@media (pointer: fine) {
+  *,
+  *::before,
+  *::after {
+    cursor: none !important;
+  }
+}
+
 // Custom scrollbar — thin, right-edge, appears on activity. Native cursor
 // pointer devices only; touch falls back to system scrollbar.
 @media (pointer: fine) {

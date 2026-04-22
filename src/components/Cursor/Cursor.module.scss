@@ -1,5 +1,9 @@
 @use 'mixins' as *;
 
+// The root is a zero-sized anchor positioned at the pointer via GSAP
+// transforms. Every visible glyph (ring, dot, beam) is absolutely centred on
+// that anchor using `translate(-50%, -50%)`, so swapping sizes between
+// variants never requires recomputing offsets.
 .root {
   position: fixed;
   top: 0;
@@ -8,48 +12,139 @@
   height: 0;
   z-index: 1000;
   pointer-events: none;
+  // Difference keeps the ring readable over any ground the page uses — Page,
+  // Stone, figure duotones — without the component needing to know which
+  // ground it's currently over. Variants that carry their own colour
+  // (ember interactive) override this locally.
   mix-blend-mode: difference;
+}
 
-  @media (pointer: coarse) {
+@media (pointer: coarse) {
+  .root {
     display: none;
   }
 }
 
-.ring {
+.ring,
+.dot,
+.beam {
   position: absolute;
-  inset: 0;
-  top: -12px;
-  left: -12px;
-  width: 24px;
-  height: 24px;
-  border: 1px solid var(--ink-page);
-  border-radius: 999px;
-  transform-origin: center;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
   transition:
     width var(--dur-element) var(--ease-house),
     height var(--dur-element) var(--ease-house),
-    top var(--dur-element) var(--ease-house),
-    left var(--dur-element) var(--ease-house),
-    background-color var(--dur-element) var(--ease-house),
+    border-width var(--dur-element) var(--ease-house),
     border-color var(--dur-element) var(--ease-house),
+    background-color var(--dur-element) var(--ease-house),
     opacity var(--dur-state) var(--ease-house);
 }
 
-.root[data-variant='interactive'] .ring {
-  width: 38px;
-  height: 38px;
-  top: -19px;
-  left: -19px;
-  background: var(--ink-ember);
-  border-color: var(--ink-ember);
+.ring {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--ink-page);
+  border-radius: 999px;
+  background: transparent;
+}
+
+.dot {
+  width: 0;
+  height: 0;
+  border-radius: 999px;
+  background: var(--ink-page);
+  opacity: 0;
+}
+
+.beam {
+  width: 2px;
+  height: 22px;
+  background: var(--ink-page);
+  opacity: 0;
+  // I-beam caps — thin horizontal bars top and bottom.
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 10px;
+    height: 2px;
+    background: inherit;
+    transform: translateX(-50%);
+  }
+  &::before {
+    top: 0;
+  }
+  &::after {
+    bottom: 0;
+  }
+}
+
+// --- Variants -----------------------------------------------------------------
+
+// Interactive — anchors, buttons. Ember disc is a full colour statement, so
+// it opts out of difference blending and reads as the ember token itself.
+.root[data-variant='interactive'] {
   mix-blend-mode: normal;
+
+  .ring {
+    width: 40px;
+    height: 40px;
+    background: var(--ink-ember);
+    border-color: var(--ink-ember);
+  }
 }
 
-.root[data-variant='ember'] .ring {
-  background: var(--ink-ember);
-  border-color: var(--ink-ember);
+// Grab — the hero seal and any future directly-manipulable subject. Wider
+// ring plus a centred dot signal "grip point".
+.root[data-variant='grab'] {
+  .ring {
+    width: 32px;
+    height: 32px;
+    border-width: 2px;
+  }
+  .dot {
+    width: 4px;
+    height: 4px;
+    opacity: 1;
+  }
 }
 
-.root[data-variant='hidden'] .ring {
+// Grabbing — the ring closes around the subject while the pointer is held.
+.root[data-variant='grabbing'] {
+  .ring {
+    width: 18px;
+    height: 18px;
+    background: var(--ink-page);
+    border-color: var(--ink-page);
+  }
+  .dot {
+    opacity: 0;
+  }
+}
+
+// Text — collapse the ring, show the I-beam.
+.root[data-variant='text'] {
+  .ring {
+    width: 0;
+    height: 0;
+    border-width: 0;
+  }
+  .beam {
+    opacity: 1;
+  }
+}
+
+// Ember — kept for authored emphasis (the `useCursorVariant` hook exposes
+// it; design.md §6). Iron ring with an ember fill.
+.root[data-variant='ember'] {
+  .ring {
+    background: var(--ink-ember);
+    border-color: var(--ink-ember);
+  }
+}
+
+.root[data-variant='hidden'] {
   opacity: 0;
 }

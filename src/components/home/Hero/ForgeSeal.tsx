@@ -79,7 +79,7 @@ export function ForgeSeal() {
   const active = inView && !reduced;
 
   return (
-    <div ref={rootRef} className={styles.root} aria-hidden>
+    <div ref={rootRef} className={styles.root} data-cursor="grab" aria-hidden>
       <Canvas
         // Capping DPR at 1.75 costs almost nothing perceptually on retina
         // screens while cutting roughly a quarter of the fragments shaded.
@@ -105,29 +105,6 @@ export function ForgeSeal() {
 
 /**
  * Lighting — a studio softbox rig built from area lights.
- *
- *   Point lights, being zero-dimensional sources, show up as hard bulb
- *   highlights when reflected in a metallic surface. That reads wrong
- *   for a jewel — a real gem on a bench is lit by panels (softboxes),
- *   so the reflections returned are panel-shaped rather than pinpricks.
- *   `rectAreaLight` integrates across its surface, so it produces
- *   exactly this softer, shaped highlight regardless of how tight the
- *   material's roughness is.
- *
- *   Nine panels are arranged around the seal, biased toward the front
- *   hemisphere so the head-on view carries the most weight. Each panel
- *   shares the same colour and size; only position and intensity vary.
- *   Every panel is aimed at the origin via a `lookAt` callback ref so
- *   its face is always pointed at the subject.
- *
- *   One smaller panel sits on the view axis between the camera and the
- *   seal. This is what keeps the facets whose normal points straight at
- *   the viewer from reading as flat grey — metal only returns specular
- *   from lights near the view axis for those facets.
- *
- *   The warehouse environment preset is held low so the direct panel
- *   reflections dominate — the jewel read wants the panels themselves
- *   to be the thing that speaks.
  */
 function Lighting() {
   // Aim every panel at the origin the moment it mounts.
