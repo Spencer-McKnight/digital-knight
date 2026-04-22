@@ -3,7 +3,7 @@ import { Button } from '@/components/Button';
 import styles from './LetsTalk.module.scss';
 
 /**
- * LetsTalk — the Call beat (`design.md` §9 beat 5).
+ * LetsTalk — the Call beat (`design.md` §9 beat 2).
  *
  *   Per project instructions this block ships the framing only — copy,
  *   hairlines, the meta rails around the calendar. The bespoke week-grid
@@ -27,12 +27,17 @@ const INTRO = [
 
 export function LetsTalk() {
   return (
-    <section id="talk" className={styles.root} aria-labelledby="talk-title">
+    <section
+      id="talk"
+      data-ground="stone"
+      className={styles.root}
+      aria-labelledby="talk-title"
+    >
       <div className={styles.inner}>
         <header className={styles.header}>
           <p className={styles.eyebrow}>
             <span className={styles.eyebrowDot} aria-hidden />
-            Call · 05
+            Call · 02
           </p>
           <h2 id="talk-title" className={styles.title}>
             Free thirty-minute
@@ -112,7 +117,7 @@ export function LetsTalk() {
             <p className={styles.calendarFoot}>
               Can&apos;t find a time?{' '}
               <Button
-                href="mailto:hello@digitalknight.com"
+                href="mailto:hello@digital-knight.au"
                 variant="ghost"
               >
                 Reach out directly

@@ -53,7 +53,7 @@ Framer Motion is not used. It overlaps with GSAP, adds bundle weight, and its de
 
 **Packages:** `@react-three/fiber` · `@react-three/drei` · `three`
 
-Used selectively — only where a page's **Turn** or **Proof** beat calls for it. R3F integrates cleanly into the React tree and works well alongside GSAP (animate R3F uniforms via GSAP's ticker). Drei supplies ready abstractions (environment maps, soft shadows, suspense loaders) that keep 3D scenes tight.
+Used selectively — only where a page's beat calls for it. R3F integrates cleanly into the React tree and works well alongside GSAP (animate R3F uniforms via GSAP's ticker). Drei supplies ready abstractions (environment maps, soft shadows, suspense loaders) that keep 3D scenes tight.
 
 The design constraint — matte metal, no glassy chrome — means scenes are small and deliberate, not full-canvas spectacles. R3F + Drei makes that achievable without building a raw Three.js scaffold every time.
 

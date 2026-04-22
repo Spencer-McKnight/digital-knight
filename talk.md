@@ -49,13 +49,13 @@ No other runtime dependencies. No date picker libraries, no scheduling libraries
 
 Business hours are defined in **one fixed timezone** — the host's. Visitors see slots rendered in **their own local timezone** with a clear indicator of what the business hours are.
 
-- Config: `BUSINESS_TIMEZONE` env var. Default `Europe/London`. Changing this is a deployment-level decision, never a per-request one.
+- Config: `BUSINESS_TIMEZONE` env var. Default `Australia/Melbourne`. Changing this is a deployment-level decision, never a per-request one.
 - Storage: `timestamptz` in Postgres — always UTC under the hood.
 - Client rendering: `ZonedDateTime` from `@internationalized/date` converts to the visitor's resolved timezone (`Intl.DateTimeFormat().resolvedOptions().timeZone`).
-- The grid labels each column with the date in the **visitor's** timezone. A meta-type subtitle declares: "Shown in your time (`America/New_York`) · Business hours 10:00–15:00 UK."
+- The grid labels each column with the date in the **visitor's** timezone. A meta-type subtitle declares: "Shown in your time (`America/New_York`) · Business hours 10:00–15:00 Melbourne."
 - DST transitions: `@internationalized/date` handles them correctly. Write a single unit test for the spring-forward week in the host timezone to protect this.
 
-This decision keeps slot identity unambiguous: a slot is "2026-04-27 10:00 Europe/London", period. The visitor's view is a presentation concern.
+This decision keeps slot identity unambiguous: a slot is "2026-04-27 10:00 Australia/Melbourne", period. The visitor's view is a presentation concern.
 
 ---
 
@@ -161,7 +161,7 @@ Two actions, one file: `src/app/_actions/booking.ts`. Both run in a Node runtime
 type WeekAvailability = {
   weekISO: string;               // echoed back
   weekStartUTC: string;          // ISO timestamp
-  businessTimezone: string;      // e.g. 'Europe/London'
+  businessTimezone: string;      // e.g. 'Australia/Melbourne'
   bookedSlotsUTC: string[];      // ISO timestamps
   horizonReached: boolean;       // true if this is the last reachable week
 };
@@ -338,7 +338,7 @@ BOOKING_FROM_EMAIL=hello@...      # verified sender
 BOOKING_HOST_EMAIL=spencer@...    # organizer in ICS + BCC on confirmations
 
 # Booking config
-BUSINESS_TIMEZONE=Europe/London
+BUSINESS_TIMEZONE=Australia/Melbourne
 BOOKING_HORIZON_WEEKS=8
 ```
 

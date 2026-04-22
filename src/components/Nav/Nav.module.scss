@@ -1,4 +1,27 @@
 @use 'mixins' as *;
+@use 'tokens/colors' as colors;
+
+// =============================================================================
+// Nav — glass-surfaced, always-blurred, split-inked
+// -----------------------------------------------------------------------------
+// The nav floats over whatever ground scrolls beneath, softened by a constant
+// backdrop blur and a low-opacity tinted "glass" fill. Both the ink and the
+// glass tint are allowed to SPLIT across the bar so the moment a section
+// boundary sweeps through, the upper half reads against the outgoing ground
+// and the lower half reads against the incoming one. Painting is done by a
+// vertical `linear-gradient`: clipped to glyph shapes for ink, and drawn on
+// a `::before` behind the content for the contrast surface.
+//
+// CSS custom properties that carry the state:
+//   • `--ink-upper`     / `--ink-lower`     — text colour on each side.
+//   • `--surface-upper` / `--surface-lower` — glass tint on each side.
+//     Both pairs are set on `.root` via the `data-upper-ground` /
+//     `data-lower-ground` attributes and resolve through design tokens.
+//   • `--nav-split` — set inline on every `[data-ink-split]` element AND on
+//     the nav root itself, holding that element's local Y-offset from the
+//     boundary. JS writes this per rAF frame so the gradient stop tracks the
+//     exact viewport pixel where the grounds meet.
+// =============================================================================
 
 .root {
   position: fixed;
@@ -14,15 +37,54 @@
   padding-inline: var(--grid-margin);
   padding-block: var(--space-4);
 
-  color: var(--ink-iron);
-  background: transparent;
+  // ── Ink + surface selection ──────────────────────────────────────────────
+  // The nav itself is NOT a section — it never applies `ground-invert`. We
+  // read from the :root ink palette directly and route to upper/lower pairs
+  // based on which ground is above vs below the split line.
+  //
+  //                                     ink (text)      surface (glass)
+  //   ground=page  (light canvas)  →   iron (dark)     page tint (light)
+  //   ground=stone (dark canvas)   →   page (light)    stone tint (dark)
+  //
+  // The glass tint matches the ground beneath — it is not an inversion. It
+  // is a soft veil that lifts text contrast without breaking the illusion
+  // that the nav is part of the surface it floats over.
+  --ink-upper: var(--ink-iron);
+  --ink-lower: var(--ink-iron);
+  --surface-upper: #{rgba(colors.$ink-page, 0.72)};
+  --surface-lower: #{rgba(colors.$ink-page, 0.72)};
+
+  &[data-upper-ground='stone'] {
+    --ink-upper: var(--ink-page);
+    --surface-upper: #{rgba(colors.$ink-stone, 0.72)};
+  }
+  &[data-lower-ground='stone'] {
+    --ink-lower: var(--ink-page);
+    --surface-lower: #{rgba(colors.$ink-stone, 0.72)};
+  }
+
+  // ── Glass: split-tinted fill + backdrop blur ─────────────────────────────
+  // The tint gradient tracks `--nav-split` exactly like the ink (`%split-ink`)
+  // — the nav root is itself a paint target in the JS pass, so the stop Y
+  // matches the boundary crossing the bar. Backdrop-filter softens whatever
+  // ground and artwork passes beneath, so the translucent tint never lets
+  // crisp content clip through to the glyphs above.
+  background-image: linear-gradient(
+    to bottom,
+    var(--surface-upper) 0,
+    var(--surface-upper) var(--nav-split, 9999px),
+    var(--surface-lower) var(--nav-split, 9999px),
+    var(--surface-lower) 100%
+  );
+  backdrop-filter: saturate(170%) blur(28px);
+  -webkit-backdrop-filter: saturate(170%) blur(28px);
+
   opacity: 0;
   transform: translateY(-12px);
   transition:
     opacity var(--dur-scene) var(--ease-house),
     transform var(--dur-scene) var(--ease-house),
-    padding-block var(--dur-element) var(--ease-house),
-    background-color var(--dur-element) var(--ease-house);
+    padding-block var(--dur-element) var(--ease-house);
 
   &[data-loaded='true'] {
     opacity: 1;
@@ -31,12 +93,11 @@
 
   &[data-shrunk='true'] {
     padding-block: var(--space-3);
-    background: color-mix(in oklab, var(--ink-page) 80%, transparent);
-    backdrop-filter: saturate(140%) blur(8px);
   }
 }
 
 // Ember hairline beneath the nav — persists, echoed at the top of the footer.
+// Ember does not invert, so this is a single solid line regardless of grounds.
 .hairline {
   position: absolute;
   left: var(--grid-margin);
@@ -53,20 +114,51 @@
   }
 }
 
+// =============================================================================
+// Shared split-ink painter
+// -----------------------------------------------------------------------------
+// Any element carrying `data-ink-split` is painted by a clipped gradient.
+// The gradient's colour-stop sits at `--nav-split` — a pixel offset from the
+// element's own top edge. Values outside 0..height are fine: the gradient
+// clamps, so the element reads as one solid ink outside the boundary band.
+// =============================================================================
+%split-ink {
+  // Fallback for print / copy-paste / no-gradient paths.
+  color: var(--ink-upper);
+
+  background-image: linear-gradient(
+    to bottom,
+    var(--ink-upper) 0,
+    var(--ink-upper) var(--nav-split, 9999px),
+    var(--ink-lower) var(--nav-split, 9999px),
+    var(--ink-lower) 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
 .wordmark {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  color: inherit;
   text-decoration: none;
   font-weight: var(--t-weight-medium);
   letter-spacing: 0.18em;
-  font-size: var(--t-meta);
+  // Meta register plus a small, deliberate bump — keeps the nav in the meta
+  // voice (per `design.md` §8) but reads with a hair more presence.
+  font-size: clamp(0.8125rem, 0.12vw + 0.78rem, 0.9rem);
   text-transform: uppercase;
   line-height: 1;
+  color: inherit;
 }
 
 .word {
+  @extend %split-ink;
   display: inline-block;
   transition: opacity var(--dur-element) var(--ease-house);
 
@@ -80,10 +172,11 @@
 }
 
 .mark {
+  @extend %split-ink;
   display: none;
   font-weight: var(--t-weight-bold);
   letter-spacing: 0.04em;
-  font-size: var(--t-meta);
+  font-size: inherit;
 
   [data-shrunk='true'] & {
     @include respond-below(md) {
@@ -104,11 +197,12 @@
 
 .link {
   @include type(meta);
+  font-size: clamp(0.8125rem, 0.12vw + 0.78rem, 0.9rem);
   position: relative;
   display: inline-block;
   padding: var(--space-2) 0;
-  color: inherit;
   text-decoration: none;
+  color: inherit;
 
   &::after {
     content: '';
@@ -128,4 +222,12 @@
   &[data-active]::after {
     transform: scaleX(1);
   }
+}
+
+// The label span carries the split-ink painting — we keep it separate from
+// the anchor so the anchor can host padding, the underline and hit area.
+.linkLabel {
+  @extend %split-ink;
+  display: inline-block;
+  line-height: 1;
 }

@@ -120,7 +120,13 @@ export function Tech() {
   }, []);
 
   return (
-    <section ref={rootRef} id="tech" className={styles.root} aria-labelledby="tech-title">
+    <section
+      ref={rootRef}
+      id="tech"
+      data-ground="stone"
+      className={styles.root}
+      aria-labelledby="tech-title"
+    >
       <header className={styles.header}>
         <p className={styles.eyebrow}>
           <span className={styles.eyebrowDot} aria-hidden />

@@ -14,14 +14,11 @@ const ForgeSeal = dynamic(() => import('./ForgeSeal').then((m) => m.ForgeSeal), 
   loading: () => null,
 });
 
-const IDEALS = ['Strategy', 'Courage', 'Vision', 'Strength'] as const;
-
 /**
  * Hero — the Entry beat (`design.md` §9 beat 1).
  *
  *   Asymmetric layout. The seal holds the right; the promise holds the left.
- *   One monument headline, one ember word ("prevail"). The four ideals run a
- *   quiet meta-caption beneath, each letterform a token of its own.
+ *   One monument headline, one ember word ("prevail").
  *
  *   Kinetic treatment (`design.md` §3):
  *   A single word-by-word reveal on the headline, gated by `loadingComplete`.
@@ -32,9 +29,7 @@ export function Hero() {
   const rootRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const ledeRef = useRef<HTMLParagraphElement>(null);
-  const eyebrowRef = useRef<HTMLParagraphElement>(null);
   const actionsRef = useRef<HTMLDivElement>(null);
-  const idealsRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     if (!loaded) return;
@@ -45,7 +40,7 @@ export function Hero() {
       const words = title.querySelectorAll<HTMLElement>('[data-word]');
 
       gsap.set(words, { yPercent: 110, opacity: 0 });
-      gsap.set([eyebrowRef.current, ledeRef.current, actionsRef.current, idealsRef.current], {
+      gsap.set([ledeRef.current, actionsRef.current], {
         y: 16,
         opacity: 0,
       });
@@ -55,81 +50,50 @@ export function Hero() {
         defaults: { ease: 'expo.out' },
       });
 
-      tl.to(eyebrowRef.current, { y: 0, opacity: 1, duration: 0.7 })
-        .to(
-          words,
-          { yPercent: 0, opacity: 1, duration: 1.05, stagger: 0.06 },
-          '<+0.05',
-        )
+      tl.to(
+        words,
+        { yPercent: 0, opacity: 1, duration: 1.05, stagger: 0.06 },
+        '<+0.05',
+      )
         .to(ledeRef.current, { y: 0, opacity: 1, duration: 0.75 }, '-=0.55')
-        .to(actionsRef.current, { y: 0, opacity: 1, duration: 0.65 }, '-=0.4')
-        .to(idealsRef.current, { y: 0, opacity: 1, duration: 0.65 }, '-=0.45');
+        .to(actionsRef.current, { y: 0, opacity: 1, duration: 0.65 }, '-=0.4');
     }, rootRef);
 
     return () => ctx.revert();
   }, [loaded]);
 
   return (
-    <section ref={rootRef} id="top" className={styles.root} aria-labelledby="hero-title">
+    <section
+      ref={rootRef}
+      id="top"
+      data-ground="page"
+      className={styles.root}
+      aria-labelledby="hero-title"
+    >
       <div className={styles.ground}>
         <ForgeSeal />
       </div>
 
       <div className={styles.grid}>
-        <p ref={eyebrowRef} className={styles.eyebrow}>
-          <span className={styles.eyebrowDot} aria-hidden />
-          Digital Knight <span className={styles.eyebrowSlash}>/</span> independent studio
-        </p>
-
         <h1 id="hero-title" ref={titleRef} className={styles.title}>
-          {['Digital', 'work,'].map((w, i) => (
-            <span key={`a-${i}`} className={styles.line}>
-              <span data-word className={styles.word}>
-                {w}
-              </span>{' '}
-            </span>
-          ))}
-          <span className={styles.line}>
-            <span data-word className={styles.word}>
-              forged
-            </span>{' '}
-            <span data-word className={styles.word}>
-              to
-            </span>{' '}
-            <span data-word className={styles.wordEmber}>
-              prevail
-            </span>
-            <span className={styles.stop}>.</span>
-          </span>
+          Digital Knight
         </h1>
 
         <p ref={ledeRef} className={styles.lede}>
-          Strategy that cuts through. Design that holds up. Code that outlasts the trend
-          cycle. A one-desk studio for businesses that intend to be here in a decade.
+          Knowledge and strength to create.
+          <br />
+          Strategic vision towards the future.
+          <br />
+          Courage to consider what is right.
         </p>
 
         <div ref={actionsRef} className={styles.actions}>
-          <Button href="/#talk" variant="primary" size="lg">
-            Book a strategy call
-          </Button>
-          <Button href="/#services" variant="ghost">
-            See the work
+          <Button href="/#talk" variant="secondary" size="md">
+            Talk to Spencer McKnight
           </Button>
         </div>
       </div>
 
-      <ul ref={idealsRef} className={styles.ideals} aria-label="Guiding ideals">
-        {IDEALS.map((ideal, i) => (
-          <li key={ideal} className={styles.ideal}>
-            <span className={styles.idealIndex}>{String(i + 1).padStart(2, '0')}</span>
-            <span className={styles.idealLabel}>{ideal}</span>
-          </li>
-        ))}
-      </ul>
-
-      <p className={styles.scrollHint} aria-hidden>
-        Scroll <span className={styles.scrollRule} />
-      </p>
     </section>
   );
 }

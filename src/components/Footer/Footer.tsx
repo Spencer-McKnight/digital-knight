@@ -2,7 +2,7 @@ import Link from 'next/link';
 import styles from './Footer.module.scss';
 
 /**
- * Footer — the Landing beat (`design.md` §9 beat 6).
+ * Footer — the Landing beat (`design.md` §9 beat 5).
  *
  *   Stone ground (via `ground-invert` mixin). An ember hairline crowns it,
  *   echoing the nav. A quiet sign-off, a sitemap, a colophon and a local
@@ -12,34 +12,40 @@ import styles from './Footer.module.scss';
  *   so neither does the rhythm — the footer IS the landing.
  */
 const SITEMAP = [
-  { heading: 'Pages', links: [
-    { label: 'Home', href: '/' },
-    { label: 'Services', href: '/#services' },
-    { label: 'Tech', href: '/#tech' },
-    { label: 'Talk', href: '/#talk' },
-  ] },
-  { heading: 'Studio', links: [
-    { label: 'Method', href: '/method' },
-    { label: 'Soul', href: '/soul' },
-    { label: 'Design system', href: '/design' },
-  ] },
-  { heading: 'Contact', links: [
-    { label: 'hello@digitalknight.com', href: 'mailto:hello@digitalknight.com' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/', external: true },
-    { label: 'GitHub', href: 'https://github.com/', external: true },
-  ] },
+  {
+    heading: 'Pages', links: [
+      { label: 'Home', href: '/' },
+      { label: 'Talk', href: '/#talk' },
+      { label: 'Services', href: '/#services' },
+      { label: 'Tech', href: '/#tech' },
+    ]
+  },
+  {
+    heading: 'Studio', links: [
+      { label: 'Method', href: '/method' },
+      { label: 'Soul', href: '/soul' },
+      { label: 'Design system', href: '/design' },
+    ]
+  },
+  {
+    heading: 'Contact', links: [
+      { label: 'hello@digital-knight.au', href: 'mailto:hello@digital-knight.au' },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/', external: true },
+      { label: 'GitHub', href: 'https://github.com/', external: true },
+    ]
+  },
 ] as const;
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className={styles.root} aria-labelledby="footer-sign">
+    <footer className={styles.root} data-ground="stone" aria-labelledby="footer-sign">
       {/* Cinematic sign-off — the last monumental moment. */}
       <div className={styles.signBlock}>
         <p className={styles.signEyebrow}>
           <span className={styles.signDot} aria-hidden />
-          The landing · 06
+          The landing · 05
         </p>
         <h2 id="footer-sign" className={styles.sign}>
           Digital Knight.
@@ -53,7 +59,7 @@ export function Footer() {
           <p className={styles.colophonTitle}>Studio</p>
           <p className={styles.colophonLine}>
             A one-desk independent studio for long-term digital partnerships.
-            Operated by Spencer McKnight. UK-based, working globally.
+            Operated by Spencer McKnight. Melbourne-based, working globally.
           </p>
         </div>
 
@@ -99,7 +105,7 @@ export function Footer() {
         </p>
         <p className={styles.metaItem}>
           <span className={styles.metaLabel}>Location</span>
-          <span className={styles.metaValue}>Working from the UK · Europe/London</span>
+          <span className={styles.metaValue}>Working from Melbourne · Australia/Melbourne</span>
         </p>
         <p className={styles.metaItem}>
           <span className={styles.metaLabel}>Colophon</span>

@@ -4,7 +4,6 @@
   position: relative;
   min-height: 100dvh;
   display: grid;
-  grid-template-rows: 1fr auto auto;
   align-items: center;
   overflow: hidden;
   padding-top: clamp(6rem, 10vh, 9rem);
@@ -19,37 +18,10 @@
   z-index: 0;
   pointer-events: none;
 
-  &::after {
-    // A paper vignette to help the copy stay crisp against the seal.
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      ellipse 80% 90% at 20% 45%,
-      var(--ink-page) 0%,
-      var(--ink-page) 28%,
-      color-mix(in oklab, var(--ink-page) 75%, transparent) 55%,
-      transparent 75%
-    );
-    pointer-events: none;
-  }
-
   @include respond-to(md) {
     left: auto;
     right: -8%;
     width: 72%;
-
-    &::after {
-      background: radial-gradient(
-        ellipse 70% 80% at 10% 50%,
-        var(--ink-page) 0%,
-        transparent 70%
-      );
-    }
-  }
-
-  @include respond-below(md) {
-    opacity: 0.45;
   }
 }
 
@@ -61,6 +33,15 @@
   gap: var(--space-5);
   align-content: center;
   justify-items: start;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  // The grid element spans the full container width, but its content only
+  // occupies the left column on md+. Letting the empty right band pass
+  // pointer events through is the difference between the seal being
+  // draggable "sometimes" and "anywhere on the hero". Children that need
+  // clicks (the CTA) re-opt below.
+  pointer-events: none;
 
   @include respond-to(md) {
     grid-column-gap: var(--space-6);
@@ -98,6 +79,7 @@
   line-height: 0.96;
   max-width: 20ch;
   color: var(--ink-iron);
+  background: transparent;
 }
 
 .line {
@@ -147,6 +129,7 @@
   max-width: 48ch;
   color: var(--ink-iron);
   opacity: 0.82;
+  background: transparent;
 }
 
 .actions {
@@ -154,77 +137,9 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-4);
+  background: transparent;
+  // Re-opt into pointer events so the CTA stays clickable while the rest of
+  // the grid passes through to the seal canvas beneath.
+  pointer-events: auto;
 }
 
-// Four ideals row — meta, numbered, ends the Entry fold.
-.ideals {
-  @include container;
-  position: relative;
-  z-index: 1;
-  @include hairline(top);
-  margin-top: var(--space-6);
-  padding-top: var(--space-4);
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
-
-  @include respond-to(md) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.ideal {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-3);
-}
-
-.idealIndex {
-  @include type(meta);
-  color: var(--ink-iron);
-  opacity: 0.45;
-  font-variant-numeric: tabular-nums;
-}
-
-.idealLabel {
-  @include type(meta);
-  color: var(--ink-iron);
-}
-
-.scrollHint {
-  @include container;
-  @include type(meta);
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-  color: var(--ink-iron);
-  opacity: 0.55;
-
-  @include respond-below(md) {
-    display: none;
-  }
-}
-
-.scrollRule {
-  display: inline-block;
-  width: 48px;
-  height: 1px;
-  background: var(--ink-iron);
-  opacity: 0.45;
-  animation: scroll-rule 2.4s var(--ease-house) infinite;
-}
-
-@keyframes scroll-rule {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.45;
-  }
-  50% {
-    transform: translateY(4px);
-    opacity: 0.85;
-  }
-}

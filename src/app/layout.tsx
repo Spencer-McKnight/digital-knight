@@ -7,7 +7,7 @@ import { Footer } from '@/components/Footer';
 import { Cursor } from '@/components/Cursor';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://digitalknight.com'),
+  metadataBase: new URL('https://digital-knight.au'),
   title: {
     default: 'Digital Knight — Strategy, design, code that prevails.',
     template: '%s · Digital Knight',
