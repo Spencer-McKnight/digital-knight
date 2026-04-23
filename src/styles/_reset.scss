@@ -1,0 +1,83 @@
+// =============================================================================
+// RESET — modern, opinionated
+// -----------------------------------------------------------------------------
+// Adapted from Josh Comeau's modern reset, tuned for this build:
+//  • box-sizing on everything
+//  • margins off by default — vertical rhythm is composed from tokens, not
+//    browser defaults
+//  • media elements are block + max-width:100% — the cascade-free default
+//  • form controls inherit type — no more 11px Helvetica on <input>
+//
+// This file MUST emit only declarations, never :root tokens. Tokens live in
+// `styles/tokens/*`.
+// =============================================================================
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#root,
+#__next {
+  isolation: isolate;
+}

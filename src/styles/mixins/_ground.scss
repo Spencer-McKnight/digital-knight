@@ -1,0 +1,32 @@
+// =============================================================================
+// MIXIN — ground-invert()
+// -----------------------------------------------------------------------------
+// Applied at the **section root** of any Stone-ground section. Redeclares the
+// `--ink-*` custom properties so every child component adapts through the CSS
+// cascade with zero component-level branching.
+//
+//   <section className={styles.root}>  // @include ground-invert();
+//     …child components use --ink-iron / --ink-page as always,
+//     the values just read differently on this ground.
+//   </section>
+//
+// This is the linchpin of the ground-agnostic component rule in `design.md`
+// §15. Components never ask "which ground am I on?" — they only read tokens.
+//
+// ⚑ ITERATE: if a new anchor colour is added, this mixin must be updated to
+//   redeclare it too. Same for any new rule/shadow derivative.
+// =============================================================================
+
+@use '../tokens/colors' as *;
+
+@mixin ground-invert {
+  --ink-page:   #{$ink-stone};
+  --ink-iron:   #{$ink-page};
+  --ink-stone:  #{$ink-iron};
+
+  --ink-rule:   #{rgba($ink-page,  $ink-rule-inv-opacity)};
+  --ink-shadow: #{rgba($ink-iron,  0.30)};
+
+  background: var(--ink-page);
+  color: var(--ink-iron);
+}

@@ -1,0 +1,95 @@
+// =============================================================================
+// BASE — document defaults
+// -----------------------------------------------------------------------------
+// After the reset, this file sets the site's neutral defaults: ground colour,
+// body type, selection colour, custom scrollbar. Everything here is intentional
+// and sourced from tokens only.
+// =============================================================================
+
+@use 'mixins' as *;
+
+html {
+  background: var(--ink-page);
+  color: var(--ink-iron);
+  font-family: var(--t-family);
+  -webkit-text-size-adjust: 100%;
+  // Scrollbar channel never reserves layout space — `design.md` §8.
+  scrollbar-gutter: auto;
+}
+
+body {
+  @include type(body);
+  background: inherit;
+  color: inherit;
+  min-height: 100dvh;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--ink-ember);
+  color: var(--ink-page);
+}
+
+// Visible focus — ember, offset. Every interactive element inherits this
+// unless it overrides locally. `design.md` §6, §13.
+:focus-visible {
+  outline: 2px solid var(--ink-ember);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+// The custom Cursor component (`components/Cursor`) is the *only* cursor
+// treatment on pointer-fine devices — anything the system would otherwise
+// draw (the default arrow, `grab`, `pointer`, `text`, `crosshair` …) is
+// suppressed here so it never shows alongside or through the ring. Each
+// affordance those native cursors once carried is re-expressed as a
+// distinct variant of the custom cursor. Touch devices fall through.
+@media (pointer: fine) {
+  *,
+  *::before,
+  *::after {
+    cursor: none !important;
+  }
+}
+
+// Custom scrollbar — thin, right-edge, appears on activity. Native cursor
+// pointer devices only; touch falls back to system scrollbar.
+@media (pointer: fine) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ink-rule) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--ink-rule);
+    border-radius: 999px;
+    transition: background var(--dur-element) var(--ease-house);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--ink-ember);
+  }
+}
+
+// Reduced-motion: kill transitions and animations site-wide. Token layer
+// `motion.scss` already collapses scene/epic durations; this is the
+// belt-and-braces for any author who forgot to gate a keyframe.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

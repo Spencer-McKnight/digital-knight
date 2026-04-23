@@ -1,0 +1,188 @@
+@use 'mixins' as *;
+
+.root {
+  @include ground-invert;
+  @include section-pad(xl);
+  @include container;
+  position: relative;
+  display: grid;
+  gap: var(--space-8);
+
+  // Ember hairline across the top — mirrors the nav (design.md §8).
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: var(--grid-margin);
+    right: var(--grid-margin);
+    height: 1px;
+    background: var(--ink-ember);
+  }
+}
+
+// --- Sign-off --------------------------------------------------------------
+.signBlock {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.signEyebrow {
+  @include type(meta);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-iron);
+}
+
+.signDot {
+  width: 6px;
+  height: 6px;
+  background: var(--ink-ember);
+  display: inline-block;
+}
+
+.sign {
+  @include type(hero-display);
+  max-width: 16ch;
+  color: var(--ink-iron);
+}
+
+.signEmber {
+  color: var(--ink-iron);
+  opacity: 0.6;
+  font-weight: var(--t-weight-light);
+}
+
+// --- Body (colophon + sitemap) --------------------------------------------
+.body {
+  display: grid;
+  gap: var(--space-6);
+  align-items: start;
+
+  @include respond-to(lg) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: var(--space-7);
+  }
+}
+
+.colophon {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 42ch;
+}
+
+.colophonTitle {
+  @include type(meta);
+  color: var(--ink-ember);
+}
+
+.colophonLine {
+  @include type(body);
+  color: var(--ink-iron);
+  opacity: 0.78;
+}
+
+.sitemap {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5);
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.column {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+
+.columnHeading {
+  @include type(meta);
+  color: var(--ink-ember);
+}
+
+.columnList {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.link {
+  @include type(body);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-iron);
+  text-decoration: none;
+  opacity: 0.85;
+  padding: var(--space-1) 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--ink-ember);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-element) var(--ease-house);
+  }
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+
+    &::after {
+      transform: scaleX(1);
+    }
+  }
+}
+
+.linkMark {
+  opacity: 0.5;
+  font-size: 0.85em;
+}
+
+// --- Bottom rule + meta ---------------------------------------------------
+.rule {
+  height: 1px;
+  background: var(--ink-rule);
+}
+
+.meta {
+  display: grid;
+  gap: var(--space-3);
+
+  @include respond-to(md) {
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-5);
+    align-items: baseline;
+  }
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  @include type(meta);
+  color: var(--ink-iron);
+  opacity: 0.68;
+}
+
+.metaLabel {
+  opacity: 0.6;
+}
+
+.metaValue {
+  @include type(ui);
+  font-weight: var(--t-weight-regular);
+  opacity: 0.9;
+
+  @include respond-below(md) {
+    font-size: var(--t-body);
+  }
+}

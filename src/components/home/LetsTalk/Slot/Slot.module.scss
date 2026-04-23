@@ -1,0 +1,233 @@
+@use 'mixins' as *;
+
+// ============================================================================
+// Slot — one cell of the week grid.
+// ----------------------------------------------------------------------------
+// Visual states (drive everything from `data-state`):
+//   free       — available. Hairline cell, subtle time label, hover ember
+//                underline + tooltip reveal.
+//   taken      — iron-hatched cell, cursor disallowed, label hidden.
+//   past       — Page-fade cell, no interaction, strike through label.
+//   selected   — ember-filled cell, inverted text, persistent tooltip.
+//   submitting — selected + an animated hairline sweeps back and forth.
+//
+// One ember moment. Ember only appears for the selected cell.
+// ============================================================================
+
+.root {
+  --_cell-pad: var(--space-2);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--_cell-pad) var(--space-2);
+  min-height: 44px; // accessibility floor
+  border: 0;
+  background: transparent;
+  color: var(--ink-iron);
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+  isolation: isolate;
+
+  // Hairline frame — each cell carries its own so the 1px gap reads as a grid.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--ink-rule);
+    transition:
+      border-color var(--dur-state) var(--ease-house),
+      background-color var(--dur-element) var(--ease-house);
+    z-index: 0;
+  }
+
+  // Hover sweep — an ember underline that draws left → right. Only for free.
+  &[data-state='free']::after {
+    content: '';
+    position: absolute;
+    left: var(--space-3);
+    right: var(--space-3);
+    bottom: calc(var(--_cell-pad) - 1px);
+    height: 1px;
+    background: var(--ink-ember);
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform var(--dur-element) var(--ease-house);
+    z-index: 1;
+  }
+
+  &[data-state='free']:hover::after,
+  &[data-state='free']:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  &[data-state='free']:hover::before,
+  &[data-state='free']:focus-visible::before {
+    border-color: var(--ink-iron);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--ink-page), 0 0 0 3px var(--ink-ember);
+    z-index: 2;
+  }
+}
+
+.time {
+  position: relative;
+  z-index: 1;
+  @include type(ui);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  color: var(--ink-iron);
+  transition: color var(--dur-state) var(--ease-house);
+}
+
+// Ember fill layer — sweeps in on select.
+.fill {
+  position: absolute;
+  inset: 0;
+  background: var(--ink-ember);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform var(--dur-element) var(--ease-house);
+  z-index: 0;
+}
+
+// Tooltip — keyboard and pointer users both get it via role="tooltip".
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + var(--space-2));
+  left: 50%;
+  transform: translate(-50%, 4px);
+  padding: var(--space-2) var(--space-3);
+  background: var(--ink-iron);
+  color: var(--ink-page);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity var(--dur-state) var(--ease-house),
+    transform var(--dur-element) var(--ease-house);
+  @include type(meta);
+  font-weight: var(--t-weight-medium);
+  letter-spacing: 0.08em;
+  z-index: 3;
+}
+
+.root:hover .tooltip,
+.root:focus-visible .tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+// ── STATES ─────────────────────────────────────────────────────────────────
+
+.root[data-state='taken'] {
+  cursor: not-allowed;
+
+  &::before {
+    background: repeating-linear-gradient(
+      135deg,
+      transparent 0,
+      transparent 6px,
+      var(--ink-rule) 6px,
+      var(--ink-rule) 7px
+    );
+    border-color: var(--ink-rule);
+  }
+
+  .time {
+    opacity: 0.35;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+
+  &:hover::before {
+    border-color: var(--ink-rule);
+  }
+}
+
+.root[data-state='past'] {
+  cursor: not-allowed;
+
+  .time {
+    opacity: 0.18;
+  }
+
+  &::before {
+    border-color: var(--ink-rule);
+    border-style: dashed;
+  }
+
+  .tooltip {
+    display: none;
+  }
+}
+
+.root[data-state='selected'] {
+  color: var(--ink-page);
+  cursor: default;
+
+  .fill {
+    transform: scaleX(1);
+  }
+
+  .time {
+    color: var(--ink-page);
+    font-weight: var(--t-weight-bold);
+  }
+
+  &::before {
+    border-color: var(--ink-ember);
+  }
+
+  // Force the tooltip visible while selected.
+  .tooltip {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.root[data-state='submitting'] {
+  .fill {
+    transform: scaleX(1);
+    opacity: 0.9;
+  }
+
+  .time {
+    color: var(--ink-page);
+  }
+
+  // Thin hairline sweeping back and forth reads as "working".
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--ink-page);
+    animation: slot-progress 1200ms linear infinite;
+    z-index: 2;
+    transform: none;
+  }
+}
+
+@keyframes slot-progress {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%);  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root::before,
+  .root::after,
+  .fill,
+  .tooltip,
+  .time {
+    transition-duration: var(--dur-state) !important;
+    animation: none !important;
+  }
+}

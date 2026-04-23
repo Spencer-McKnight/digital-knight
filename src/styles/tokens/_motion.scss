@@ -1,0 +1,39 @@
+// =============================================================================
+// TOKENS — MOTION
+// -----------------------------------------------------------------------------
+// One house easing curve, four speeds by role. Everything that animates must
+// pick exactly one `--dur-*` and (almost always) the `--ease-house` curve.
+// Marquees are the only exception and use `--ease-linear`.
+//
+// ⚑ ITERATE: motion tokens tempt to multiply ("just one more bezier…").
+//   Resist. A curve that isn't house or linear has to earn a name and a role.
+// =============================================================================
+
+// ── Layer 1 ──────────────────────────────────────────────────────────────────
+$dur-state:   80ms;
+$dur-element: 220ms;
+$dur-scene:   500ms;
+$dur-epic:    1200ms;
+
+$ease-house:  cubic-bezier(0.16, 1, 0.3, 1);
+$ease-linear: linear;
+
+// ── Layer 2 ──────────────────────────────────────────────────────────────────
+:root {
+  --dur-state:   #{$dur-state};
+  --dur-element: #{$dur-element};
+  --dur-scene:   #{$dur-scene};
+  --dur-epic:    #{$dur-epic};
+
+  --ease-house:  #{$ease-house};
+  --ease-linear: #{$ease-linear};
+}
+
+// Reduced-motion: collapse scene and epic durations to element-speed opacity
+// fades. Element and state remain intact so feedback stays legible.
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-scene: var(--dur-element);
+    --dur-epic:  var(--dur-element);
+  }
+}

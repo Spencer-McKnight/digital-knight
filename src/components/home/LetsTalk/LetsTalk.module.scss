@@ -1,0 +1,87 @@
+@use 'mixins' as *;
+
+// ============================================================================
+// Let's Talk — the Call beat. Stone ground, calendar-first.
+// ----------------------------------------------------------------------------
+// Framing: top ember hairline marks the change of act. The calendar is the
+// focus; copy is short, bold, centred.
+// ============================================================================
+
+.root {
+  @include ground-invert;
+  @include section-pad(xl);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: var(--grid-margin);
+    right: var(--grid-margin);
+    height: 1px;
+    background: var(--ink-ember);
+    opacity: 0.85;
+  }
+}
+
+.inner {
+  @include container;
+  display: grid;
+  gap: var(--space-7);
+  justify-items: center;
+  text-align: center;
+}
+
+.header {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 640px;
+  justify-items: center;
+}
+
+.eyebrow {
+  @include type(meta);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-iron);
+  opacity: 0.85;
+  margin: 0;
+}
+
+.eyebrowDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--ink-ember);
+}
+
+.title {
+  @include type(section);
+  margin: 0;
+  color: var(--ink-iron);
+  font-weight: var(--t-weight-bold);
+  letter-spacing: -0.02em;
+  max-width: 16ch;
+}
+
+.emberWord {
+  color: var(--ink-ember);
+  font-style: normal;
+}
+
+.lede {
+  @include type(lede);
+  margin: 0;
+  color: var(--ink-iron);
+  opacity: 0.78;
+  max-width: 52ch;
+  line-height: 1.45;
+}
+
+.canvas {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}

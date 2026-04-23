@@ -1,0 +1,167 @@
+// =============================================================================
+// TYPOGRAPHY MIXIN SYSTEM
+// -----------------------------------------------------------------------------
+// Six canonical type roles (monument → meta) with full-treatment mixins and
+// granular utilities for controlled variation. Components should reach for
+// these rather than wiring individual tokens.
+//
+// MIXINS (in order of specificity):
+//
+//   @include type($role)        — Full treatment: size + leading + tracking + weight + case
+//   @include type-size($role)   — Font-size only — for when the role sets the scale
+//   @include type-weight($wt)   — Weight only (light | regular | medium | bold)
+//   @include type-heading       — Shared heading rhythm (tight leading, tight tracking)
+//   @include type-prose         — Shared prose rhythm (generous leading, default tracking)
+//
+// VARIANT ROLES:
+//
+//   @include type(hero-display) — Larger hero for primary page titles (Hero, Loader)
+//   @include type(subsection)   — Between lede and section for sub-heads
+//   @include type(ui)           — Meta-scale without uppercase — for nav, buttons, chips
+//
+// Uppercase lives only on the canonical `meta` role (`design.md` §3).
+// The `ui` variant is meta-scaled but sentence-case for interactive elements.
+//
+// ⚑ ITERATE: variants extend the six canonical roles. Adding a new canonical
+//   role requires matching `--t-*` tokens in `tokens/_type.scss`.
+// =============================================================================
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UTILITY: type-weight($weight)
+// Outputs only font-weight. Accepts: light, regular, medium, bold.
+// ─────────────────────────────────────────────────────────────────────────────
+@mixin type-weight($weight) {
+  @if $weight == light {
+    font-weight: var(--t-weight-light);
+  } @else if $weight == regular {
+    font-weight: var(--t-weight-regular);
+  } @else if $weight == medium {
+    font-weight: var(--t-weight-medium);
+  } @else if $weight == bold {
+    font-weight: var(--t-weight-bold);
+  } @else {
+    @error "type-weight: unknown weight `#{$weight}`. Available: light, regular, medium, bold.";
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UTILITY: type-size($role)
+// Outputs only font-size for the given role. Useful when you need the scale
+// but want to control other properties (e.g. headings with body leading).
+// ─────────────────────────────────────────────────────────────────────────────
+@mixin type-size($role) {
+  @if $role == monument or $role == hero-display {
+    font-size: var(--t-monument);
+  } @else if $role == hero {
+    font-size: var(--t-hero);
+  } @else if $role == section {
+    font-size: var(--t-section);
+  } @else if $role == subsection {
+    font-size: var(--t-subsection);
+  } @else if $role == lede {
+    font-size: var(--t-lede);
+  } @else if $role == body {
+    font-size: var(--t-body);
+  } @else if $role == meta or $role == ui {
+    font-size: var(--t-meta);
+  } @else {
+    @error "type-size: unknown role `#{$role}`. Available: monument, hero-display, hero, section, subsection, lede, body, meta, ui.";
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UTILITY: type-heading
+// Shared heading rhythm — tight leading, tight tracking. Use with type-size()
+// when building custom heading treatments.
+// ─────────────────────────────────────────────────────────────────────────────
+@mixin type-heading {
+  line-height: var(--t-leading-tight);
+  letter-spacing: var(--t-tracking-tight);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UTILITY: type-prose
+// Shared prose rhythm — generous leading, default tracking. Use with type-size()
+// when building custom prose treatments.
+// ─────────────────────────────────────────────────────────────────────────────
+@mixin type-prose {
+  line-height: var(--t-leading-body);
+  letter-spacing: 0;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CORE MIXIN: type($role)
+// Full treatment for each role. This is the primary entry point.
+//
+// Canonical roles (6):
+//   monument — sparingly, cinematic
+//   hero     — primary page title
+//   section  — act headers
+//   lede     — opening sentence, pull copy
+//   body     — reading
+//   meta     — eyebrows, captions, labels (uppercase)
+//
+// Variant roles (3):
+//   hero-display — larger hero, used for primary showcase headings
+//   subsection   — between lede and section, for sub-headings
+//   ui           — meta-scale, sentence-case, for nav/buttons/chips
+// ─────────────────────────────────────────────────────────────────────────────
+@mixin type($role) {
+  // ── CANONICAL ROLES ────────────────────────────────────────────────────────
+  @if $role == monument {
+    font-size: var(--t-monument);
+    line-height: var(--t-leading-tight);
+    letter-spacing: var(--t-tracking-tight);
+    font-weight: var(--t-weight-light);
+  } @else if $role == hero {
+    font-size: var(--t-hero);
+    line-height: var(--t-leading-tight);
+    letter-spacing: var(--t-tracking-tight);
+    font-weight: var(--t-weight-medium);
+  } @else if $role == section {
+    font-size: var(--t-section);
+    line-height: var(--t-leading-tight);
+    letter-spacing: var(--t-tracking-tight);
+    font-weight: var(--t-weight-medium);
+  } @else if $role == lede {
+    font-size: var(--t-lede);
+    line-height: var(--t-leading-body);
+    letter-spacing: 0;
+    font-weight: var(--t-weight-regular);
+  } @else if $role == body {
+    font-size: var(--t-body);
+    line-height: var(--t-leading-body);
+    letter-spacing: 0;
+    font-weight: var(--t-weight-regular);
+  } @else if $role == meta {
+    font-size: var(--t-meta);
+    line-height: var(--t-leading-body);
+    letter-spacing: var(--t-tracking-meta);
+    font-weight: var(--t-weight-medium);
+    text-transform: uppercase;
+
+  // ── VARIANT ROLES ──────────────────────────────────────────────────────────
+  } @else if $role == hero-display {
+    // Larger hero for primary showcase headings (Hero, Loader sign-off)
+    font-size: var(--t-hero-display);
+    line-height: var(--t-leading-tight);
+    letter-spacing: var(--t-tracking-tight);
+    font-weight: var(--t-weight-medium);
+  } @else if $role == subsection {
+    // Between lede and section — for service row titles, brief headings
+    font-size: var(--t-subsection);
+    line-height: 1.1;
+    letter-spacing: var(--t-tracking-tight);
+    font-weight: var(--t-weight-medium);
+  } @else if $role == ui {
+    // Meta-scale but sentence-case — for nav, buttons, chips, labels
+    font-size: var(--t-ui);
+    line-height: 1;
+    letter-spacing: var(--t-tracking-ui);
+    font-weight: var(--t-weight-medium);
+    text-transform: none;
+
+  } @else {
+    @error "type: unknown role `#{$role}`. Available: monument, hero, hero-display, section, subsection, lede, body, meta, ui.";
+  }
+}

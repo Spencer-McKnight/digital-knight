@@ -1,0 +1,8 @@
+// Forward every mixin. Components author `@use 'mixins' as *;` to pull in the
+// full verb set (`respond-to`, `respond-below`, `fluid`, `type`,
+// `ground-invert`) without noise.
+@forward 'respond';
+@forward 'fluid';
+@forward 'type';
+@forward 'ground';
+@forward 'layout';

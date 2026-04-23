@@ -1,0 +1,25 @@
+// =============================================================================
+// TOKENS — GRID
+// -----------------------------------------------------------------------------
+// 12-column fluid grid. Gutters and margins grow with the viewport.
+// `--grid-max` caps the canvas at 1440px so extra-wide displays get air on
+// either side instead of typographic chaos.
+//
+// ⚑ ITERATE: breakpoint names live in `mixins/_respond.scss`. Keep grid and
+//   breakpoint systems co-authored — a columns change usually implies a
+//   breakpoint re-think.
+// =============================================================================
+
+// ── Layer 1 ──────────────────────────────────────────────────────────────────
+$grid-columns: 12;
+$grid-gutter:  clamp(1rem,    2.5vw, 2rem);
+$grid-margin:  clamp(1.25rem, 5vw,   4rem);
+$grid-max:     90rem; // 1440px
+
+// ── Layer 2 ──────────────────────────────────────────────────────────────────
+:root {
+  --grid-columns: #{$grid-columns};
+  --grid-gutter:  #{$grid-gutter};
+  --grid-margin:  #{$grid-margin};
+  --grid-max:     #{$grid-max};
+}
