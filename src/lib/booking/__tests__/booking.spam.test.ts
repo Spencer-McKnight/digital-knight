@@ -1,12 +1,16 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
- * Contract-level tests for the spam filters in `createBooking`. The
- * Supabase client is mocked end-to-end so we can assert the action layer
- * without a network or database.
+ * Contract-level tests for the spam filters + token verification in
+ * `createBooking`. The Supabase client is mocked end-to-end so we can
+ * assert the action layer without a network or database.
  */
 
+// Set env vars BEFORE any module that captures them is evaluated. `env.ts`
+// reads `process.env` at module-load time.
 beforeAll(() => {
+  process.env.BOOKING_SLOT_SIGNING_KEY =
+    'test-key-test-key-test-key-test-key-test-key-00';
   process.env.BUSINESS_TIMEZONE = 'Australia/Melbourne';
   process.env.BOOKING_HORIZON_WEEKS = '8';
   // Deliberately unset so the action skips Resend entirely.
@@ -14,6 +18,8 @@ beforeAll(() => {
   delete process.env.BOOKING_FROM_EMAIL;
 });
 
+// Mock Supabase: a happy-path client that always inserts cleanly and
+// returns a stable id. Individual tests can swap this if needed.
 const insertSingle = vi.fn();
 vi.mock('@/lib/supabase/server', () => ({
   supabaseAdmin: () => ({
@@ -27,18 +33,22 @@ vi.mock('@/lib/supabase/server', () => ({
   }),
 }));
 
+// Silence Next's cache helpers — neither the test env nor our asserts need
+// them to do anything real.
 vi.mock('next/cache', () => ({
   unstable_cache: (fn: unknown) => fn,
   updateTag: vi.fn(),
   revalidateTag: vi.fn(),
 }));
 
+// Dynamic import after mocks are in place.
 const { createBooking } = await import('@/app/_actions/booking');
+const { signSlotToken } = await import('@/lib/booking/slotToken');
 
-// AEST = UTC+10 in May (no DST), so a Monday 10:00 Melbourne slot is
-// 00:00 UTC. We pin `Date.now()` to a Sunday so the slot is in the future.
-const FAKE_NOW = new Date('2026-05-03T00:00:00.000Z');
-const VALID_START_UTC = '2026-05-04T00:00:00.000Z';
+// A Monday 10:00 Australia/Melbourne slot well inside the 8-week horizon
+// relative to our fake `now`. AEST = UTC+10 in May (no DST), so UTC is 00:00.
+const FAKE_NOW = new Date('2026-05-03T00:00:00.000Z'); // Sunday 10:00 Melbourne
+const VALID_START_UTC = '2026-05-04T00:00:00.000Z'; // Monday 10:00 Melbourne
 
 function validPayload() {
   return {
@@ -46,6 +56,7 @@ function validPayload() {
     email: 'ada@example.com',
     startAtUTC: VALID_START_UTC,
     visitorTimezone: 'Europe/London',
+    slotToken: signSlotToken(VALID_START_UTC),
     formDwellMs: 5000,
     company: '',
   };
@@ -88,7 +99,7 @@ describe('createBooking — spam filters', () => {
 });
 
 describe('createBooking — happy path', () => {
-  it('succeeds with clean inputs', async () => {
+  it('succeeds with a valid token and clean inputs', async () => {
     const result = await createBooking(validPayload());
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -97,5 +108,15 @@ describe('createBooking — happy path', () => {
       expect(result.links).toBeDefined();
     }
     expect(insertSingle).toHaveBeenCalledTimes(1);
+  });
+
+  it('rejects with slot_invalid when the token is garbage', async () => {
+    const result = await createBooking({
+      ...validPayload(),
+      slotToken: '1700000000000.deadbeefdeadbeefdeadbeefdeadbeef',
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toBe('slot_invalid');
+    expect(insertSingle).not.toHaveBeenCalled();
   });
 });

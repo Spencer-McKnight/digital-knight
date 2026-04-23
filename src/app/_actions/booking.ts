@@ -2,7 +2,7 @@
 
 import 'server-only';
 import { unstable_cache, updateTag } from 'next/cache';
-import { fromAbsolute } from '@internationalized/date';
+import { fromAbsolute, type ZonedDateTime } from '@internationalized/date';
 import { z } from 'zod';
 import { Resend } from 'resend';
 import { env, requireEnv } from '@/lib/env';
@@ -19,16 +19,12 @@ import {
   weekStart as weekStartOf,
   weeksBetween,
 } from '@/lib/booking/week';
-import { isValidSlot, slotEndISO } from '@/lib/booking/slots';
+import { generateWeekSlots, isValidSlot, slotEndISO } from '@/lib/booking/slots';
 import { buildICS } from '@/lib/booking/ics';
-import { buildCalendarLinks } from '@/lib/booking/calendarLinks';
+import { buildCalendarLinks, type CalendarLinks } from '@/lib/booking/calendarLinks';
+import { signSlotToken, verifySlotToken } from '@/lib/booking/slotToken';
 import { isDisposableEmail } from '@/lib/booking/disposableEmailDomains';
 import BookingConfirmation from '@/emails/BookingConfirmation';
-import type {
-  BookingInput,
-  BookingResult,
-  WeekAvailability,
-} from './booking.types';
 
 /**
  * Server Actions — booking.
@@ -44,8 +40,57 @@ import type {
  *   - Email failure does NOT roll back a booking. A stored row is authoritative.
  */
 
-// Public types live in `./booking.types` — see that file for the rationale.
-// This module is `'use server'`, so it may only export async functions.
+// ── PUBLIC TYPES ─────────────────────────────────────────────────────────────
+
+export type WeekAvailability = {
+  weekISO: string;
+  /** Monday 00:00, business-timezone, as a UTC ISO (for grid reconstruction). */
+  weekStartUTC: string;
+  businessTimezone: string;
+  /** UTC ISOs of booked slots. Rendered as `taken` in the grid. */
+  bookedSlotsUTC: string[];
+  /** True when `weekISO === current + BOOKING_HORIZON_WEEKS`. */
+  horizonReached: boolean;
+  /** True when `weekISO` is the current week (prev should be disabled). */
+  atCurrentWeek: boolean;
+  /**
+   * Freshly-signed tokens keyed by the slot's UTC ISO string. Only free,
+   * bookable slots are included — booked and past slots are omitted. The
+   * client must echo the matching token back on `createBooking`.
+   *
+   * Issued per request; never cached alongside the booked-slots payload.
+   */
+  slotTokens: Record<string, string>;
+};
+
+export type BookingInput = {
+  name: string;
+  email: string;
+  startAtUTC: string;
+  visitorTimezone: string;
+  /** Echoed from `WeekAvailability.slotTokens[startAtUTC]`. */
+  slotToken: string;
+  /** Client-measured ms between BookingForm mount and submit. Soft spam signal. */
+  formDwellMs: number;
+  /** Honeypot — a hidden field humans never fill in. Leave empty. */
+  company?: string;
+};
+
+export type BookingResult =
+  | {
+      ok: true;
+      id: string;
+      startAtUTC: string;
+      endAtUTC: string;
+      icsBase64: string;
+      links: CalendarLinks;
+      emailSent: boolean;
+    }
+  | {
+      ok: false;
+      reason: 'slot_taken' | 'slot_invalid' | 'validation' | 'server' | 'spam';
+      message?: string;
+    };
 
 // ── INPUT SCHEMAS ────────────────────────────────────────────────────────────
 
@@ -58,10 +103,13 @@ const bookingInputSchema = z.object({
   email: z.string().trim().toLowerCase().email().max(254),
   startAtUTC: z.string().datetime({ offset: true }),
   visitorTimezone: z.string().min(1).max(64),
+  slotToken: z.string().min(1).max(128),
   formDwellMs: z.number().finite().min(0).max(7 * 24 * 60 * 60 * 1000),
   company: z.string().max(200).optional().default(''),
 });
 
+/** Max token age honoured by `verifySlotToken`. Matches the 30-min slot size. */
+const SLOT_TOKEN_MAX_AGE_MS = 30 * 60 * 1000;
 /** Minimum form dwell in ms. Below this is almost certainly a bot. */
 const MIN_FORM_DWELL_MS = 1500;
 
@@ -119,12 +167,19 @@ export async function getWeekAvailability(weekISO: string): Promise<WeekAvailabi
   const weekStartMs = requested.toDate().getTime();
 
   // Per-week cache, invalidated by `createBooking` via `revalidateTag`.
+  // The cache wraps ONLY the DB read — tokens must be freshly signed on every
+  // request so their issuedAt clock lives outside the cache.
   const cached = unstable_cache(
     async () => fetchBookedSlotsFromDB(weekStartMs),
     ['booking-week', parsed.data],
     { tags: [weekTag(parsed.data)], revalidate: 60 },
   );
   const bookedSlotsUTC = await cached();
+
+  // Issue slot tokens for every *free* slot in the week. Booked or past
+  // slots are deliberately absent so the UI can't pass a token for a slot
+  // it shouldn't offer in the first place.
+  const slotTokens = issueSlotTokens(requested, bookedSlotsUTC);
 
   return {
     weekISO: parsed.data,
@@ -133,7 +188,28 @@ export async function getWeekAvailability(weekISO: string): Promise<WeekAvailabi
     bookedSlotsUTC,
     horizonReached: delta === horizon,
     atCurrentWeek: delta === 0,
+    slotTokens,
   };
+}
+
+/**
+ * Sign a fresh token for every bookable slot in the week. Returns a map
+ * keyed by the slot's canonical UTC ISO string. Booked and past slots
+ * are skipped.
+ */
+function issueSlotTokens(
+  weekStartZoned: ZonedDateTime,
+  bookedSlotsUTC: string[],
+): Record<string, string> {
+  const booked = new Set(bookedSlotsUTC.map((iso) => new Date(iso).getTime()));
+  const nowMs = Date.now();
+  const out: Record<string, string> = {};
+  for (const slot of generateWeekSlots(weekStartZoned)) {
+    if (slot.absoluteMs < nowMs) continue;
+    if (booked.has(slot.absoluteMs)) continue;
+    out[slot.utc] = signSlotToken(slot.utc);
+  }
+  return out;
 }
 
 /**
@@ -236,7 +312,14 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     return { ok: false, reason: 'validation', message: 'Invalid startAtUTC' };
   }
 
-  // 3. Slot validity — rebuild the week grid and confirm membership.
+  // 3. Verify the server-issued slot token. Deny by default — a throw here
+  //    surfaces as a `false` from `verifySlotToken`, not a 500. An invalid
+  //    or expired token is semantically a `slot_invalid`.
+  if (!verifySlotToken(data.startAtUTC, data.slotToken, SLOT_TOKEN_MAX_AGE_MS)) {
+    return { ok: false, reason: 'slot_invalid' };
+  }
+
+  // 4. Slot validity — rebuild the week grid and confirm membership.
   const slotZoned = fromAbsolute(startAtMs, tz);
   const weekStart = weekStartOf(slotZoned);
   if (!isValidSlot(new Date(startAtMs).toISOString(), weekStart)) {
@@ -248,7 +331,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     return { ok: false, reason: 'slot_invalid', message: 'Slot is in the past' };
   }
 
-  // 4. Insert the booking. Unique (start_at) is the concurrency guard.
+  // 5. Insert the booking. Unique (start_at) is the concurrency guard.
   const startAtISO = new Date(startAtMs).toISOString();
   const supabase = supabaseAdmin();
   const { data: inserted, error } = await supabase
@@ -270,7 +353,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     return { ok: false, reason: 'server', message: error.message };
   }
 
-  // 5. Build ICS + calendar links.
+  // 6. Build ICS + calendar links.
   const endAtISO = slotEndISO(startAtISO, SLOT_MINUTES);
   let icsBase64 = '';
   try {
@@ -300,7 +383,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     icsBase64,
   );
 
-  // 6. Send confirmation email. Non-blocking for the booking result itself.
+  // 7. Send confirmation email. Non-blocking for the booking result itself.
   const emailSent = await sendConfirmation({
     name: data.name,
     email: data.email,
@@ -313,7 +396,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     return false;
   });
 
-  // 7. Invalidate the week cache for all open tabs.
+  // 8. Invalidate the week cache for all open tabs.
   //    `updateTag` is the Server-Action flavour; it enables read-your-own-
   //    writes in the same request cycle.
   const weekISO = toWeekISO(weekStart);

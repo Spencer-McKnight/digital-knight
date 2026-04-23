@@ -13,6 +13,25 @@ import { z } from 'zod';
  *   compile-time error.
  */
 
+// Slot-token signing key — deny-by-default in production, soft-land in dev.
+//
+// The key guards the HMAC that binds every bookable slot to a server-issued
+// token. In production it is mandatory (schema enforces `min(32)`). In dev
+// we pre-populate a deterministic fallback so a fresh clone can `pnpm dev`
+// without a one-liner of setup; we log a loud warning so nobody ships it.
+const IS_PROD = process.env.NODE_ENV === 'production';
+const DEV_SLOT_SIGNING_KEY =
+  'dev-fallback-do-not-use-in-production-00000000000000000000';
+
+if (!process.env.BOOKING_SLOT_SIGNING_KEY && !IS_PROD) {
+  process.env.BOOKING_SLOT_SIGNING_KEY = DEV_SLOT_SIGNING_KEY;
+  console.warn(
+    '[env] BOOKING_SLOT_SIGNING_KEY is missing — using a deterministic ' +
+      'DEV fallback. Generate a real key with `openssl rand -hex 32` and ' +
+      'add it to .env.local. This fallback will refuse to load in production.',
+  );
+}
+
 const schema = z.object({
   // Supabase — server-only. The anon key is intentionally absent: this
   // feature owns zero client-side data paths.
@@ -29,6 +48,10 @@ const schema = z.object({
   BOOKING_HORIZON_WEEKS: z.coerce.number().int().min(1).max(26).default(8),
   BOOKING_HOST_NAME: z.string().default('Digital Knight'),
   BOOKING_HOST_DOMAIN: z.string().default('digital-knight.au'),
+
+  // HMAC key that signs per-slot booking tokens (see `lib/booking/slotToken`).
+  // Required in production; dev fallback is wired in above.
+  BOOKING_SLOT_SIGNING_KEY: z.string().min(32),
 });
 
 const parsed = schema.safeParse(process.env);

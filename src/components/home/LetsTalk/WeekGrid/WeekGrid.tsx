@@ -9,8 +9,11 @@ import {
   useTransition,
 } from 'react';
 import { fromAbsolute } from '@internationalized/date';
-import { createBooking, getWeekAvailability } from '@/app/_actions/booking';
-import type { WeekAvailability } from '@/app/_actions/booking.types';
+import {
+  createBooking,
+  getWeekAvailability,
+  type WeekAvailability,
+} from '@/app/_actions/booking';
 import type { CalendarLinks } from '@/lib/booking/calendarLinks';
 import {
   BUSINESS_DAYS,
@@ -249,6 +252,19 @@ export function WeekGrid({ initial, hostEmail, onConfirmed }: WeekGridProps) {
       return;
     }
 
+    // Resolve the server-issued token for this slot. No token → refuse to
+    // submit. The only legitimate way to hit this branch is a slot that was
+    // rendered before the week refreshed; treat it as a validation failure
+    // and let the user pick another slot.
+    const slotToken = availability.slotTokens?.[state.selectedSlotUTC];
+    if (!slotToken) {
+      dispatch({
+        type: 'formError',
+        message: 'This slot just expired — please pick another.',
+      });
+      return;
+    }
+
     dispatch({ type: 'submitStart' });
 
     try {
@@ -257,6 +273,7 @@ export function WeekGrid({ initial, hostEmail, onConfirmed }: WeekGridProps) {
         email: email.trim(),
         startAtUTC: state.selectedSlotUTC,
         visitorTimezone: visitorTZ,
+        slotToken,
         formDwellMs: extras.formDwellMs,
         company: extras.company,
       });
@@ -329,6 +346,7 @@ export function WeekGrid({ initial, hostEmail, onConfirmed }: WeekGridProps) {
     state.weekISO,
     selectedSlot,
     visitorTZ,
+    availability.slotTokens,
     onConfirmed,
   ]);
 
