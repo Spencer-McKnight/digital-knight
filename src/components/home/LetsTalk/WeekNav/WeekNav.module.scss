@@ -1,0 +1,69 @@
+@use 'mixins' as *;
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  position: relative;
+
+  // Subtle hairline that doubles as a resting state frame.
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--ink-rule);
+  }
+
+  &[data-pending] {
+    opacity: 0.6;
+  }
+}
+
+.range {
+  @include type(ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-iron);
+  letter-spacing: 0.02em;
+  font-weight: var(--t-weight-medium);
+  min-width: 10ch;
+  text-align: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid var(--ink-rule);
+  color: var(--ink-iron);
+  cursor: pointer;
+  transition:
+    color var(--dur-state) var(--ease-house),
+    border-color var(--dur-state) var(--ease-house),
+    transform var(--dur-element) var(--ease-house);
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    border-color: var(--ink-iron);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--ink-page), 0 0 0 3px var(--ink-ember);
+  }
+
+  &:disabled {
+    opacity: 0.22;
+    cursor: not-allowed;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+}

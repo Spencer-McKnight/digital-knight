@@ -1,0 +1,231 @@
+@use 'mixins' as *;
+
+.root {
+  display: grid;
+  gap: var(--space-5);
+  padding-block: var(--space-6);
+  max-width: 640px;
+  margin-inline: auto;
+  text-align: left;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  text-align: center;
+}
+
+.eyebrow {
+  @include type(meta);
+  color: var(--ink-iron);
+  opacity: 0.6;
+  margin: 0;
+}
+
+.slotLabel {
+  @include type(subsection);
+  margin: 0;
+  color: var(--ink-iron);
+  font-weight: var(--t-weight-medium);
+  letter-spacing: -0.01em;
+}
+
+.fields {
+  display: grid;
+  gap: var(--space-4);
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  @include type(meta);
+  color: var(--ink-iron);
+  opacity: 0.7;
+}
+
+.input {
+  @include type(body);
+  font: inherit;
+  background: transparent;
+  color: var(--ink-iron);
+  border: 0;
+  border-bottom: 1px solid var(--ink-rule);
+  padding: var(--space-2) 0;
+  width: 100%;
+  outline: none;
+  transition: border-color var(--dur-state) var(--ease-house);
+
+  &::placeholder {
+    color: var(--ink-iron);
+    opacity: 0.35;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: var(--ink-iron);
+  }
+
+  &:focus-visible {
+    border-color: var(--ink-ember);
+    border-bottom-width: 2px;
+    padding-bottom: calc(var(--space-2) - 1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.error {
+  @include type(meta);
+  color: var(--ink-ember);
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: var(--t-weight-medium);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.cancel {
+  @include type(ui);
+  background: transparent;
+  border: 0;
+  color: var(--ink-iron);
+  opacity: 0.7;
+  cursor: pointer;
+  padding: var(--space-2) 0;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.4;
+    transform-origin: left;
+    transform: scaleX(1);
+    transition: transform var(--dur-state) var(--ease-house);
+  }
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+    outline: none;
+
+    &::after {
+      background: var(--ink-ember);
+      opacity: 1;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.submit {
+  --_pad-inline: var(--space-5);
+  --_pad-block: var(--space-3);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--_pad-block) var(--_pad-inline);
+  border: 1px solid var(--ink-iron);
+  background: var(--ink-iron);
+  color: var(--ink-page);
+  cursor: pointer;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    background-color var(--dur-element) var(--ease-house),
+    border-color var(--dur-element) var(--ease-house),
+    transform var(--dur-state) var(--ease-house);
+  @include type(ui);
+  font-weight: var(--t-weight-medium);
+
+  // Ember fill sweeps on hover.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ink-ember);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform var(--dur-element) var(--ease-house);
+    z-index: 0;
+  }
+
+  &:hover:not(:disabled)::before,
+  &:focus-visible:not(:disabled)::before {
+    transform: scaleX(1);
+  }
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    border-color: var(--ink-ember);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--ink-page), 0 0 0 3px var(--ink-ember);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &[data-pending]::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--ink-page);
+    animation: submit-progress 1200ms linear infinite;
+    z-index: 2;
+  }
+}
+
+.submitLabel {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes submit-progress {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .submit::before,
+  .submit::after {
+    animation: none !important;
+    transition-duration: var(--dur-state) !important;
+  }
+}

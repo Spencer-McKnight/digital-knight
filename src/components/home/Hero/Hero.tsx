@@ -82,7 +82,7 @@ export function Hero() {
         <p ref={ledeRef} className={styles.lede}>
           Knowledge and strength to create.
           <br />
-          Strategic vision, beckoning the future.
+          Strategic vision that invites the future.
           <br />
           Courage to consider what is right.
         </p>
