@@ -82,14 +82,14 @@ export function Hero() {
         <p ref={ledeRef} className={styles.lede}>
           Knowledge and strength to create.
           <br />
-          Strategic vision towards the future.
+          Strategic vision, beckoning the future.
           <br />
           Courage to consider what is right.
         </p>
 
         <div ref={actionsRef} className={styles.actions}>
           <Button href="/#talk" variant="secondary" size="md">
-            Talk to Spencer McKnight
+            Free Digital Consultation
           </Button>
         </div>
       </div>
