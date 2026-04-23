@@ -20,33 +20,4 @@
 
 .inner {
   @include container;
-  display: grid;
-  gap: var(--space-7);
-}
-
-.header {
-  display: grid;
-  gap: var(--space-4);
-  max-width: 56ch;
-}
-
-.title {
-  @include type(hero);
-  color: var(--ink-iron);
-}
-
-.titleEmber {
-  color: var(--ink-ember);
-  position: relative;
-  display: inline-block;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -0.08em;
-    height: 2px;
-    background: var(--ink-ember);
-  }
 }
