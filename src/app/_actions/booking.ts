@@ -21,8 +21,14 @@ import {
 } from '@/lib/booking/week';
 import { isValidSlot, slotEndISO } from '@/lib/booking/slots';
 import { buildICS } from '@/lib/booking/ics';
-import { buildCalendarLinks, type CalendarLinks } from '@/lib/booking/calendarLinks';
+import { buildCalendarLinks } from '@/lib/booking/calendarLinks';
+import { isDisposableEmail } from '@/lib/booking/disposableEmailDomains';
 import BookingConfirmation from '@/emails/BookingConfirmation';
+import type {
+  BookingInput,
+  BookingResult,
+  WeekAvailability,
+} from './booking.types';
 
 /**
  * Server Actions — booking.
@@ -38,43 +44,8 @@ import BookingConfirmation from '@/emails/BookingConfirmation';
  *   - Email failure does NOT roll back a booking. A stored row is authoritative.
  */
 
-// ── PUBLIC TYPES ─────────────────────────────────────────────────────────────
-
-export type WeekAvailability = {
-  weekISO: string;
-  /** Monday 00:00, business-timezone, as a UTC ISO (for grid reconstruction). */
-  weekStartUTC: string;
-  businessTimezone: string;
-  /** UTC ISOs of booked slots. Rendered as `taken` in the grid. */
-  bookedSlotsUTC: string[];
-  /** True when `weekISO === current + BOOKING_HORIZON_WEEKS`. */
-  horizonReached: boolean;
-  /** True when `weekISO` is the current week (prev should be disabled). */
-  atCurrentWeek: boolean;
-};
-
-export type BookingInput = {
-  name: string;
-  email: string;
-  startAtUTC: string;
-  visitorTimezone: string;
-};
-
-export type BookingResult =
-  | {
-      ok: true;
-      id: string;
-      startAtUTC: string;
-      endAtUTC: string;
-      icsBase64: string;
-      links: CalendarLinks;
-      emailSent: boolean;
-    }
-  | {
-      ok: false;
-      reason: 'slot_taken' | 'slot_invalid' | 'validation' | 'server';
-      message?: string;
-    };
+// Public types live in `./booking.types` — see that file for the rationale.
+// This module is `'use server'`, so it may only export async functions.
 
 // ── INPUT SCHEMAS ────────────────────────────────────────────────────────────
 
@@ -87,7 +58,12 @@ const bookingInputSchema = z.object({
   email: z.string().trim().toLowerCase().email().max(254),
   startAtUTC: z.string().datetime({ offset: true }),
   visitorTimezone: z.string().min(1).max(64),
+  formDwellMs: z.number().finite().min(0).max(7 * 24 * 60 * 60 * 1000),
+  company: z.string().max(200).optional().default(''),
 });
+
+/** Minimum form dwell in ms. Below this is almost certainly a bot. */
+const MIN_FORM_DWELL_MS = 1500;
 
 // ── CACHE KEYS ───────────────────────────────────────────────────────────────
 
@@ -160,6 +136,67 @@ export async function getWeekAvailability(weekISO: string): Promise<WeekAvailabi
   };
 }
 
+/**
+ * Find the first week (starting from current) that has at least one free slot.
+ * This ensures the calendar opens on a week with availability rather than
+ * potentially showing a fully booked current week.
+ */
+export async function getFirstAvailableWeek(): Promise<WeekAvailability> {
+  const tz = env.BUSINESS_TIMEZONE;
+  const horizon = env.BOOKING_HORIZON_WEEKS;
+  const totalSlotsPerWeek = 40; // 4 days × 10 slots
+
+  let week = currentWeekStart(tz);
+
+  for (let i = 0; i <= horizon; i++) {
+    const weekISO = toWeekISO(week);
+    const availability = await getWeekAvailability(weekISO);
+
+    // Count past slots in the current week (they're not bookable)
+    let pastSlots = 0;
+    if (i === 0) {
+      const now = Date.now();
+      pastSlots = availability.bookedSlotsUTC.length; // start with booked
+      // Also need to count actual past slots based on time
+      const weekStartMs = new Date(availability.weekStartUTC).getTime();
+      const dayZeroStart = fromAbsolute(weekStartMs, tz).set({
+        hour: 10,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      });
+
+      // Count how many slots are in the past
+      pastSlots = 0;
+      for (let dayIndex = 0; dayIndex < 4; dayIndex++) {
+        for (let slotIndex = 0; slotIndex < 10; slotIndex++) {
+          const slotZoned = dayZeroStart.add({
+            days: dayIndex,
+            minutes: slotIndex * 30,
+          });
+          if (slotZoned.toDate().getTime() < now) {
+            pastSlots++;
+          }
+        }
+      }
+    }
+
+    const bookedCount = availability.bookedSlotsUTC.length;
+    const unavailableCount = Math.max(pastSlots, bookedCount);
+    const freeSlots = totalSlotsPerWeek - unavailableCount;
+
+    if (freeSlots > 0) {
+      return availability;
+    }
+
+    // Move to next week
+    week = week.add({ weeks: 1 });
+  }
+
+  // If all weeks are full, return the current week anyway
+  return getWeekAvailability(toWeekISO(currentWeekStart(tz)));
+}
+
 export async function createBooking(input: BookingInput): Promise<BookingResult> {
   // 1. Validate input shape.
   const parsed = bookingInputSchema.safeParse(input);
@@ -172,13 +209,34 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
   }
   const data = parsed.data;
 
+  // 2. Spam filters. Order is deliberate: cheapest first, and we never leak
+  //    which check tripped. All three funnel to the generic `spam` reason so
+  //    the UI can render the same neutral message as a validation failure.
+  //
+  //    a) Honeypot — a hidden <input name="company"> that humans can't see.
+  if (data.company && data.company.trim().length > 0) {
+    console.warn('[booking] rejected: honeypot');
+    return { ok: false, reason: 'spam' };
+  }
+  //    b) Dwell-time floor. Trivial for humans; drive-by bots tend to submit
+  //       immediately on mount. Value is untrusted — treat as a soft signal.
+  if (data.formDwellMs < MIN_FORM_DWELL_MS) {
+    console.warn('[booking] rejected: dwell');
+    return { ok: false, reason: 'spam' };
+  }
+  //    c) Disposable-email-domain blocklist.
+  if (isDisposableEmail(data.email)) {
+    console.warn('[booking] rejected: disposable');
+    return { ok: false, reason: 'spam' };
+  }
+
   const tz = env.BUSINESS_TIMEZONE;
   const startAtMs = new Date(data.startAtUTC).getTime();
   if (Number.isNaN(startAtMs)) {
     return { ok: false, reason: 'validation', message: 'Invalid startAtUTC' };
   }
 
-  // 2. Slot validity — rebuild the week grid and confirm membership.
+  // 3. Slot validity — rebuild the week grid and confirm membership.
   const slotZoned = fromAbsolute(startAtMs, tz);
   const weekStart = weekStartOf(slotZoned);
   if (!isValidSlot(new Date(startAtMs).toISOString(), weekStart)) {
@@ -190,7 +248,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     return { ok: false, reason: 'slot_invalid', message: 'Slot is in the past' };
   }
 
-  // 3. Insert the booking. Unique (start_at) is the concurrency guard.
+  // 4. Insert the booking. Unique (start_at) is the concurrency guard.
   const startAtISO = new Date(startAtMs).toISOString();
   const supabase = supabaseAdmin();
   const { data: inserted, error } = await supabase
@@ -212,7 +270,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     return { ok: false, reason: 'server', message: error.message };
   }
 
-  // 4. Build ICS + calendar links.
+  // 5. Build ICS + calendar links.
   const endAtISO = slotEndISO(startAtISO, SLOT_MINUTES);
   let icsBase64 = '';
   try {
@@ -242,7 +300,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     icsBase64,
   );
 
-  // 5. Send confirmation email. Non-blocking for the booking result itself.
+  // 6. Send confirmation email. Non-blocking for the booking result itself.
   const emailSent = await sendConfirmation({
     name: data.name,
     email: data.email,
@@ -255,7 +313,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     return false;
   });
 
-  // 6. Invalidate the week cache for all open tabs.
+  // 7. Invalidate the week cache for all open tabs.
   //    `updateTag` is the Server-Action flavour; it enables read-your-own-
   //    writes in the same request cycle.
   const weekISO = toWeekISO(weekStart);

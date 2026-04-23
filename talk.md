@@ -22,7 +22,7 @@ A single, brand-integrated week grid on the home page that turns a visitor into 
 
 **Out of scope for v1:**
 
-- Spam protection (deferred — custom solution to follow).
+- Spam protection (deferred)
 - Rescheduling, cancellation by the visitor.
 - Google Calendar freebusy sync (availability is owned purely by the `bookings` table).
 - A separate `/talk` route. The block lives on `/`.
@@ -31,15 +31,15 @@ A single, brand-integrated week grid on the home page that turns a visitor into 
 
 ## 1. Tech stack for this feature
 
-| Concern | Choice | Package |
-|---|---|---|
-| Data | Supabase (Postgres + RLS) | `@supabase/supabase-js` |
-| Server mutation | Next 16 Server Actions | built-in |
-| Email | Resend | `resend` |
-| Email templating | React Email | `@react-email/components` |
-| ICS generation | `ics` | `ics` |
-| Date / timezone math | `@internationalized/date` | `@internationalized/date` |
-| UI | React 19 + SCSS Modules + GSAP | (already installed) |
+| Concern              | Choice                         | Package                   |
+| -------------------- | ------------------------------ | ------------------------- |
+| Data                 | Supabase (Postgres + RLS)      | `@supabase/supabase-js`   |
+| Server mutation      | Next 16 Server Actions         | built-in                  |
+| Email                | Resend                         | `resend`                  |
+| Email templating     | React Email                    | `@react-email/components` |
+| ICS generation       | `ics`                          | `ics`                     |
+| Date / timezone math | `@internationalized/date`      | `@internationalized/date` |
+| UI                   | React 19 + SCSS Modules + GSAP | (already installed)       |
 
 No other runtime dependencies. No date picker libraries, no scheduling libraries, no calendar widgets.
 
@@ -159,11 +159,11 @@ Two actions, one file: `src/app/_actions/booking.ts`. Both run in a Node runtime
 
 ```ts
 type WeekAvailability = {
-  weekISO: string;               // echoed back
-  weekStartUTC: string;          // ISO timestamp
-  businessTimezone: string;      // e.g. 'Australia/Melbourne'
-  bookedSlotsUTC: string[];      // ISO timestamps
-  horizonReached: boolean;       // true if this is the last reachable week
+  weekISO: string; // echoed back
+  weekStartUTC: string; // ISO timestamp
+  businessTimezone: string; // e.g. 'Australia/Melbourne'
+  bookedSlotsUTC: string[]; // ISO timestamps
+  horizonReached: boolean; // true if this is the last reachable week
 };
 ```
 
@@ -177,8 +177,8 @@ type WeekAvailability = {
 type BookingInput = {
   name: string;
   email: string;
-  startAtUTC: string;            // ISO timestamp — the source of truth
-  visitorTimezone: string;       // for the confirmation email rendering
+  startAtUTC: string; // ISO timestamp — the source of truth
+  visitorTimezone: string; // for the confirmation email rendering
 };
 
 type BookingResult =
@@ -254,10 +254,10 @@ All client state is local to `WeekGrid`. Nothing leaks to Zustand — the bookin
 
 ```ts
 type UIState =
-  | { phase: 'browsing';   weekISO: string; selectedSlotUTC: string | null }
+  | { phase: 'browsing'; weekISO: string; selectedSlotUTC: string | null }
   | { phase: 'submitting'; weekISO: string; selectedSlotUTC: string }
-  | { phase: 'confirmed';  booking: BookingResult & { ok: true } }
-  | { phase: 'error';      message: string; weekISO: string };
+  | { phase: 'confirmed'; booking: BookingResult & { ok: true } }
+  | { phase: 'error'; message: string; weekISO: string };
 ```
 
 A single `useReducer` (or `useActionState` wrapping `createBooking`) drives the transitions. React 19's `useTransition` marks the server action as pending — the clicked slot shows a subtle pending state, the rest of the grid stays interactive.
@@ -411,9 +411,16 @@ Each step leaves the tree green and deployable. Do not merge steps.
 
 ## 14. Future extensions (flagged, not built)
 
-- **Spam protection** — custom, per the project's stance on third-party widgets. Likely a timing honeypot + server-side heuristic on email/name signal.
 - **Google Calendar freebusy** — service-account read of the host's calendar, unioned with the `bookings` table in `get_week_availability`. Turns the block into a live reflection of actual availability.
 - **Cancellation link** — signed token in the confirmation email routing to a cancel action that sets `canceled_at`.
 - **Per-slot custom durations** — add `duration_min` to the slot generator and surface longer meeting types.
 
 These are anticipated, not scoped. v1 ships without them.
+
+---
+
+## 15. Implemented hardening
+
+- **Spam filters** — `BookingForm` carries an off-screen honeypot input and a `performance.now()` dwell-time ref; `createBooking` rejects with `reason: 'spam'` if the honeypot is filled, dwell < 1.5 s, or the email's domain is in `src/lib/booking/disposableEmailDomains.ts`. The UI surfaces the same generic message as a validation failure.
+- **HMAC-signed slot tokens** — `getWeekAvailability` issues a fresh `${issuedAtMs}.${hmac16}` token for every free slot via `src/lib/booking/slotToken.ts`. `createBooking` verifies the token with `crypto.timingSafeEqual` and a 30-minute max age before any DB work; a bad or expired token is a `slot_invalid`. The signing key is `BOOKING_SLOT_SIGNING_KEY` (`env.ts`, dev fallback + prod throw).
+- **No new runtime deps.** Honeypot + dwell are inline, token signing uses `node:crypto`, the blocklist is a literal `Set`. Tokens are regenerated per request; the `bookedSlotsUTC` cache is untouched.
