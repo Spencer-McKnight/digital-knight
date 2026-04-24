@@ -15,6 +15,7 @@ type NavLink = { label: string; href: string; section?: string };
 const LINKS: ReadonlyArray<NavLink> = [
   { label: 'Talk', href: '/#talk', section: 'talk' },
   { label: 'Services', href: '/#services', section: 'services' },
+  { label: 'Meet Spencer', href: '/#meet', section: 'meet' },
 ];
 
 type Ground = 'page' | 'stone';

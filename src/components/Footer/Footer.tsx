@@ -11,6 +11,7 @@ const SITEMAP = [
       { label: 'Home', href: '/' },
       { label: 'Talk', href: '/#talk' },
       { label: 'Services', href: '/#services' },
+      { label: 'Meet Spencer', href: '/#meet' },
     ]
   },
   {

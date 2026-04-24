@@ -1,9 +1,12 @@
 @use 'mixins' as *;
 
-// Sticky phase stack. Each phase's zone of scroll == its measured content
-// height (set inline by Services.tsx). When scroll crosses a zone boundary,
-// activeIndex flips; the previous content's grid row collapses 1fr → 0fr and
-// the monuments below flow up into place — that's the "slot in" feel.
+// Active phase is driven by which monument's top has crossed the sticky
+// content's top line (see ScrollTrigger in Services.tsx).
+// Mobile: each phase's content row collapses 1fr → 0fr so only the active
+// content shows, monuments below flow up.
+// Desktop: monuments scroll normally in col 1 with equal margins; content
+// column is sticky in col 2, with all content blocks overlaid and only the
+// active one visible (focus signalled by ember label, not by position).
 
 .root {
   --services-nav-offset: clamp(4.5rem, 4vh + 2.5rem, 6rem);
@@ -55,19 +58,20 @@
   color: var(--ink-ember);
 }
 
-.track {
-  position: relative;
-  width: 100%;
-}
-
 .stage {
-  position: sticky;
-  top: var(--services-nav-offset);
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
+
+  @include respond-to(md) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: repeat(4, auto);
+    column-gap: var(--space-6);
+    align-items: start;
+  }
 }
 
 .phase {
@@ -80,15 +84,7 @@
   }
 
   @include respond-to(md) {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: auto;
-    column-gap: var(--space-6);
-    align-items: start;
-    transition: none;
-
-    &[data-state='active'] {
-      grid-template-rows: auto;
-    }
+    display: contents;
   }
 }
 
@@ -110,7 +106,7 @@
 
   @include respond-to(md) {
     grid-column: 1;
-    grid-row: 1;
+    margin-bottom: var(--space-7);
   }
 
   &:hover .monumentLabel,
@@ -159,6 +155,12 @@
   color: var(--ink-ember);
 }
 
+.phase:last-child .monument {
+  @include respond-to(md) {
+    margin-bottom: 0;
+  }
+}
+
 .phase[data-state='incoming'] {
   .monumentLabel,
   .monumentGhost {
@@ -189,13 +191,16 @@
 
   @include respond-to(md) {
     grid-column: 2;
-    grid-row: 1;
-    max-height: 0;
-    transform: translateY(var(--space-2));
-    transition:
-      max-height var(--phase-dur) var(--phase-ease),
-      opacity var(--phase-dur) var(--phase-ease),
-      transform var(--phase-dur) var(--phase-ease);
+    grid-row: 1 / -1;
+    position: sticky;
+    top: var(--services-nav-offset);
+    align-self: start;
+    min-height: 0;
+    min-width: 0;
+    overflow: visible;
+    transform: none;
+    pointer-events: none;
+    transition: opacity var(--phase-dur) var(--phase-ease);
   }
 }
 
@@ -204,7 +209,7 @@
   transform: none;
 
   @include respond-to(md) {
-    max-height: 140vh;
+    pointer-events: auto;
   }
 }
 
@@ -218,8 +223,7 @@
 
   @include respond-to(md) {
     gap: var(--space-5);
-    padding-left: var(--space-3);
-    padding-top: var(--space-5);
+    padding-top: 0;
     padding-bottom: var(--space-7);
   }
 }

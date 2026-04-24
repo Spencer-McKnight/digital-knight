@@ -10,108 +10,55 @@ type PhaseState = 'collapsed' | 'active' | 'incoming';
 const phaseState = (i: number, active: number): PhaseState =>
   i < active ? 'collapsed' : i === active ? 'active' : 'incoming';
 
-type Zones = {
-  starts: number[];
-  total: number;
-};
-
 export function Services() {
   const rootRef = useRef<HTMLElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
   const phaseRefs = useRef<Array<HTMLLIElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const zonesRef = useRef<Zones | null>(null);
-  const lastIdxRef = useRef(-1);
-
-  const measureAndLayout = useCallback(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    const vh = window.innerHeight;
-
-    const heights = phaseRefs.current.map((phase) => {
-      const inner = phase?.querySelector(`.${styles.contentInner}`) as HTMLElement | null;
-      // offsetHeight reports natural layout height even when clipped by an
-      // overflow:hidden ancestor.
-      return Math.max(inner?.offsetHeight ?? 0, 1);
-    });
-
-    // Each phase's scroll zone matches its measured content height, so dwell
-    // scales naturally with how much there is to read.
-    const starts: number[] = [];
-    let acc = 0;
-    heights.forEach((l) => {
-      starts.push(acc);
-      acc += l;
-    });
-
-    zonesRef.current = { starts, total: acc };
-    track.style.height = `${acc + vh}px`;
-    ScrollTrigger.refresh();
+  const getThresholdPx = useCallback((): number => {
+    const content = phaseRefs.current[0]?.querySelector(
+      `.${styles.content}`,
+    ) as HTMLElement | null;
+    if (content) {
+      const v = parseFloat(getComputedStyle(content).top);
+      if (Number.isFinite(v) && v > 0) return v;
+    }
+    return 120;
   }, []);
 
+  const scrollToPhase = useCallback(
+    (index: number) => {
+      const phase = phaseRefs.current[index];
+      if (!phase) return;
+      const y = phase.getBoundingClientRect().top + window.scrollY - getThresholdPx() - 4;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    },
+    [getThresholdPx],
+  );
+
   useEffect(() => {
-    measureAndLayout();
+    const root = rootRef.current;
+    if (!root) return;
 
-    const observer = new ResizeObserver(() => measureAndLayout());
-    phaseRefs.current.forEach((phase) => {
-      const inner = phase?.querySelector(`.${styles.contentInner}`);
-      if (inner) observer.observe(inner);
-    });
-
-    window.addEventListener('resize', measureAndLayout);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', measureAndLayout);
+    const compute = () => {
+      const threshold = getThresholdPx() + 8;
+      let idx = 0;
+      phaseRefs.current.forEach((phase, i) => {
+        if (phase && phase.getBoundingClientRect().top <= threshold) idx = i;
+      });
+      setActiveIndex((prev) => (prev === idx ? prev : idx));
     };
-  }, [measureAndLayout]);
-
-  const scrollToPhase = useCallback((index: number) => {
-    const track = trackRef.current;
-    const zones = zonesRef.current;
-    if (!track || !zones) return;
-    const rect = track.getBoundingClientRect();
-    const trackTop = rect.top + window.scrollY;
-    const start = zones.starts[index] ?? 0;
-    window.scrollTo({
-      top: trackTop + start + 4,
-      behavior: 'smooth',
-    });
-  }, []);
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
 
     const st = ScrollTrigger.create({
-      trigger: track,
-      start: 'top top',
-      end: 'bottom bottom',
-      onUpdate: (self) => {
-        const zones = zonesRef.current;
-        if (!zones) return;
-        const scrollable = track.offsetHeight - window.innerHeight;
-        const scrolled = self.progress * scrollable;
-
-        let idx = 0;
-        for (let i = zones.starts.length - 1; i >= 0; i--) {
-          const s = zones.starts[i];
-          if (s !== undefined && scrolled >= s) {
-            idx = i;
-            break;
-          }
-        }
-
-        if (idx !== lastIdxRef.current) {
-          lastIdxRef.current = idx;
-          setActiveIndex(idx);
-        }
-      },
+      trigger: root,
+      start: 'top bottom',
+      end: 'bottom top',
+      onUpdate: compute,
     });
+    compute();
 
     return () => st.kill();
-  }, []);
+  }, [getThresholdPx]);
 
   return (
     <section
@@ -129,57 +76,55 @@ export function Services() {
           </h2>
         </header>
 
-        <div ref={trackRef} className={styles.track}>
-          <ol className={styles.stage} role="list" aria-label="Phases">
-            {SERVICES.map((service, i) => {
-              const state = phaseState(i, activeIndex);
-              return (
-                <li
-                  key={service.id}
-                  className={styles.phase}
-                  ref={(el) => {
-                    phaseRefs.current[i] = el;
-                  }}
-                  data-state={state}
-                  data-service={service.id}
+        <ol className={styles.stage} role="list" aria-label="Phases">
+          {SERVICES.map((service, i) => {
+            const state = phaseState(i, activeIndex);
+            return (
+              <li
+                key={service.id}
+                className={styles.phase}
+                ref={(el) => {
+                  phaseRefs.current[i] = el;
+                }}
+                data-state={state}
+                data-service={service.id}
+              >
+                <button
+                  type="button"
+                  className={styles.monument}
+                  onClick={() => scrollToPhase(i)}
+                  aria-current={state === 'active' ? 'true' : undefined}
+                  aria-label={`Open ${service.label}`}
                 >
-                  <button
-                    type="button"
-                    className={styles.monument}
-                    onClick={() => scrollToPhase(i)}
-                    aria-current={state === 'active' ? 'true' : undefined}
-                    aria-label={`Open ${service.label}`}
-                  >
-                    <span className={styles.monumentInner} aria-hidden="true">
-                      <span className={styles.monumentGhost}>{service.label}</span>
-                      <span className={styles.monumentLabel}>{service.label}</span>
-                    </span>
-                    <span className={styles.srOnly}>{service.label}</span>
-                  </button>
+                  <span className={styles.monumentInner} aria-hidden="true">
+                    <span className={styles.monumentGhost}>{service.label}</span>
+                    <span className={styles.monumentLabel}>{service.label}</span>
+                  </span>
+                  <span className={styles.srOnly}>{service.label}</span>
+                </button>
 
-                  <div
-                    className={styles.content}
-                    aria-hidden={state !== 'active'}
-                    aria-labelledby={`service-${service.id}`}
-                  >
-                    <span id={`service-${service.id}`} className={styles.srOnly}>
-                      {service.label}
-                    </span>
-                    <div className={styles.contentInner}>
-                      {service.lede ? <p className={styles.lede}>{service.lede}</p> : null}
-                      {service.body?.map((p, idx) => (
-                        <p key={idx} className={styles.body}>
-                          {p}
-                        </p>
-                      ))}
-                      {service.pop ? <Pop pop={service.pop} /> : null}
-                    </div>
+                <div
+                  className={styles.content}
+                  aria-hidden={state !== 'active'}
+                  aria-labelledby={`service-${service.id}`}
+                >
+                  <span id={`service-${service.id}`} className={styles.srOnly}>
+                    {service.label}
+                  </span>
+                  <div className={styles.contentInner}>
+                    {service.lede ? <p className={styles.lede}>{service.lede}</p> : null}
+                    {service.body?.map((p, idx) => (
+                      <p key={idx} className={styles.body}>
+                        {p}
+                      </p>
+                    ))}
+                    {service.pop ? <Pop pop={service.pop} /> : null}
                   </div>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );

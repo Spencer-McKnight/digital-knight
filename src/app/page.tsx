@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Hero } from '@/components/home/Hero';
 import { Services } from '@/components/home/Services';
+import { MeetSpencer } from '@/components/home/MeetSpencer';
 import { LetsTalk } from '@/components/home/LetsTalk';
 
 export const metadata: Metadata = {
@@ -12,10 +13,11 @@ export const metadata: Metadata = {
 /**
  * `/` — the home page (`home.md`).
  *
- *   A short film in four beats (`design.md` §9):
+ *   A short film in five beats (`design.md` §9):
  *     1. Entry  — Hero (Page)
  *     2. Call   — Let's Talk (Stone)
  *     3. Act    — Services (Page)
+ *     4. Act    — Meet Spencer (Stone)
  *        Landing — Footer (Stone)
  *
  *   Ground alternates Page → Stone to mark act changes. Every section is
@@ -27,6 +29,7 @@ export default function HomePage() {
       <Hero />
       <LetsTalk />
       <Services />
+      <MeetSpencer />
     </main>
   );
 }
