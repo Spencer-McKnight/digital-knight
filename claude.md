@@ -11,4 +11,5 @@
 # Rules
 
 - Do not check git history unless explicitly asked
-- Do not write long, arduous comments. Explanation is okay, but keep it vital.
+- Do not write long, arduous comments. Explanation is okay, but keep it vital. Code comments for every new piece is not necessary here.
+- Read both the UI and scss files when composing code, to ensure you have the right picture.

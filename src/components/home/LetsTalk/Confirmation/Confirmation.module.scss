@@ -9,11 +9,9 @@
   padding-block: var(--space-6);
 }
 
-.eyebrow {
-  @include type(meta);
-  color: var(--ink-iron);
-  opacity: 0.6;
-  margin: 0;
+.header {
+  display: grid;
+  gap: var(--space-3);
 }
 
 .title {
@@ -22,6 +20,7 @@
   color: var(--ink-iron);
   font-weight: var(--t-weight-medium);
 }
+
 
 .emberWord {
   position: relative;
@@ -69,12 +68,12 @@
 .detailLabel {
   @include type(meta);
   color: var(--ink-iron);
-  opacity: 0.55;
+  opacity: 0.6;
   margin: 0;
 }
 
 .detailValue {
-  @include type(ui);
+  @include type(body);
   font-weight: var(--t-weight-medium);
   color: var(--ink-iron);
   margin: 0;
@@ -86,7 +85,7 @@
 }
 
 .detailSub {
-  @include type(meta);
+  @include type(body);
   text-transform: none;
   letter-spacing: 0;
   opacity: 0.65;
@@ -100,37 +99,60 @@
 }
 
 .addLabel {
-  @include type(meta);
+  @include type(body);
   color: var(--ink-iron);
-  opacity: 0.55;
+  opacity: 0.6;
   margin: 0;
 }
 
 .addList {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   gap: 0;
-  flex-wrap: wrap;
-  justify-content: center;
+  width: 100%;
+  max-width: 220px;
   list-style: none;
   padding: 0;
   margin: 0;
   border: 1px solid var(--ink-rule);
+
+  @include respond-to(sm) {
+    flex-direction: row;
+    width: auto;
+    max-width: none;
+  }
+}
+
+.addList > li {
+  display: flex;
 }
 
 .addList > li + li {
-  border-left: 1px solid var(--ink-rule);
+  border-top: 1px solid var(--ink-rule);
+  border-left: 0;
+
+  @include respond-to(sm) {
+    border-top: 0;
+    border-left: 1px solid var(--ink-rule);
+  }
 }
 
 .addLink {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-2);
+  flex: 1;
   padding: var(--space-3) var(--space-4);
   color: var(--ink-iron);
   text-decoration: none;
   position: relative;
   isolation: isolate;
   transition: color var(--dur-state) var(--ease-house);
+
+  @include respond-to(sm) {
+    justify-content: center;
+  }
 
   &::before {
     content: '';
@@ -160,19 +182,16 @@
 }
 
 .addName {
-  @include type(ui);
+  @include type(body);
   font-weight: var(--t-weight-medium);
 }
 
 .softNotice {
-  @include type(meta);
-  text-transform: none;
-  letter-spacing: 0;
+  @include type(body);
   color: var(--ink-iron);
   opacity: 0.8;
   margin: 0;
   font-weight: var(--t-weight-regular);
-  line-height: 1.55;
 }
 
 .mailLink {

@@ -91,8 +91,24 @@
     transform: translateY(0);
   }
 
-  &[data-shrunk='true'] {
-    padding-block: var(--space-3);
+  // Shrink only applies from `sm` upward. On mobile the wordmark stays at its
+  // full size — no compaction towards a `DK` short form — so the nav keeps a
+  // consistent silhouette while scrolling (`design.md` §8).
+  @include respond-to(sm) {
+    &[data-shrunk='true'] {
+      padding-block: var(--space-3);
+    }
+  }
+
+  // When the mobile drawer is open the bar floats on top of a stone panel.
+  // Force text/icon ink to page and the glass tint to a near-solid stone so
+  // the bar reads as a continuation of the drawer surface rather than a
+  // translucent strip showing the page beneath.
+  &[data-menu-open] {
+    --ink-upper: var(--ink-page);
+    --ink-lower: var(--ink-page);
+    --surface-upper: #{rgba(colors.$ink-stone, 0.92)};
+    --surface-lower: #{rgba(colors.$ink-stone, 0.92)};
   }
 }
 
@@ -156,29 +172,6 @@
 .word {
   @extend %split-ink;
   display: inline-block;
-  transition: opacity var(--dur-element) var(--ease-house);
-
-  [data-shrunk='true'] & {
-    @include respond-below(md) {
-      opacity: 0;
-      width: 0;
-      overflow: hidden;
-    }
-  }
-}
-
-.mark {
-  @extend %split-ink;
-  display: none;
-  font-weight: var(--t-weight-bold);
-  letter-spacing: 0.04em;
-  font-size: inherit;
-
-  [data-shrunk='true'] & {
-    @include respond-below(md) {
-      display: inline-block;
-    }
-  }
 }
 
 .links {
@@ -226,4 +219,298 @@
   @extend %split-ink;
   display: inline-block;
   line-height: 1;
+}
+
+// =============================================================================
+// Mobile — burger trigger + dark drawer modal
+// -----------------------------------------------------------------------------
+// The burger is the ONLY mobile-specific element that lives in the bar. Its
+// icon morphs from three bars to an X using transforms only — no layout
+// thrash. The morph is asymmetrically timed: opening, the middle bar fades
+// first and the outer bars rotate into place after a beat; closing runs in
+// reverse so the outer bars untuck first and the middle bar settles in last.
+// That small stagger is what makes the gesture read as intentional rather
+// than mechanical.
+//
+// The drawer is a separate fixed-position overlay that sits above the page
+// but beneath the nav bar, so the burger remains tappable as a close target.
+// It is intentionally iron-themed at all times — the deepest ink we use —
+// so it reads as a distinct modal surface rather than a continuation of
+// whichever ground happens to scroll beneath (`design.md` §8).
+// =============================================================================
+
+.burger {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: var(--space-2);
+  margin-inline-end: calc(var(--space-2) * -1);
+  color: var(--ink-upper);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  position: relative;
+  z-index: 2;
+  transition: color var(--dur-element) var(--ease-house);
+
+  @include respond-below(sm) {
+    display: inline-flex;
+  }
+
+  &:focus-visible {
+    outline: 1px solid currentColor;
+    outline-offset: 4px;
+  }
+}
+
+.burgerInner {
+  position: relative;
+  display: inline-block;
+  width: 22px;
+  height: 14px;
+}
+
+.burgerBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: currentColor;
+  transform-origin: center;
+  will-change: transform, opacity;
+
+  // Closing choreography (default): outer bars untuck first, middle bar
+  // fades back in last. Using explicit delays on each property lets the
+  // opacity, top and transform resolve in the right order.
+  transition:
+    transform var(--dur-element) var(--ease-house) 0ms,
+    top var(--dur-element) var(--ease-house) 0ms,
+    opacity var(--dur-state) var(--ease-house) var(--dur-element);
+
+  &:nth-child(1) { top: 0; }
+  &:nth-child(2) { top: 50%; transform: translateY(-50%); }
+  &:nth-child(3) { top: 100%; transform: translateY(-100%); }
+
+  // Opening choreography: middle bar fades first (no delay), then the
+  // outer bars slide to the midline and rotate into an X.
+  .burger[data-open] & {
+    transition:
+      transform var(--dur-element) var(--ease-house) var(--dur-state),
+      top var(--dur-element) var(--ease-house) var(--dur-state),
+      opacity var(--dur-state) var(--ease-house) 0ms;
+  }
+
+  .burger[data-open] &:nth-child(1) {
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+  }
+  .burger[data-open] &:nth-child(2) {
+    opacity: 0;
+    transform: translateY(-50%) scaleX(0.2);
+  }
+  .burger[data-open] &:nth-child(3) {
+    top: 50%;
+    transform: translateY(-50%) rotate(-45deg);
+  }
+}
+
+// ── Drawer modal ─────────────────────────────────────────────────────────────
+// Full-viewport takeover. The panel always covers the entire screen — width
+// AND height — so the menu reads as a complete overlay rather than a side
+// drawer with the page peeking past it. The scrim sits beneath the panel
+// and provides the wash for the cross-fade entrance; the panel itself
+// carries the stagger of its contents. Closed state is fully non-interactive
+// via pointer-events + visibility (visibility flips after the out-transition
+// so focus can't land inside a hidden panel).
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 39;
+  display: none;
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s linear var(--dur-scene);
+
+  @include respond-below(sm) {
+    display: block;
+  }
+
+  &[data-open] {
+    pointer-events: auto;
+    visibility: visible;
+    transition: visibility 0s linear 0s;
+  }
+}
+
+// Stone-tinted wash beneath the panel. With the panel fully opaque the scrim
+// is mostly hidden once the entrance settles, but it carries the early
+// frames of the open transition so the page doesn't pop straight to grey.
+.drawerScrim {
+  position: absolute;
+  inset: 0;
+  background: #{rgba(colors.$ink-stone, 0.85)};
+  opacity: 0;
+  transition: opacity var(--dur-scene) var(--ease-house);
+
+  [data-open] > & {
+    opacity: 1;
+  }
+}
+
+.drawerPanel {
+  position: absolute;
+  inset: 0;
+
+  // Stone is our charcoal grey — softer than iron but unmistakably an
+  // overlay surface. Painted from the SCSS primitive (rather than the
+  // `--ink-stone` custom property) so an ancestor with `ground-invert`
+  // can't redefine the token out from under us — the panel is its own
+  // surface, not a continuation of any ground beneath.
+  background: colors.$ink-stone;
+  color: colors.$ink-page;
+
+  display: flex;
+  flex-direction: column;
+  // Content is bottom-aligned so the link stack and CTA fall close to the
+  // thumb on a phone — the burger lives at the top of the bar, but the
+  // tappable targets belong at the bottom of the reach arc.
+  justify-content: flex-end;
+
+  // Modest top padding (the nav bar already clears its own space at the
+  // top of the panel — the X is paintable against stone). Bottom padding
+  // is a generous landing for the CTA so it doesn't crowd the device's
+  // home indicator / safe area.
+  padding-block: var(--space-5) calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
+  padding-inline: var(--grid-margin);
+
+  // A full-screen surface needs a softer entrance than a side drawer — a
+  // gentle drift up paired with the cross-fade reads as the surface
+  // settling into place rather than sliding past the viewport edge.
+  transform: translateY(8px);
+  opacity: 0;
+  transition:
+    transform var(--dur-scene) var(--ease-house),
+    opacity var(--dur-scene) var(--ease-house);
+
+  [data-open] > & {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Thin hairline between the link stack and the CTA — mirrors the nav's own
+// underline language without introducing a new divider style. The panel
+// itself bottom-aligns the whole stack via `justify-content: flex-end`, so
+// the divider only owns its own breathing room.
+.drawerDivider {
+  height: 1px;
+  background: #{rgba(colors.$ink-page, 0.14)};
+  margin-block: var(--space-5) var(--space-4);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-scene) var(--ease-house);
+
+  [data-open] & {
+    transform: scaleX(1);
+    transition-delay: calc(var(--dur-state) + 3 * 70ms);
+  }
+}
+
+.drawerLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+// Each item stagger-reveals after the panel has arrived. The per-row delay
+// is driven by `--i` set inline on the li so we only pay for one rule.
+.drawerItem {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity var(--dur-element) var(--ease-house),
+    transform var(--dur-element) var(--ease-house);
+
+  [data-open] & {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: calc(var(--dur-state) + var(--i, 0) * 70ms);
+  }
+}
+
+.drawerLink {
+  @include type(subsection);
+  display: inline-block;
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  padding-block: var(--space-2);
+  letter-spacing: -0.01em;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 4px;
+    height: 1px;
+    background: var(--ink-ember);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-element) var(--ease-house);
+  }
+
+  &:hover::after,
+  &:focus-visible::after,
+  &[data-active]::after {
+    transform: scaleX(1);
+  }
+}
+
+.drawerCta {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity var(--dur-element) var(--ease-house),
+    transform var(--dur-element) var(--ease-house);
+
+  [data-open] & {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: calc(var(--dur-state) + var(--i, 0) * 70ms);
+  }
+
+  // The CTA sits on stone — the Button's default iron-on-page reads poorly
+  // here, so we flip its tokens locally to page-on-stone with an ember
+  // hover that matches the link underline language.
+  :global([data-variant='primary']) {
+    background: var(--ink-page);
+    color: var(--ink-iron);
+    border-color: var(--ink-page);
+    width: 100%;
+    justify-content: center;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--ink-ember);
+      border-color: var(--ink-ember);
+      color: var(--ink-page);
+    }
+  }
+}
+
+// Meta label above the CTA — a small typographic anchor so the button
+// doesn't float, keeping the panel "dynamically aligned" top-to-bottom.
+.drawerCtaLabel {
+  @include type(meta);
+  display: block;
+  color: #{rgba(colors.$ink-page, 0.6)};
+  margin-block-end: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
 }

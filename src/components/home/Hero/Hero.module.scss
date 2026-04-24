@@ -2,26 +2,86 @@
 
 .root {
   position: relative;
-  min-height: 100dvh;
+  // Height ladder, tier by tier:
+  //   mobile  — min(100svh, 850px): svh avoids URL-bar CLS; cap stops the
+  //             hero swallowing entire tall phones.
+  //   sm+     — min(100svh, 1000px): slightly generous cap for tablets.
+  //   lg+     — 100vh: on real monitors the hero fills the viewport.
+  height: min(100svh, 850px);
   display: grid;
-  align-items: center;
-  overflow: hidden;
+  // Mobile: copy anchors bottom-left, seal lives top-right (see `.ground`).
+  align-items: end;
   padding-top: clamp(6rem, 10vh, 9rem);
-  padding-bottom: var(--space-5);
+  padding-bottom: var(--space-6);
+  // Cap the hero's frame on very wide displays so the seal doesn't drift
+  // far past the content's right edge. `.ground` is absolute to this box,
+  // so this also constrains where the seal can sit. Intentionally wider
+  // than the global `--grid-max` — the hero carries the composition and
+  // earns more air on ultra-wide monitors.
+  max-width: 128rem;
+  margin-inline: auto;
+
+  @include respond-to(sm) {
+    height: min(100svh, 1000px);
+    align-items: center;
+    padding-bottom: var(--space-5);
+  }
+
+  @include respond-to(lg) {
+    height: 100vh;
+  }
 }
 
-// The 3D seal lives beneath, bleeds slightly off the right edge on wide
-// viewports so the composition feels forged, not framed.
+// The 3D seal. On mobile it's a compact top-right flourish; from sm up it
+// becomes the right-rail composition mass.
+//
+// R3F scene sizing note: the camera's FOV + distance locks the world-space
+// viewport *height* at ~3.17 units, so the seal's rendered *pixel* size is
+// driven by the canvas's CSS **height**, not its width. To make the seal
+// actually shrink, we have to shrink height in lockstep. `--seal-size`
+// drives both — changing it at a breakpoint rescales the seal cleanly.
 .ground {
   position: absolute;
-  inset: 0;
   z-index: 0;
   pointer-events: none;
 
+  // Mobile. ~15% smaller than the previous tier so the silhouette sits
+  // more gracefully in the top-right of the hero.
+  --seal-size: clamp(22rem, 82vw, 29rem);
+  top: clamp(3.5rem, 10vh, 7rem);
+  right: clamp(-3rem, -3vw, -1rem);
+  width: var(--seal-size);
+  height: var(--seal-size);
+
+  @include respond-to(sm) {
+    // sm+: switch to the vertical (center-right) layout. Was previously at
+    // md — moved one breakpoint earlier so small tablets and large phones
+    // pick up the balanced composition.
+    --seal-size: clamp(22rem, 48vw, 30rem);
+    top: 50%;
+    right: clamp(-2rem, -1vw, -0.25rem);
+    transform: translateY(-50%);
+  }
+
   @include respond-to(md) {
-    left: auto;
-    right: -8%;
-    width: 72%;
+    --seal-size: clamp(26rem, 48vw, 34rem);
+  }
+
+  @include respond-to(lg) {
+    --seal-size: clamp(40rem, 58vw, 54rem);
+    right: clamp(-3rem, -1.5vw, -0.5rem);
+  }
+
+  @include respond-to(xl) {
+    --seal-size: clamp(50rem, 60vw, 66rem);
+    right: clamp(-4rem, -2vw, -1rem);
+  }
+
+  @include respond-to(xxl) {
+    // Very large monitors: dominant right-rail mass. Aggressive right-bleed
+    // lets the seal feel forged onto the canvas, not bolted inside a box.
+    --seal-size: clamp(60rem, 62vw, 78rem);
+    right: clamp(-6rem, -3vw, -2rem);
   }
 }
 
@@ -43,32 +103,13 @@
   // clicks (the CTA) re-opt below.
   pointer-events: none;
 
-  @include respond-to(md) {
+  @include respond-to(sm) {
     grid-column-gap: var(--space-6);
     max-width: calc(var(--grid-max) - 0px);
-    // Leave canvas room for the seal on the right.
-    padding-right: clamp(0px, 20vw, 22rem);
+    // Leave canvas room for the seal on the right. Starts at sm because
+    // that's where the vertical (seal center-right) layout kicks in.
+    padding-right: clamp(0px, 24vw, 24rem);
   }
-}
-
-.eyebrow {
-  @include type(meta);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--ink-iron);
-}
-
-.eyebrowDot {
-  width: 6px;
-  height: 6px;
-  background: var(--ink-ember);
-  display: inline-block;
-}
-
-.eyebrowSlash {
-  opacity: 0.45;
-  padding-inline: 0.25ch;
 }
 
 .title {

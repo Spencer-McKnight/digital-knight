@@ -3,13 +3,25 @@
 // ============================================================================
 // Let's Talk — the Call beat. Stone ground, calendar-first.
 // ----------------------------------------------------------------------------
-// Framing: top ember hairline marks the change of act. The calendar is the
-// focus; copy is short, bold, centred.
+// Single-column stack on every viewport:
+//
+//   ┌──────────────┐
+//   │   Heading    │
+//   ├──────────────┤
+//   │   Calendar   │
+//   ├──────────────┤
+//   │ Description  │
+//   └──────────────┘
+//
+// Mobile fills 100% of the viewport (minus grid margin). Desktop caps at
+// --grid-max via the `container` mixin. The WeekGrid keeps its own axis
+// labels (day headers + nav arrows) lifted out of flow so the section's
+// y-padding lands on the slot grid, not the furniture.
 // ============================================================================
 
 .root {
   @include ground-invert;
-  @include section-pad(xl);
+  @include section-pad(act);
   position: relative;
   overflow: hidden;
 
@@ -28,9 +40,17 @@
 .inner {
   @include container;
   display: grid;
-  gap: var(--space-7);
+  gap: var(--space-6);
   justify-items: center;
   text-align: center;
+
+  @include respond-to(sm) {
+    gap: var(--space-7);
+  }
+
+  @include respond-to(xl) {
+    gap: var(--space-8);
+  }
 }
 
 .header {
@@ -38,23 +58,10 @@
   gap: var(--space-3);
   max-width: 640px;
   justify-items: center;
-}
 
-.eyebrow {
-  @include type(meta);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--ink-iron);
-  opacity: 0.85;
-  margin: 0;
-}
-
-.eyebrowDot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  background: var(--ink-ember);
+  @include respond-to(xl) {
+    gap: var(--space-5);
+  }
 }
 
 .title {
@@ -63,7 +70,6 @@
   color: var(--ink-iron);
   font-weight: var(--t-weight-bold);
   letter-spacing: -0.02em;
-  max-width: 16ch;
 }
 
 .emberWord {
@@ -84,4 +90,14 @@
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+// ── Confirmed state ───────────────────────────────────────────────────────────
+// Replaces the stack once a booking is committed.
+
+.innerConfirmed {
+  @include container;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

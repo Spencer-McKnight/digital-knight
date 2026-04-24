@@ -12,7 +12,7 @@ A reference of the technical decisions underpinning the build. Every choice is a
 > `typescript@6`). App Router semantics are identical to the 15-era argument
 > below; the prose was authored against Next 15 but the rationale holds.
 
-App Router is the right model for this site. Each page is a distinct film — Server Components deliver the shell instantly, Client Components take over for animation and interactivity. Turbopack handles dev HMR. Route segments map cleanly to the four pages (`/`, `/services`, `/method`, `/talk`).
+App Router is the right model for this site. Each page is a distinct film — Server Components deliver the shell instantly, Client Components take over for animation and interactivity. Turbopack handles dev HMR.
 
 No pages router. No `getServerSideProps`. The mental model is: static shell → hydrated experience.
 
@@ -38,14 +38,13 @@ Token architecture and file structure are defined below.
 
 **Package:** `gsap@3`
 
-The loading sequence, text reveals, scroll-linked parallax, stat counters, custom cursor — all of this demands a professional animation timeline engine. GSAP is the industry standard for cinematic web animation and the unambiguous choice here.
+Text reveals, scroll-linked parallax, stat counters, and the custom cursor all demand a professional animation timeline engine. GSAP is the industry standard for cinematic web animation and the unambiguous choice here.
 
 - **ScrollTrigger** plugin drives all scroll-linked effects (parallax on imagery, section entrances, footer lock)
 - **SplitText** (GSAP Club, included with paid license) enables the per-character/per-word heading reveals specified in the design
-- Timeline composition makes the loading sequence (`DK` → `DIGITAL KNIGHT` → settle to nav) straightforward to build and tune
 - `prefers-reduced-motion` collapses by toggling timeline `timeScale(0)` or swapping to opacity-only fallbacks — one place, clean implementation
 
-Framer Motion is not used. It overlaps with GSAP, adds bundle weight, and its declarative model resists the imperative sequence control the loading beat and cursor need.
+Framer Motion is not used. It overlaps with GSAP, adds bundle weight, and its declarative model resists the imperative sequence control the scroll and cursor system need.
 
 ---
 
@@ -65,7 +64,6 @@ The design constraint — matte metal, no glassy chrome — means scenes are sma
 
 The site has a small set of genuinely global states:
 
-- `loadingComplete` — gates the loading sequence; components subscribe to know when to animate in
 - `cursorVariant` — the custom cursor ring changes on hover over interactables
 - `reducedMotion` — read from `prefers-reduced-motion` once, consumed everywhere
 
@@ -112,73 +110,14 @@ Natural target for Next.js. Edge Network, automatic preview deployments per bran
 
 Three layers. Components only ever touch layer 2.
 
-| Layer | Where | Role |
-|---|---|---|
-| **1. SCSS primitives** | `styles/tokens/_*.scss` | Raw values (`$ink-ember: #DD6637`). Used in mixins for computed values (rgba, darken). Never imported into component files. |
-| **2. CSS custom properties** | `:root` in `globals.scss` | Semantic runtime tokens (`--ink-ember`). The only thing components reference. |
-| **3. Ground overrides** | Section root via `@include ground-invert()` | Redeclares `--ink-*` locally for Stone-ground sections. All child components adapt through the cascade with no modification. |
+| Layer                        | Where                                       | Role                                                                                                                         |
+| ---------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **1. SCSS primitives**       | `styles/tokens/_*.scss`                     | Raw values (`$ink-ember: #DD6637`). Used in mixins for computed values (rgba, darken). Never imported into component files.  |
+| **2. CSS custom properties** | `:root` in `globals.scss`                   | Semantic runtime tokens (`--ink-ember`). The only thing components reference.                                                |
+| **3. Ground overrides**      | Section root via `@include ground-invert()` | Redeclares `--ink-*` locally for Stone-ground sections. All child components adapt through the cascade with no modification. |
 
 **Why this layering:**
 SCSS primitives exist for compile-time computation inside mixins. CSS custom properties exist because components must never hardcode color values, JS (GSAP) can read and animate them, and ground inversion is just CSS cascade — no prop threading, no conditional rendering.
-
----
-
-## File Structure
-
-```
-src/
-  app/
-    layout.tsx                  ← root layout: font injection, globals.scss import
-    globals.scss                ← @use styles/index — one import, zero output of its own
-    page.tsx                    ← /
-    services/
-      page.tsx
-    method/
-      page.tsx
-    talk/
-      page.tsx
-
-  components/
-    Loader/
-      Loader.tsx
-      Loader.module.scss
-    Nav/
-      Nav.tsx
-      Nav.module.scss
-    Footer/
-      Footer.tsx
-      Footer.module.scss
-    Cursor/
-      Cursor.tsx
-      Cursor.module.scss
-
-  styles/
-    tokens/
-      _colors.scss              ← $ink-* primitives + :root --ink-* custom props
-      _type.scss                ← $t-* + :root --t-*, --t-leading-*, --t-tracking-*
-      _space.scss               ← $space-* + :root --space-*
-      _motion.scss              ← $dur-*, $ease-* + :root --dur-*, --ease-*
-      _grid.scss                ← $grid-* + :root --grid-*
-    mixins/
-      _respond.scss             ← respond-to($bp) — named breakpoint wrapper
-      _fluid.scss               ← fluid($min, $max, $from, $to) — generates clamp()
-      _type.scss                ← type($role) — applies size + leading + tracking in one call
-      _ground.scss              ← ground-invert() — Stone-ground CSS var overrides
-    _reset.scss                 ← modern reset: box-sizing, margin, list, img
-    _base.scss                  ← html/body defaults, custom scrollbar, ::selection
-    index.scss                  ← @use of all tokens + reset + base; no output of its own
-
-  lib/
-    gsap.ts                     ← register plugins (ScrollTrigger, SplitText), set defaults
-    motion.ts                   ← prefers-reduced-motion detection; exports gate for GSAP timelines
-
-  store/
-    ui.ts                       ← Zustand: loadingComplete, cursorVariant, reducedMotion
-
-  hooks/
-    useLoadGate.ts              ← subscribes to loadingComplete; returns boolean for animation entry
-    useCursorVariant.ts         ← sets cursorVariant from pointer events; consumed by Cursor
-```
 
 ---
 
@@ -189,7 +128,7 @@ src/
 - `.root` — always the outermost element of a component. No exceptions.
 - Child names are semantic to the component: `.title`, `.body`, `.lead`, `.figure`, `.actions`
 - State via data attributes, not modifier classes: `[data-active]`, `[data-variant="ghost"]`
-- Forbidden: `.wrapper`, `.container`, `.inner`, `.outer` — name what the element *is*, not where it sits
+- Forbidden: `.wrapper`, `.container`, `.inner`, `.outer` — name what the element _is_, not where it sits
 
 **SCSS**
 
@@ -201,9 +140,9 @@ src/
 **TypeScript / Components**
 
 - Component: PascalCase directory + matching filename (`Nav/Nav.tsx`, `Nav/Nav.module.scss`)
-- Hooks: `use` prefix, camelCase, named for what they return (`useLoadGate`, `useCursorVariant`)
+- Hooks: `use` prefix, camelCase, named for what they return (`useCursorVariant`)
 - Store file: feature-named (`ui.ts`), not `store.ts`
-- GSAP timelines: named string IDs at creation — `gsap.timeline({ id: 'loader-sequence' })`. One timeline per named sequence, not per component.
+- GSAP timelines: named string IDs at creation — `gsap.timeline({ id: 'services-row-enter' })`. One timeline per named sequence, not per component.
 
 **File-level rules**
 
@@ -214,19 +153,19 @@ src/
 
 ## Summary
 
-| Layer | Choice | Version |
-|---|---|---|
-| Framework | Next.js App Router | 16 |
-| Language | TypeScript | 6 |
-| React | React | 19 |
-| Styling | SCSS + CSS Modules | Dart Sass latest |
-| Animation | GSAP + ScrollTrigger | 3 |
-| 3D | React Three Fiber + Drei | latest |
-| State | Zustand | 5 |
-| Font loading | next/font (localFont) | built-in |
-| Booking — data | Supabase (Postgres) | latest |
-| Booking — email | Resend + React Email | latest |
-| Booking — ICS | `ics` | latest |
-| Booking — dates | `@internationalized/date` | latest |
-| Package manager | pnpm | latest |
-| Deployment | Vercel | — |
+| Layer           | Choice                    | Version          |
+| --------------- | ------------------------- | ---------------- |
+| Framework       | Next.js App Router        | 16               |
+| Language        | TypeScript                | 6                |
+| React           | React                     | 19               |
+| Styling         | SCSS + CSS Modules        | Dart Sass latest |
+| Animation       | GSAP + ScrollTrigger      | 3                |
+| 3D              | React Three Fiber + Drei  | latest           |
+| State           | Zustand                   | 5                |
+| Font loading    | next/font (localFont)     | built-in         |
+| Booking — data  | Supabase (Postgres)       | latest           |
+| Booking — email | Resend + React Email      | latest           |
+| Booking — ICS   | `ics`                     | latest           |
+| Booking — dates | `@internationalized/date` | latest           |
+| Package manager | pnpm                      | latest           |
+| Deployment      | Vercel                    | —                |

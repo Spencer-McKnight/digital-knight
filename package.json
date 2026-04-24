@@ -15,7 +15,18 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,scss,md,json}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,scss,md,json}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,scss,md,json}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:login": "supabase login",
+    "db:link": "supabase link",
+    "db:push": "supabase db push",
+    "db:pull": "supabase db pull",
+    "db:diff": "supabase db diff --linked --use-migra -f",
+    "db:types": "supabase gen types typescript --linked --schema public > src/lib/supabase/database.types.ts",
+    "db:sync-env": "node scripts/sync-supabase-env.mjs",
+    "db:setup": "pnpm db:link && pnpm db:push && pnpm db:sync-env && pnpm db:types",
+    "email:dev": "email dev --dir src/emails --port 3333"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",
@@ -24,6 +35,7 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.0",
     "@supabase/supabase-js": "^2.104.0",
+    "@vercel/analytics": "^2.0.1",
     "gsap": "^3.15.0",
     "ics": "^3.11.0",
     "next": "^16.2.4",
@@ -41,10 +53,19 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.184.0",
+    "@vitest/expect": "^4.1.5",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.4",
     "prettier": "^3.8.3",
     "sass": "^1.99.0",
-    "typescript": "^6.0.3"
+    "supabase": "^2.94.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "supabase"
+    ]
   }
 }

@@ -49,6 +49,10 @@ export function ForgeSeal() {
   // Optimistically true for SSR / first paint — we'd rather render one frame
   // and then suspend than pop in when the observer catches up.
   const [inView, setInView] = useState(true);
+  // Flipped on the very first rendered frame (see `Seal` → `onReady`). Drives
+  // the `.loaded` class that fades the canvas in, hiding the blank frame
+  // between the Canvas mounting and WebGL actually drawing something.
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -79,8 +83,10 @@ export function ForgeSeal() {
 
   const active = inView && !reduced;
 
+  const rootClass = loaded ? `${styles.root} ${styles.loaded}` : styles.root;
+
   return (
-    <div ref={rootRef} className={styles.root} aria-hidden>
+    <div ref={rootRef} className={rootClass} aria-hidden>
       <Canvas
         // Capping DPR at 1.75 costs almost nothing perceptually on retina
         // screens while cutting roughly a quarter of the fragments shaded.
@@ -97,7 +103,7 @@ export function ForgeSeal() {
           rotationIntensity={reduced ? 0 : 0.25}
           floatIntensity={reduced ? 0 : 0.35}
         >
-          <Seal reduced={reduced} active={active} />
+          <Seal reduced={reduced} active={active} onReady={() => setLoaded(true)} />
         </Float>
       </Canvas>
     </div>
@@ -166,12 +172,53 @@ function Lighting() {
   );
 }
 
-function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
+function Seal({
+  reduced,
+  active,
+  onReady,
+}: {
+  reduced: boolean;
+  active: boolean;
+  onReady: () => void;
+}) {
   const groupRef = useRef<Group>(null);
   const sealRef = useRef<Mesh>(null);
   const ringRef = useRef<Mesh>(null);
   const innerRingRef = useRef<Mesh>(null);
   const { viewport, gl } = useThree();
+
+  // Intro reveal — the scene can't draw anything until WebGL has compiled the
+  // programs and uploaded the environment map, which leaves a visible gap
+  // between mount and first paint. Instead of popping in at full size we grow
+  // the seal from 0 → baseScale with a gentle Y spin and a tenth as much on
+  // X for depth. The eases are cubic Hermites chosen so that at t=1 each
+  // axis's angular velocity already matches the steady-state cruise rate —
+  // the intro merges into the resting rotation without the "stop + restart"
+  // you get with a symmetric ease that lands at zero velocity. Timed from
+  // the first frame useFrame actually runs.
+  const CRUISE_Y = 0.175; // rad/s — must mirror the steady-state values below
+  const CRUISE_X = 0.056;
+  const durationMs = reduced ? 0 : 1800;
+  const spinTurnsY = reduced ? 0 : 0.75;
+  const spinTurnsX = reduced ? 0 : 0.075;
+  // Terminal slope of the normalized ease. `ease(t) ∈ [0,1]` maps to angle
+  // `spinTurns * 2π * ease(t)`, so its time-derivative at t=1 is
+  // `spinTurns * 2π * ease'(1) / durationSec`, which we want to equal CRUISE.
+  const durSec = Math.max(0.001, durationMs / 1000);
+  const termSlopeY = spinTurnsY > 0 ? (CRUISE_Y * durSec) / (spinTurnsY * 2 * Math.PI) : 0;
+  const termSlopeX = spinTurnsX > 0 ? (CRUISE_X * durSec) / (spinTurnsX * 2 * Math.PI) : 0;
+  const intro = useRef({
+    startMs: 0,
+    durationMs,
+    spinTurnsY,
+    spinTurnsX,
+    termSlopeY,
+    termSlopeX,
+    lastSpinY: 0, // delta-accumulated so the total equals spinTurnsY * 2π
+    lastSpinX: 0, // delta-accumulated so the total equals spinTurnsX * 2π
+    done: reduced,
+    notified: false,
+  }).current;
 
   // Hover flag — true only when R3F's raycaster reports a hit on the seal
   // group (the icosahedron or either ring). Drives both the cursor state
@@ -403,12 +450,81 @@ function Seal({ reduced, active }: { reduced: boolean; active: boolean }) {
   );
 
   useFrame((_, delta) => {
-    if (reduced) return;
     const g = groupRef.current;
     const s = sealRef.current;
     const r = ringRef.current;
     const ir = innerRingRef.current;
     if (!g || !s || !r || !ir) return;
+
+    // First frame to actually execute is our "WebGL has drawn something"
+    // signal — kick off the intro and let the parent fade the canvas in.
+    if (!intro.notified) {
+      intro.notified = true;
+      intro.startMs = performance.now();
+      onReady();
+    }
+
+    // Intro reveal: 0 → baseScale with a smooth easeInOutCubic, layered with
+    // quintic Hermite spins on Y and X. The quintic is chosen so that
+    // ease(1)=1, ease'(1) equals each axis's steady-state cruise rate
+    // (normalized) — hand-off has matching velocity — and ease''(1)=0, so
+    // there's no deceleration kink at the handoff either. With the terminal
+    // acceleration pinned to zero, the curve's tail glides into steady
+    // state rather than ramping down sharply over the last few frames.
+    if (!intro.done) {
+      const t = Math.min(1, (performance.now() - intro.startMs) / Math.max(1, intro.durationMs));
+      // Scale is still a symmetric easeInOutCubic — it terminates at 1 and
+      // stays at 1 in steady state, so zero terminal slope is correct here.
+      const scaleEase = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      g.scale.setScalar(baseScale * scaleEase);
+
+      // Quintic Hermite with h(0)=0, h(1)=1, h'(0)=m0, h'(1)=m1, h''(0)=h''(1)=0:
+      //   h(t) = (10t³ - 15t⁴ + 6t⁵)
+      //        + m0·(t - 6t³ + 8t⁴ - 3t⁵)
+      //        + m1·(-4t³ + 7t⁴ - 3t⁵).
+      // M0 is the initial slope — keep it modest so the peak velocity stays
+      // low; m1 is per-axis so both axes land on their cruise rate together.
+      const t2 = t * t;
+      const t3 = t2 * t;
+      const t4 = t3 * t;
+      const t5 = t4 * t;
+      const base = 10 * t3 - 15 * t4 + 6 * t5;
+      const coefM0 = t - 6 * t3 + 8 * t4 - 3 * t5;
+      const coefM1 = -4 * t3 + 7 * t4 - 3 * t5;
+      const hermite = (m0: number, m1: number) => base + m0 * coefM0 + m1 * coefM1;
+      const M0 = 0.55; // gentler start — lower peak, motion spreads further into the tail
+      const easeY = hermite(M0, intro.termSlopeY);
+      const easeX = hermite(M0, intro.termSlopeX);
+
+      const targetY = intro.spinTurnsY * 2 * Math.PI * easeY;
+      const targetX = intro.spinTurnsX * 2 * Math.PI * easeX;
+      s.rotation.y += targetY - intro.lastSpinY;
+      s.rotation.x += targetX - intro.lastSpinX;
+      intro.lastSpinY = targetY;
+      intro.lastSpinX = targetX;
+
+      if (t >= 1) {
+        intro.done = true;
+        // Park idleTime at the plateau so the steady-state base rotation
+        // immediately runs at full cruise — the ramp would otherwise
+        // accelerate from 0 and produce the "stop → restart" stutter.
+        motion.idleTime = 1.2;
+      } else {
+        // While the intro is running, skip the rest of the frame logic —
+        // no drag, no parallax, no pulse. Rings keep spinning though, so
+        // the scene feels alive from the very first frame.
+        r.rotation.z += delta * 0.245;
+        r.rotation.y += delta * 0.028;
+        ir.rotation.y -= delta * 0.028;
+        ir.rotation.z -= delta * 0.035;
+        return;
+      }
+    }
+
+    if (reduced) {
+      g.scale.setScalar(baseScale);
+      return;
+    }
 
     // Ember ring — original behaviour: a quiet, constant Z-orbit, independent
     // of what the user is doing to the seal itself. Plus a very subtle Y

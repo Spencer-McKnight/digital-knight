@@ -7,6 +7,7 @@ import {
   useRef,
   useSyncExternalStore,
   useTransition,
+  type CSSProperties,
 } from 'react';
 import { fromAbsolute } from '@internationalized/date';
 import {
@@ -17,6 +18,7 @@ import {
 import type { CalendarLinks } from '@/lib/booking/calendarLinks';
 import {
   BUSINESS_DAYS,
+  BUSINESS_HOUR_START,
   SLOTS_PER_DAY,
   SLOT_MINUTES,
 } from '@/lib/booking/config';
@@ -28,8 +30,9 @@ import {
   visitorTimezone,
 } from '@/lib/booking/week';
 import { Slot, type SlotState } from '../Slot/Slot';
-import { WeekNav } from '../WeekNav/WeekNav';
-import { BookingForm } from '../BookingForm/BookingForm';
+import { NavArrow } from '../WeekNav/WeekNav';
+import { BookingForm, type BookingFormExtras } from '../BookingForm/BookingForm';
+import { BookingPopup } from '../BookingPopup/BookingPopup';
 import { Confirmation } from '../Confirmation/Confirmation';
 import styles from './WeekGrid.module.scss';
 
@@ -48,6 +51,12 @@ export type WeekGridProps = {
   initial: WeekAvailability;
   /** Host email — surfaced in the soft-error fallback. */
   hostEmail: string;
+  /**
+   * When provided, the parent owns the confirmation surface. WeekGrid calls
+   * this instead of rendering Confirmation internally, allowing the parent to
+   * replace the entire section layout on success.
+   */
+  onConfirmed?: (payload: ConfirmationPayload) => void;
 };
 
 // ── STATE ────────────────────────────────────────────────────────────────────
@@ -58,7 +67,7 @@ type Phase =
   | { kind: 'confirmed'; confirmation: ConfirmationPayload }
   | { kind: 'error'; message: string };
 
-type ConfirmationPayload = {
+export type ConfirmationPayload = {
   slotLabel: string;
   name: string;
   email: string;
@@ -141,14 +150,14 @@ function reducer(state: State, action: Action): State {
 // Stable references keep `useSyncExternalStore` happy without triggering
 // re-subscriptions. The snapshot getters are pure.
 
-const subscribeNoop = () => () => {};
+const subscribeNoop = () => () => { };
 const getTrueSnapshot = () => true;
 const getFalseSnapshot = () => false;
 const getVisitorTZSnapshot = () => visitorTimezone();
 
 // ── COMPONENT ────────────────────────────────────────────────────────────────
 
-export function WeekGrid({ initial, hostEmail }: WeekGridProps) {
+export function WeekGrid({ initial, hostEmail, onConfirmed }: WeekGridProps) {
   const [state, dispatch] = useReducer(reducer, initial, initialState);
   const [isNavPending, startNavTransition] = useTransition();
 
@@ -232,7 +241,7 @@ export function WeekGrid({ initial, hostEmail }: WeekGridProps) {
     [],
   );
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback(async (extras: BookingFormExtras) => {
     if (!state.selectedSlotUTC) return;
     const { name, email } = state.form;
 
@@ -245,6 +254,19 @@ export function WeekGrid({ initial, hostEmail }: WeekGridProps) {
       return;
     }
 
+    // Resolve the server-issued token for this slot. No token → refuse to
+    // submit. The only legitimate way to hit this branch is a slot that was
+    // rendered before the week refreshed; treat it as a validation failure
+    // and let the user pick another slot.
+    const slotToken = availability.slotTokens?.[state.selectedSlotUTC];
+    if (!slotToken) {
+      dispatch({
+        type: 'formError',
+        message: 'This slot just expired — please pick another.',
+      });
+      return;
+    }
+
     dispatch({ type: 'submitStart' });
 
     try {
@@ -253,6 +275,9 @@ export function WeekGrid({ initial, hostEmail }: WeekGridProps) {
         email: email.trim(),
         startAtUTC: state.selectedSlotUTC,
         visitorTimezone: visitorTZ,
+        slotToken,
+        formDwellMs: extras.formDwellMs,
+        company: extras.company,
       });
 
       if (!result.ok) {
@@ -279,26 +304,33 @@ export function WeekGrid({ initial, hostEmail }: WeekGridProps) {
           clearSelection: false,
           phase: {
             kind: 'error',
+            // `spam` is intentionally indistinguishable from `validation` at
+            // the UI layer — telling bots which filter tripped is a gift to
+            // them. Real humans land here as vanishingly rare noise.
             message:
               result.reason === 'validation'
                 ? result.message ?? 'Please check the details.'
-                : 'Something went wrong. Try again in a moment.',
+                : result.reason === 'spam'
+                  ? 'Please check the details.'
+                  : 'Something went wrong. Try again in a moment.',
           },
         });
         return;
       }
 
-      const slotLabel = selectedSlot?.fullLabel ?? 'Your call';
-      dispatch({
-        type: 'confirm',
-        confirmation: {
-          slotLabel,
-          name: name.trim(),
-          email: email.trim(),
-          links: result.links,
-          emailSent: result.emailSent,
-        },
-      });
+      const payload: ConfirmationPayload = {
+        slotLabel: selectedSlot?.fullLabel ?? 'Your call',
+        name: name.trim(),
+        email: email.trim(),
+        links: result.links,
+        emailSent: result.emailSent,
+      };
+
+      if (onConfirmed) {
+        onConfirmed(payload);
+      } else {
+        dispatch({ type: 'confirm', confirmation: payload });
+      }
     } catch (e) {
       console.error('[LetsTalk] submit failed', e);
       dispatch({
@@ -310,13 +342,17 @@ export function WeekGrid({ initial, hostEmail }: WeekGridProps) {
         },
       });
     }
-  }, [state.selectedSlotUTC, state.form, state.weekISO, selectedSlot, visitorTZ]);
+  }, [
+    state.selectedSlotUTC,
+    state.form,
+    state.weekISO,
+    selectedSlot,
+    visitorTZ,
+    availability.slotTokens,
+    onConfirmed,
+  ]);
 
   const handleCancel = useCallback(() => {
-    dispatch({ type: 'reset' });
-  }, []);
-
-  const handleBookAnother = useCallback(() => {
     dispatch({ type: 'reset' });
   }, []);
 
@@ -328,14 +364,6 @@ export function WeekGrid({ initial, hostEmail }: WeekGridProps) {
   const isSubmitting = state.phase.kind === 'submitting';
   const confirmed = state.phase.kind === 'confirmed' ? state.phase.confirmation : null;
 
-  const metaSubtitle = useMemo(
-    () =>
-      `Shown in your time (${visitorTZ}) · Business hours ${
-        availability.businessTimezone
-      } 10:00–15:00`,
-    [visitorTZ, availability.businessTimezone],
-  );
-
   // ── Render ─────────────────────────────────────────────────────────────
 
   const gridRef = useRef<HTMLDivElement>(null);
@@ -343,72 +371,93 @@ export function WeekGrid({ initial, hostEmail }: WeekGridProps) {
   return (
     <div ref={gridRef} className={styles.root} data-phase={state.phase.kind}>
       {confirmed ? (
-        <>
-          <Confirmation
-            slotLabel={confirmed.slotLabel}
-            name={confirmed.name}
-            email={confirmed.email}
-            emailSent={confirmed.emailSent}
-            links={confirmed.links}
-            hostEmail={hostEmail}
-          />
-          <div className={styles.bookAgain}>
-            <button type="button" onClick={handleBookAnother} className={styles.bookAgainBtn}>
-              Book another time
-            </button>
-          </div>
-        </>
+        <Confirmation
+          slotLabel={confirmed.slotLabel}
+          name={confirmed.name}
+          email={confirmed.email}
+          emailSent={confirmed.emailSent}
+          links={confirmed.links}
+          hostEmail={hostEmail}
+        />
       ) : (
         <>
-          <div className={styles.subtitle}>{metaSubtitle}</div>
-
-          <div className={styles.navRow}>
-            <WeekNav
-              rangeLabel={weekRangeLabel}
-              prevDisabled={prevDisabled}
-              nextDisabled={nextDisabled}
-              onPrev={() => goToWeek(-1)}
-              onNext={() => goToWeek(1)}
+          <div
+            className={styles.gridFrame}
+            aria-busy={isNavPending || undefined}
+            style={
+              {
+                '--_day-cols': BUSINESS_DAYS.length,
+                '--_time-rows': SLOTS_PER_DAY,
+              } as CSSProperties
+            }
+          >
+            <NavArrow
+              direction="prev"
+              disabled={prevDisabled}
+              onClick={() => goToWeek(-1)}
               pending={isNavPending}
+              className={styles.prevArrow}
             />
-          </div>
 
-          <div className={styles.gridFrame} aria-busy={isNavPending || undefined}>
-            {/* Day headers */}
+            {/* Day headers — horizontal axis (X) */}
             <div className={styles.dayHeaders} role="presentation">
               {slots
                 .filter((s) => s.slotIndex === 0)
                 .map((s) => (
-                  <div key={s.dayIndex} className={styles.dayHeader}>
+                  <div
+                    key={s.dayIndex}
+                    className={styles.dayHeader}
+                    data-day-index={s.dayIndex}
+                  >
                     <span className={styles.dayName}>{s.dayName}</span>
                     <span className={styles.dayDate}>{s.dayDate}</span>
                   </div>
                 ))}
             </div>
 
-            {/* Time rail */}
+            <NavArrow
+              direction="next"
+              disabled={nextDisabled}
+              onClick={() => goToWeek(1)}
+              pending={isNavPending}
+              className={styles.nextArrow}
+            />
+
+            {/* Time rail — vertical axis (Y). The am/pm suffix is split into
+                its own span so it can hide on narrow viewports. */}
             <div className={styles.timeRail} aria-hidden>
               {slots
                 .filter((s) => s.dayIndex === 0)
-                .map((s) => (
-                  <div key={s.slotIndex} className={styles.timeTick}>
-                    {s.timeShortBusiness}
-                  </div>
-                ))}
+                .map((s) => {
+                  const [time, period] = splitTimeAndPeriod(s.timeShortBusiness);
+                  return (
+                    <div
+                      key={s.slotIndex}
+                      className={styles.timeTick}
+                      data-slot-index={s.slotIndex}
+                    >
+                      <span>{time}</span>
+                      {period ? (
+                        <span className={styles.timeTickPeriod}>{period}</span>
+                      ) : null}
+                    </div>
+                  );
+                })}
             </div>
 
-            {/* Grid */}
+            {/* Grid — reordered time-major (days across, times down) */}
             <div
               className={styles.grid}
               role="grid"
               aria-label={`Available times, week of ${weekRangeLabel}`}
             >
-              {slots.map((s) => (
+              {reorderSlotsForGrid(slots).map((s) => (
                 <Slot
                   key={s.utc}
                   state={resolveSlotState(s, state, availability, mounted)}
                   label={s.fullLabel}
-                  timeShort={s.timeShort}
+                  dayIndex={s.dayIndex}
+                  slotIndex={s.slotIndex}
                   onSelect={() => handleSelect(s.utc)}
                 />
               ))}
@@ -421,10 +470,11 @@ export function WeekGrid({ initial, hostEmail }: WeekGridProps) {
             </p>
           ) : null}
 
-          {selectedSlot ? (
-            <div className={styles.formSurface}>
+          <BookingPopup open={!!selectedSlot} onClose={handleCancel}>
+            {selectedSlot ? (
               <BookingForm
-                slotLabel={selectedSlot.fullLabel}
+                dateLabel={selectedSlot.dateLabel}
+                timeLabel={selectedSlot.timeLabel}
                 name={state.form.name}
                 email={state.form.email}
                 submitting={isSubmitting}
@@ -434,10 +484,9 @@ export function WeekGrid({ initial, hostEmail }: WeekGridProps) {
                 }
                 onChange={handleFormChange}
                 onSubmit={handleSubmit}
-                onCancel={handleCancel}
               />
-            </div>
-          ) : null}
+            ) : null}
+          </BookingPopup>
         </>
       )}
 
@@ -473,7 +522,11 @@ type SlotModel = {
   timeShort: string;
   /** Short label in the business timezone, for the time rail. */
   timeShortBusiness: string;
-  /** Full accessible label, visitor-local + business hours. */
+  /** Date portion for the booking popup, e.g. "Mon 28 Apr". */
+  dateLabel: string;
+  /** Time range + timezone for the booking popup, e.g. "10:00–10:30 am (AEST)". */
+  timeLabel: string;
+  /** Full accessible label, visitor-local. */
   fullLabel: string;
 };
 
@@ -483,45 +536,49 @@ function buildSlotModels(avail: WeekAvailability, visitorTZ: string): SlotModel[
 
   const slots: SlotModel[] = [];
 
-  const dayNameFmt = new Intl.DateTimeFormat('en-GB', {
+  const dayNameFmt = new Intl.DateTimeFormat('en-AU', {
     weekday: 'short',
     timeZone: visitorTZ,
   });
-  const dayDateFmt = new Intl.DateTimeFormat('en-GB', {
-    day: '2-digit',
+  const dayDateFmt = new Intl.DateTimeFormat('en-AU', {
+    day: 'numeric',
     month: 'short',
     timeZone: visitorTZ,
   });
-  const visitorTimeFmt = new Intl.DateTimeFormat('en-GB', {
-    hour: '2-digit',
+  const visitorTimeFmt = new Intl.DateTimeFormat('en-AU', {
+    hour: 'numeric',
     minute: '2-digit',
-    hour12: false,
+    hour12: true,
     timeZone: visitorTZ,
   });
-  const businessTimeFmt = new Intl.DateTimeFormat('en-GB', {
-    hour: '2-digit',
+  const businessTimeFmt = new Intl.DateTimeFormat('en-AU', {
+    hour: 'numeric',
     minute: '2-digit',
-    hour12: false,
+    hour12: true,
     timeZone: businessTZ,
+  });
+  const visitorTzNameFmt = new Intl.DateTimeFormat('en-AU', {
+    timeZone: visitorTZ,
+    timeZoneName: 'short',
+  });
+
+  // Anchor to the host-local Monday at `BUSINESS_HOUR_START`, then walk the
+  // grid in host-local units so DST transitions are handled by the calendar
+  // arithmetic rather than after-the-fact hour correction.
+  const dayZeroStart = fromAbsolute(weekStartMs, businessTZ).set({
+    hour: BUSINESS_HOUR_START,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
   });
 
   BUSINESS_DAYS.forEach((_, dayIndex) => {
     for (let slotIndex = 0; slotIndex < SLOTS_PER_DAY; slotIndex++) {
-      // Align to business-zone grid via offsetting from the week start in
-      // its business-local clock — the server guarantees these are real
-      // 10:00–15:00 slots in that zone.
-      const approximateMs =
-        weekStartMs +
-        dayIndex * 24 * 60 * 60 * 1000 +
-        10 * 60 * 60 * 1000 + // 10:00 anchor
-        slotIndex * SLOT_MINUTES * 60 * 1000;
-
-      // Re-resolve the instant precisely through the business tz using
-      // @internationalized/date to guard DST transitions.
-      const businessZoned = fromAbsolute(approximateMs, businessTZ);
-      // If a DST shift moved us off the 10:00 boundary, re-anchor.
-      const hourOffset = businessZoned.hour - 10;
-      const correctedMs = approximateMs - hourOffset * 60 * 60 * 1000;
+      const slotZoned = dayZeroStart.add({
+        days: dayIndex,
+        minutes: slotIndex * SLOT_MINUTES,
+      });
+      const correctedMs = slotZoned.toDate().getTime();
 
       const date = new Date(correctedMs);
       const utc = date.toISOString();
@@ -534,7 +591,13 @@ function buildSlotModels(avail: WeekAvailability, visitorTZ: string): SlotModel[
       const endDate = new Date(correctedMs + SLOT_MINUTES * 60 * 1000);
       const endShort = visitorTimeFmt.format(endDate);
 
-      const fullLabel = `${dayName} ${dayDate} · ${timeShort}–${endShort} (your time)`;
+      const tzName =
+        visitorTzNameFmt
+          .formatToParts(date)
+          .find((p) => p.type === 'timeZoneName')?.value ?? visitorTZ;
+      const dateLabel = `${dayName} ${dayDate}`;
+      const timeLabel = `${timeShort}–${endShort} (${tzName})`;
+      const fullLabel = `${dateLabel} · ${timeLabel}`;
 
       slots.push({
         utc,
@@ -545,6 +608,8 @@ function buildSlotModels(avail: WeekAvailability, visitorTZ: string): SlotModel[
         dayDate,
         timeShort,
         timeShortBusiness,
+        dateLabel,
+        timeLabel,
         fullLabel,
       });
     }
@@ -569,5 +634,41 @@ function resolveSlotState(
     return state.phase.kind === 'submitting' ? 'submitting' : 'selected';
   }
   return 'free';
+}
+
+/**
+ * Reorder slots from day-major to time-major for the CSS grid layout.
+ *
+ * Input order (day-major):  Mon-10:00, Mon-10:30, ..., Mon-14:30, Tue-10:00, ...
+ * Output order (time-major): Mon-10:00, Tue-10:00, ..., Fri-10:00, Mon-10:30, ...
+ *
+ * This fills a `BUSINESS_DAYS.length`-col × `SLOTS_PER_DAY`-row grid correctly
+ * with days across and times down.
+ */
+function reorderSlotsForGrid(slots: SlotModel[]): SlotModel[] {
+  const reordered: SlotModel[] = [];
+
+  for (let slotIndex = 0; slotIndex < SLOTS_PER_DAY; slotIndex++) {
+    for (let dayIndex = 0; dayIndex < BUSINESS_DAYS.length; dayIndex++) {
+      const slot = slots.find(
+        (s) => s.dayIndex === dayIndex && s.slotIndex === slotIndex
+      );
+      if (slot) reordered.push(slot);
+    }
+  }
+
+  return reordered;
+}
+
+/**
+ * Split a formatted time like "10:30 am" into ["10:30", "am"] so the rail
+ * can render the period marker as a separately styleable span (e.g. hidden
+ * on narrow viewports). Falls back to `[input, null]` if the string has no
+ * period suffix — defensive against locale-specific formats.
+ */
+function splitTimeAndPeriod(formatted: string): [string, string | null] {
+  const idx = formatted.lastIndexOf(' ');
+  if (idx === -1) return [formatted, null];
+  return [formatted.slice(0, idx), formatted.slice(idx + 1)];
 }
 

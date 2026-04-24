@@ -32,27 +32,13 @@ export function Confirmation({
 }: ConfirmationProps) {
   return (
     <div className={styles.root} role="status" aria-live="polite">
-      <p className={styles.eyebrow}>CONFIRMED</p>
-
-      <h3 className={styles.title}>
-        <span className={styles.emberWord}>Booked</span> —
-        <br />
-        see you on the call.
-      </h3>
-
-      <dl className={styles.details}>
-        <div className={styles.detail}>
-          <dt className={styles.detailLabel}>When</dt>
-          <dd className={styles.detailValue}>{slotLabel}</dd>
-        </div>
-        <div className={styles.detail}>
-          <dt className={styles.detailLabel}>Who</dt>
-          <dd className={styles.detailValue}>
-            {name}
-            <span className={styles.detailSub}>{email}</span>
-          </dd>
-        </div>
-      </dl>
+      <div className={styles.header}>
+        <h3 className={styles.title}>Meeting confirmed.</h3>
+        <h3 className={styles.title}>
+          Please add the meeting to your calendar,
+          or check your email for details.
+        </h3>
+      </div>
 
       <div className={styles.add}>
         <p className={styles.addLabel}>Add to calendar</p>
@@ -78,16 +64,22 @@ export function Confirmation({
         </ul>
       </div>
 
-      {!emailSent ? (
-        <p className={styles.softNotice}>
-          The booking is saved, but the confirmation email didn&apos;t send. Reach
-          me at{' '}
-          <a href={`mailto:${hostEmail}`} className={styles.mailLink}>
-            {hostEmail}
-          </a>{' '}
-          if you need anything.
-        </p>
-      ) : null}
+      <dl className={styles.details}>
+        <div className={styles.detail}>
+          <dt className={styles.detailLabel}>When</dt>
+          <dd className={styles.detailValue}>
+            {slotLabel.split(' · ')[0]}
+            <span className={styles.detailValue}>{slotLabel.split(' · ')[1]}</span>
+          </dd>
+        </div>
+        <div className={styles.detail}>
+          <dt className={styles.detailLabel}>Who</dt>
+          <dd className={styles.detailValue}>
+            {name}
+            <span className={styles.detailValue}>{email}</span>
+          </dd>
+        </div>
+      </dl>
     </div>
   );
 }

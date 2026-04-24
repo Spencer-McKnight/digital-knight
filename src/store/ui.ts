@@ -16,14 +16,11 @@ export const CURSOR_VARIANTS = [
 export type CursorVariant = (typeof CURSOR_VARIANTS)[number];
 
 interface UiState {
-  /** True once the DK → DIGITAL KNIGHT loading sequence has settled. */
-  loadingComplete: boolean;
   /** Current cursor ring treatment — drives the custom cursor. */
   cursorVariant: CursorVariant;
   /** Mirror of `prefers-reduced-motion`; read from `lib/motion.ts` on boot. */
   reducedMotion: boolean;
 
-  setLoadingComplete: (value: boolean) => void;
   setCursorVariant: (variant: CursorVariant) => void;
   setReducedMotion: (value: boolean) => void;
 }
@@ -34,11 +31,9 @@ interface UiState {
  * that multiple independent components must read.
  */
 export const useUiStore = create<UiState>((set) => ({
-  loadingComplete: false,
   cursorVariant: 'default',
   reducedMotion: false,
 
-  setLoadingComplete: (value) => set({ loadingComplete: value }),
   setCursorVariant: (variant) => set({ cursorVariant: variant }),
   setReducedMotion: (value) => set({ reducedMotion: value }),
 }));

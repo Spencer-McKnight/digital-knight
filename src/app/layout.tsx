@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import { aeonik } from './fonts';
+import { GtagLazyClient } from '@/lib/google/GtagLazyClient';
 import './globals.scss';
-import { Loader } from '@/components/Loader';
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
 import { Cursor } from '@/components/Cursor';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://digital-knight.au'),
@@ -48,14 +49,21 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={aeonik.variable}>
+    <html lang="en" className={aeonik.variable} style={{ backgroundColor: '#FFEDD7' }}>
+      <head>
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://www.google-analytics.com" />
+      </head>
       <body>
-        <Loader />
-        <Nav />
-        <Cursor />
-        {children}
+        <div style={{ minHeight: '100vh', backgroundColor: '#FFEDD7' }}>
+          <Nav />
+          <Cursor />
+          {children}
+        </div>
         <Footer />
+        <Analytics />
       </body>
+      <GtagLazyClient gaId="G-FDR2H865P2" />
     </html>
   );
 }

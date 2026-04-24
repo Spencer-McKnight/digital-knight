@@ -1,167 +1,210 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { gsap, ScrollTrigger } from '@/lib/gsap';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ScrollTrigger } from '@/lib/gsap';
+import { SERVICES } from './content';
 import styles from './Services.module.scss';
 
-type Service = {
-  n: string;
-  eyebrow: string;
-  title: string;
-  ember: string; // one ember word inside the title
-  body: string;
-  rail: ReadonlyArray<string>;
-};
+type Service = (typeof SERVICES)[number];
+type PhaseState = 'collapsed' | 'active' | 'incoming';
 
-const SERVICES: ReadonlyArray<Service> = [
-  {
-    n: '01',
-    eyebrow: 'Partnership',
-    title: 'Long-term digital partnerships.',
-    ember: 'partnerships',
-    body: 'Advisory, ideation, strategy and development under one continuing engagement — so the work compounds instead of resetting every quarter.',
-    rail: ['Advisory', 'Ideation', 'Strategy', 'Development'],
-  },
-  {
-    n: '02',
-    eyebrow: 'Web craft',
-    title: 'Websites built as the pillar of the business.',
-    ember: 'pillar',
-    body: 'Design, build, evolve and maintain — a single surface the rest of your digital work can relate through. No CMS sprawl, no template drift.',
-    rail: ['Design', 'Build', 'Evolve', 'Maintain'],
-  },
-  {
-    n: '03',
-    eyebrow: 'AI integration',
-    title: 'Process integrations that evolve past manual labour.',
-    ember: 'evolve',
-    body: 'Agents, pipelines and production tooling wired into the business you actually run — prepared to build on ideas, not just demo them.',
-    rail: ['Agents', 'Pipelines', 'Operations', 'Tooling'],
-  },
-  {
-    n: '04',
-    eyebrow: 'Research',
-    title: 'Evolution research — understand the market, set the trend.',
-    ember: 'trend',
-    body: 'Specialist market and technology research. Input new ideas. Pressure-test assumptions. Inform every other decision in the engagement.',
-    rail: ['Markets', 'Signals', 'Reports', 'Briefs'],
-  },
-];
+const phaseState = (i: number, active: number): PhaseState =>
+  i < active ? 'collapsed' : i === active ? 'active' : 'incoming';
 
-/**
- * Services — a four-pillar act (`design.md` §9).
- *
- *   Numbered, structured, trustable — Supernova clarity crossed with the
- *   studio's forge aesthetic. One idea per row, one ember word per row. Each
- *   pillar has a horizontal "rail" of its constituent verbs, drawing in as
- *   the row enters view.
- *
- *   Kinetic: a single reveal per row on enter. No compounding between rows.
- */
 export function Services() {
-  const rootRef = useRef<HTMLElement>(null);
+  const rootRef = useRef<HTMLElement | null>(null);
+  const monumentRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [bgExtend, setBgExtend] = useState(false);
+  const [isDesktopView, setIsDesktopView] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 48rem)');
+    const apply = () => setIsDesktopView(mql.matches);
+    apply();
+    mql.addEventListener('change', apply);
+    return () => mql.removeEventListener('change', apply);
+  }, []);
+
+  const getThreshold = useCallback(() => {
+    if (window.matchMedia('(min-width: 48rem)').matches) return window.innerHeight / 2;
+    const root = rootRef.current;
+    if (root) {
+      const v = parseFloat(getComputedStyle(root).getPropertyValue('--services-nav-offset'));
+      if (Number.isFinite(v) && v > 0) return v + 8;
+    }
+    return 96;
+  }, []);
+
+  const scrollToPhase = useCallback(
+    (index: number) => {
+      const monument = monumentRefs.current[index];
+      if (!monument) return;
+      const y = monument.getBoundingClientRect().top + window.scrollY - getThreshold() + 4;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    },
+    [getThreshold],
+  );
 
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
 
-    const ctx = gsap.context(() => {
-      const rows = root.querySelectorAll<HTMLElement>('[data-row]');
-      rows.forEach((row) => {
-        const n = row.querySelector('[data-row-n]');
-        const title = row.querySelector('[data-row-title]');
-        const rule = row.querySelector('[data-row-rule]');
-        const body = row.querySelector('[data-row-body]');
-        const chips = row.querySelectorAll('[data-row-chip]');
-
-        gsap.set([n, title, body], { y: 20, opacity: 0 });
-        gsap.set(rule, { scaleX: 0, transformOrigin: 'left center' });
-        gsap.set(chips, { y: 10, opacity: 0 });
-
-        ScrollTrigger.create({
-          trigger: row,
-          start: 'top 78%',
-          once: true,
-          animation: gsap
-            .timeline({ defaults: { ease: 'expo.out' } })
-            .to(rule, { scaleX: 1, duration: 0.6 })
-            .to(n, { y: 0, opacity: 1, duration: 0.65 }, '<')
-            .to(title, { y: 0, opacity: 1, duration: 0.85 }, '<+0.08')
-            .to(body, { y: 0, opacity: 1, duration: 0.7 }, '<+0.15')
-            .to(
-              chips,
-              { y: 0, opacity: 1, duration: 0.55, stagger: 0.08 },
-              '<+0.05',
-            ),
-        });
+    const compute = () => {
+      const threshold = getThreshold();
+      let idx = 0;
+      monumentRefs.current.forEach((monument, i) => {
+        if (monument && monument.getBoundingClientRect().top <= threshold) idx = i;
       });
-    }, rootRef);
+      setActiveIndex((prev) => (prev === idx ? prev : idx));
 
-    return () => ctx.revert();
-  }, []);
+      // Extend the bg-backtrack only after the active monument has been stuck
+      // for at least its own height — otherwise it covers the outgoing
+      // monument/content during the handoff. stuckDepth is measured as the
+      // gap the sticky monument has opened between its own top and the top
+      // of its phase container (grows from 0 once sticky kicks in).
+      const active = monumentRefs.current[idx];
+      const phase = active?.parentElement ?? null;
+      let extend = false;
+      if (active && phase) {
+        const stuckDepth =
+          active.getBoundingClientRect().top - phase.getBoundingClientRect().top;
+        extend = stuckDepth > active.offsetHeight;
+      }
+      setBgExtend((prev) => (prev === extend ? prev : extend));
+    };
+
+    const st = ScrollTrigger.create({
+      trigger: root,
+      start: 'top bottom',
+      end: 'bottom top',
+      onUpdate: compute,
+    });
+    compute();
+
+    return () => st.kill();
+  }, [getThreshold]);
 
   return (
     <section
-      ref={rootRef}
       id="services"
       data-ground="page"
       className={styles.root}
-      aria-labelledby="services-title"
+      aria-labelledby="services-heading"
+      ref={rootRef}
     >
-      <header className={styles.header}>
-        <p className={styles.eyebrow}>
-          <span className={styles.eyebrowDot} aria-hidden />
-          Services · The studio&apos;s four pillars
-        </p>
-        <h2 id="services-title" className={styles.sectionTitle}>
-          Spencer McKnight&apos;s personal agency,
-          <br />
-          built around <span className={styles.sectionEmber}>four commitments</span>.
-        </h2>
-      </header>
+      <div className={styles.inner}>
+        <header className={styles.intro}>
+          <p className={styles.eyebrow}>The partnership</p>
+          <h2 id="services-heading" className={styles.heading}>
+            Systematic <span className={styles.ember}>Partnership</span>
+          </h2>
+        </header>
 
-      <ol className={styles.list}>
-        {SERVICES.map((s) => (
-          <li key={s.n} data-row className={styles.row}>
-            <span data-row-rule className={styles.rowRule} aria-hidden />
+        <ol className={styles.stage} role="list" aria-label="Phases">
+          {SERVICES.map((service, i) => {
+            const state = phaseState(i, activeIndex);
+            return (
+              <li
+                key={service.id}
+                className={styles.phase}
+                data-state={state}
+                data-service={service.id}
+                data-bg-extend={state === 'active' && bgExtend ? 'true' : undefined}
+              >
+                <button
+                  type="button"
+                  className={styles.monument}
+                  ref={(el) => {
+                    monumentRefs.current[i] = el;
+                  }}
+                  onClick={() => scrollToPhase(i)}
+                  aria-current={state === 'active' ? 'true' : undefined}
+                  aria-label={`Open ${service.label}`}
+                >
+                  <span className={styles.monumentInner} aria-hidden="true">
+                    <span className={styles.monumentGhost}>{service.label}</span>
+                    <span className={styles.monumentLabel}>{service.label}</span>
+                  </span>
+                  <span className={styles.srOnly}>{service.label}</span>
+                </button>
 
-            <span data-row-n className={styles.rowN}>
-              {s.n}
-            </span>
-
-            <div className={styles.rowContent}>
-              <p className={styles.rowEyebrow}>{s.eyebrow}</p>
-              <h3 data-row-title className={styles.rowTitle}>
-                {renderWithEmber(s.title, s.ember)}
-              </h3>
-              <p data-row-body className={styles.rowBody}>
-                {s.body}
-              </p>
-            </div>
-
-            <ul className={styles.rowRail} aria-label={`${s.eyebrow} rail`}>
-              {s.rail.map((r) => (
-                <li key={r} data-row-chip className={styles.rowChip}>
-                  {r}
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ol>
+                <div
+                  className={styles.content}
+                  aria-hidden={isDesktopView && state !== 'active' ? true : undefined}
+                  aria-labelledby={`service-${service.id}`}
+                >
+                  <span id={`service-${service.id}`} className={styles.srOnly}>
+                    {service.label}
+                  </span>
+                  <ServiceBody service={service} />
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </section>
   );
 }
 
-function renderWithEmber(text: string, ember: string) {
-  const lower = text.toLowerCase();
-  const idx = lower.indexOf(ember.toLowerCase());
-  if (idx === -1) return text;
+function ServiceBody({ service }: { service: Service }) {
   return (
-    <>
-      {text.slice(0, idx)}
-      <span className={styles.emberWord}>{text.slice(idx, idx + ember.length)}</span>
-      {text.slice(idx + ember.length)}
-    </>
+    <div className={styles.contentInner}>
+      {service.lede ? <p className={styles.lede}>{service.lede}</p> : null}
+      {service.body?.map((p, idx) => (
+        <p key={idx} className={styles.body}>
+          {p}
+        </p>
+      ))}
+      {service.pop ? <Pop pop={service.pop} /> : null}
+    </div>
+  );
+}
+
+function Pop({ pop }: { pop: NonNullable<Service['pop']> }) {
+  if (pop.kind === 'questions') {
+    return (
+      <div className={styles.popQuestions}>
+        {pop.heading ? <p className={styles.popHeading}>{pop.heading}</p> : null}
+        <ul className={styles.questionList} role="list">
+          {pop.items.map((q) => (
+            <li key={q} className={styles.question}>
+              {q}
+              <span className={styles.questionMark} aria-hidden="true">
+                ?
+              </span>
+            </li>
+          ))}
+        </ul>
+        {pop.coda ? <p className={styles.popCoda}>{pop.coda}</p> : null}
+      </div>
+    );
+  }
+
+  if (pop.kind === 'tags') {
+    return (
+      <div className={styles.popTags}>
+        {pop.heading ? <p className={styles.popHeading}>{pop.heading}</p> : null}
+        <ul className={styles.tagList} role="list">
+          {pop.items.map((t) => (
+            <li key={t} className={styles.tag}>
+              {t}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  return (
+    <ul className={styles.marks} role="list">
+      {pop.items.map((m) => (
+        <li key={m} className={styles.mark}>
+          <span className={styles.markDash} aria-hidden="true" />
+          <span>{m}</span>
+        </li>
+      ))}
+    </ul>
   );
 }

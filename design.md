@@ -20,7 +20,7 @@ A modern forge. Antique paper, charcoal stone, blackened steel, one ember of ora
 
 **Three inherited instincts, used as seasoning, not recipe:**
 
-- _Lusion_ — cinema. Restraint, atmosphere, the reel is the argument.
+- _Lusion_ — cinema. Restraint, atmosphere.
 - _Oryzo_ — wit. Each section is its own small demonstration of craft.
 - _Supernova_ — clarity. Numbered, structured, trustable.
 
@@ -78,16 +78,16 @@ Four anchors. Everything else is a mix of these four.
 ## 4. Logo & Wordmark
 
 - Wordmark: `DIGITAL KNIGHT`, Aeonik Medium, wide tracking, Iron on Page.
-- `DK` short form exists only inside the loading sequence and as favicon.
+- `DK` short form is reserved for compact UI marks (small-screen nav) and favicon only.
 - The wordmark stands alone — no box, no lockup, generous air.
 
 ---
 
-## 5. Loading Sequence
+## 5. Initial Load
 
-Locked as a beat, open as an execution. The beat:
-
-`DK` appears centered → expands into `DIGITAL KNIGHT` at monument scale → holds → smooth element transition and settles to the top-left nav position → an ember hairline draws beneath the nav, echoed again at the top of the footer.
+- Nav assumes Page (light) until section-ground detection refines it.
+- Hero copy and CTA render in-place on first paint (no post-hydration hide/reveal).
+- Motion is reserved for scroll-enter moments and interaction feedback, not startup gating.
 
 ---
 
@@ -125,7 +125,7 @@ The library is intentionally small. Locked shapes; open contents.
 
 - **Button.** Square corners, 1px stroke, no rounding, no shadow. Primary (solid), Secondary (outline), Ghost (label + arrow). Inverts cleanly on Stone. Hover and press states are felt, not loud.
 - **Navigation.** Top-left wordmark, top-right links in meta type. Transparent over Page; hairline over Stone. Shrinks on scroll-down, restores on scroll-up. Ember hairline marks the active section.
-- **Scrollbar.** Custom, thin, right-edge inset. Invisible unless scrolling or approached. Never reserves layout space.
+- **Scrollbar.** Custom, thin, right-edge inset. Invisible unless scrolling or approached. Reserves a stable gutter to avoid CLS.
 - **Footer.** Stone ground. Locks to the bottom once fully in view — a landing, not a sticky bar. Mirrors the nav's ember hairline at its top edge.
 - **Card / Tile.** Defined by hairlines, not fills. Hover: slight lift, hairline becomes ember. Interior layout is free — cards are a bespoke canvas.
 - **Input.** Hairline-only, no box. Label above in meta. Focus thickens the hairline and turns it ember.
@@ -270,6 +270,12 @@ Sections §§1–8, §10–§13 are the frame. Sections §9 and §14 are the pai
 | `--space-9`  | `8rem` / 128px  | Section breathing room        |
 | `--space-10` | `12rem` / 192px | Hero vertical padding         |
 
+**Semantic.** One override-point for the rhythm of every Act:
+
+| Token             | Value                              | Role                                                                                     |
+| ----------------- | ---------------------------------- | ---------------------------------------------------------------------------------------- |
+| `--space-section` | `clamp(4rem, 1.9rem + 9vw, 10rem)` | Block padding for Acts — fluid 64px → 160px, symmetric. Consumed via `section-pad(act)`. |
+
 ---
 
 ### Motion — `--dur-*`, `--ease-*`
@@ -279,7 +285,7 @@ Sections §§1–8, §10–§13 are the frame. Sections §9 and §14 are the pai
 | `--dur-state`   | `80ms`                          | Hover, focus — immediate                      |
 | `--dur-element` | `220ms`                         | Card lift, cursor fill, button                |
 | `--dur-scene`   | `500ms`                         | Section entrance, nav shrink                  |
-| `--dur-epic`    | `1200ms`                        | Loader, sparingly used sequences              |
+| `--dur-epic`    | `1200ms`                        | Sparingly used long-form sequences            |
 | `--ease-house`  | `cubic-bezier(0.16, 1, 0.3, 1)` | Fast-out-slow-in. Everywhere except marquees. |
 | `--ease-linear` | `linear`                        | Infinite marquees only                        |
 

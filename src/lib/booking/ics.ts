@@ -16,6 +16,10 @@ export type BuildICSInput = {
   uid: string;
   title: string;
   description: string;
+  /** Physical/virtual location — the Google Meet URL for our case. */
+  location?: string;
+  /** Optional URL attached as `URL:` — surfaced by Apple Calendar as a click target. */
+  url?: string;
   startUTC: string;
   endUTC: string;
   organizer: { name: string; email: string };
@@ -41,6 +45,8 @@ export function buildICS(input: BuildICSInput): string {
     uid: `${input.uid}@${input.domain}`,
     title: input.title,
     description: input.description,
+    location: input.location,
+    url: input.url,
     start: toTuple(input.startUTC),
     end: toTuple(input.endUTC),
     startInputType: 'utc',

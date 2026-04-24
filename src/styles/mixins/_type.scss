@@ -15,7 +15,7 @@
 //
 // VARIANT ROLES:
 //
-//   @include type(hero-display) — Larger hero for primary page titles (Hero, Loader)
+//   @include type(hero-display) — Larger hero for primary page titles
 //   @include type(subsection)   — Between lede and section for sub-heads
 //   @include type(ui)           — Meta-scale without uppercase — for nav, buttons, chips
 //
@@ -142,7 +142,7 @@
 
   // ── VARIANT ROLES ──────────────────────────────────────────────────────────
   } @else if $role == hero-display {
-    // Larger hero for primary showcase headings (Hero, Loader sign-off)
+    // Larger hero for primary showcase headings
     font-size: var(--t-hero-display);
     line-height: var(--t-leading-tight);
     letter-spacing: var(--t-tracking-tight);

@@ -1,38 +1,5 @@
 @use 'mixins' as *;
 
-.root {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-2) var(--space-3);
-  position: relative;
-
-  // Subtle hairline that doubles as a resting state frame.
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 1px;
-    background: var(--ink-rule);
-  }
-
-  &[data-pending] {
-    opacity: 0.6;
-  }
-}
-
-.range {
-  @include type(ui);
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-iron);
-  letter-spacing: 0.02em;
-  font-weight: var(--t-weight-medium);
-  min-width: 10ch;
-  text-align: center;
-}
-
 .btn {
   display: inline-flex;
   align-items: center;
@@ -46,7 +13,12 @@
   transition:
     color var(--dur-state) var(--ease-house),
     border-color var(--dur-state) var(--ease-house),
-    transform var(--dur-element) var(--ease-house);
+    transform var(--dur-element) var(--ease-house),
+    opacity var(--dur-state) var(--ease-house);
+
+  &[data-pending] {
+    opacity: 0.6;
+  }
 
   &:hover:not(:disabled),
   &:focus-visible:not(:disabled) {
