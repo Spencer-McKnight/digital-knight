@@ -4,7 +4,7 @@ Heading: Systematic Partnership
 
 Each idea listen,ideate,create,evolve is a monument that at first animates in nicely. Then as you scroll, the monument typography raises before slotting itself fixed to the top-left where only the header is positioned in a verticle stacked portfolio-style assembly of each header.
 
-Each idea also has its own content area. Fundamentally a simple formatted description, but the "could my business" questions have their own visual pop, as well as the create technology labels.
+Each idea also has its own content area, which is linked within the same container. Fundamentally a simple formatted description, but the "could my business" questions have their own visual pop, as well as the create technology labels. This content fades away as the monument text slots into the left as a sticky header.
 
 Each content section doesn't need to be pinned to a viewport height.
 

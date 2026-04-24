@@ -9,7 +9,7 @@ import styles from './Button.module.scss';
 
 const DEFAULT_SCROLL_OFFSET = 0;
 
-type Variant = 'primary' | 'secondary' | 'ghost';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'ember';
 type Size = 'md' | 'lg';
 
 type SharedProps = {
@@ -38,7 +38,8 @@ export type Props = AnchorProps | ButtonProps;
  *
  * Spec — `design.md` §8:
  *   Square corners, 1px stroke, no rounding, no shadow. Inverts cleanly on
- *   Stone. Hover is felt, not loud. Ghost is label + arrow.
+ *   Stone. Hover is felt, not loud. Ghost is label + arrow. Ember matches
+ *   secondary’s outline treatment with ember stroke and fill sweep.
  *
  * Accepts either an `href` (renders `Link` / `<a>`) or button props. Size
  * and variant data-attributes drive every visual branch from `.module.scss`.

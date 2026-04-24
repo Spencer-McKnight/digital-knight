@@ -1,0 +1,438 @@
+@use 'mixins' as *;
+
+// ============================================================================
+// Services — Systematic Partnership.
+// ----------------------------------------------------------------------------
+// Two layers, one timeline:
+//
+//   ┌────────────────────────────────────────────────────────────┐
+//   │  [ .monuments ]            │   [ .contents ]                │
+//   │   sticky stack              │   4 tall content blocks       │
+//   │   Listen                    │   ── Listen's content         │
+//   │   Ideate                    │   ── Ideate's content         │
+//   │   Create                    │   ── Create's content         │
+//   │   Evolve                    │   ── Evolve's content         │
+//   └────────────────────────────────────────────────────────────┘
+//
+// `.monuments` is `position: sticky` with `top: <nav-offset>` inside `.stack`,
+// so the four-monument column is pinned for the entire section height.
+// Prior monuments therefore persist at their slots — exactly what the brief
+// describes: a "portfolio-style assembly of each header".
+//
+// `.contents` is a normal-flow column. Each `.content` block is tall enough
+// for the sticky handover to feel choreographed rather than abrupt. GSAP
+// drives the rise-and-compact + content-fade rails, scrubbed to real scroll.
+//
+// Evolve is the coda — its content holds open, giving the footer beneath a
+// quiet landing, per `services.md`.
+// ============================================================================
+
+// ── Section-local tunables ──────────────────────────────────────────────────
+
+.root {
+  // Height reserved above the first monument so it can "raise" without being
+  // clipped by the nav bar. Fluid with viewport.
+  --services-nav-offset: clamp(5rem, 6vh + 1rem, 6.5rem);
+
+  // Visual gap between each monument in the pinned stack.
+  --services-slot-gap: clamp(0.5rem, 0.6vw + 0.3rem, 1rem);
+
+  // Width of the monument column on desktop.
+  --services-gutter: clamp(13rem, 28vw, 24rem);
+
+  position: relative;
+  background: var(--ink-page);
+  color: var(--ink-iron);
+  @include section-pad(act);
+  overflow: clip;
+}
+
+// ── Intro ───────────────────────────────────────────────────────────────────
+
+.intro {
+  @include container;
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  margin-bottom: var(--space-7);
+
+  @include respond-to(md) {
+    margin-bottom: var(--space-9);
+  }
+}
+
+.eyebrow {
+  @include type(meta);
+  color: var(--ink-iron);
+  opacity: 0.6;
+}
+
+.heading {
+  @include type(hero);
+  max-width: 22ch;
+  color: var(--ink-iron);
+  margin: 0;
+}
+
+.ember {
+  color: var(--ink-ember);
+}
+
+// ── Stack: the two-layer grid ───────────────────────────────────────────────
+
+.stack {
+  @include container;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  column-gap: var(--space-6);
+  align-items: start;
+
+  @include respond-to(md) {
+    grid-template-columns: var(--services-gutter) minmax(0, 1fr);
+    column-gap: var(--space-7);
+  }
+}
+
+// ── Monuments column (sticky) ───────────────────────────────────────────────
+// On desktop: grid column 1, sticky, holds the vertical portfolio stack.
+// On mobile: grid row 1, sticky top, holds a slimmer stacked header so
+// content still breathes.
+
+.monuments {
+  position: sticky;
+  top: var(--services-nav-offset);
+  // Sticky inside grid: the monuments column self-aligns to the start. On
+  // desktop this gives us the pinned left rail; on mobile it's a pinned
+  // top bar that remains visible while its content scrolls past.
+  align-self: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--services-slot-gap);
+  z-index: 2;
+  // Let clicks pass through the empty air around the glyphs so the content
+  // column (on mobile especially) stays fully interactive.
+  pointer-events: none;
+
+  // Mobile: let the sticky column fall to a compact horizontal or wrapped
+  // stack so it doesn't eat a third of the viewport height. We keep the
+  // same vertical layout but shrink the monument scale aggressively (done
+  // via `--monument-base-scale` below).
+  --monument-base-scale: 0.42;
+  padding-block: var(--space-2) var(--space-3);
+  background: linear-gradient(
+    to bottom,
+    var(--ink-page) 0%,
+    var(--ink-page) 82%,
+    color-mix(in srgb, var(--ink-page) 0%, transparent) 100%
+  );
+
+  @include respond-to(md) {
+    --monument-base-scale: 1;
+    background: none;
+    padding-block: 0;
+    grid-column: 1;
+    grid-row: 1;
+    // Reserve vertical space so every monument has room to rise into its
+    // slot — the column is taller than the natural sum of slots so the
+    // reveal animation has headroom.
+    min-height: calc(var(--services-nav-offset) + 80vh);
+  }
+}
+
+.monument {
+  --monument-compact: 0;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  will-change: transform, opacity;
+}
+
+.monumentInner {
+  position: relative;
+  display: inline-block;
+  transform-origin: top left;
+  // The compact interpolation. At 0 the monument sits at its full
+  // cinematic scale; at 1 it sits in its pinned slot (scaled down by the
+  // `compact-factor`). `--monument-base-scale` lets the mobile layout
+  // start smaller so the sticky column doesn't overwhelm the viewport.
+  --compact-factor: 0.55;
+  transform: scale(
+    calc(var(--monument-base-scale) - (var(--compact-factor) * var(--monument-compact)))
+  );
+  transition: transform var(--dur-state) linear;
+}
+
+.monumentGhost,
+.monumentLabel {
+  display: block;
+  @include type(monument);
+  font-weight: var(--t-weight-medium);
+  line-height: 0.9;
+  letter-spacing: var(--t-tracking-tight);
+  color: var(--ink-iron);
+}
+
+.monumentGhost {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--ink-rule);
+  // The carved ghost fades as the monument compacts — the small pinned
+  // state doesn't need the extra depth; it would only read as noise.
+  opacity: calc(1 - var(--monument-compact));
+  pointer-events: none;
+}
+
+.monumentLabel {
+  position: relative;
+}
+
+// Ember hairline beneath the monument once it's compacted — marks the
+// phase as "completed" in the portfolio stack. Ember stays scarce: only
+// appears when compact > 0.
+.monument::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.2em;
+  width: calc(0.8em + 1.6em * var(--monument-compact));
+  height: 1px;
+  background: var(--ink-ember);
+  opacity: var(--monument-compact);
+  pointer-events: none;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ── Contents column ─────────────────────────────────────────────────────────
+
+.contents {
+  display: grid;
+  gap: 0;
+
+  @include respond-to(md) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+.content {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  // Each phase occupies a tall stretch so the sticky handover has real
+  // scroll to choreograph. Mobile is less tall to preserve reading pace.
+  min-height: 90vh;
+  padding-block: var(--space-5) var(--space-8);
+
+  // Hairline between phases — the site's only divider rule.
+  & + & {
+    border-top: 1px solid var(--ink-rule);
+    margin-top: var(--space-4);
+    padding-top: var(--space-6);
+  }
+
+  @include respond-to(md) {
+    min-height: 110vh;
+    padding-block: var(--space-6) var(--space-10);
+
+    & + & {
+      margin-top: var(--space-5);
+      padding-top: var(--space-7);
+    }
+  }
+
+  @include respond-to(lg) {
+    min-height: 120vh;
+  }
+}
+
+// Evolve (last phase) is the coda — shorter, no long tail, so the footer
+// that follows feels like a deliberate landing rather than dead space.
+.content:last-child {
+  min-height: auto;
+  padding-block-end: var(--space-6);
+
+  @include respond-to(md) {
+    padding-block-end: var(--space-7);
+  }
+}
+
+.contentInner {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 62ch;
+  width: 100%;
+
+  @include respond-to(md) {
+    gap: var(--space-5);
+  }
+}
+
+// A small in-content label — only shown on mobile, where the sticky
+// monument header is quite small and readers benefit from the phase name
+// appearing at the top of the content as it enters view. Hidden on
+// desktop because the pinned monument already labels the column.
+.contentLabel {
+  @include type(meta);
+  margin: 0;
+  color: var(--ink-ember);
+  font-weight: var(--t-weight-bold);
+
+  @include respond-to(md) {
+    display: none;
+  }
+}
+
+.lede {
+  @include type(lede);
+  margin: 0;
+  color: var(--ink-iron);
+  font-weight: var(--t-weight-medium);
+  max-width: 30ch;
+}
+
+.body {
+  @include type(body);
+  margin: 0;
+  color: var(--ink-iron);
+  opacity: 0.82;
+  max-width: 58ch;
+}
+
+// ── Pop: Could my business… questions (Ideate) ──────────────────────────────
+
+.popQuestions {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--ink-rule);
+  position: relative;
+
+  // Single ember wash on the left edge — the one allowed accent for this
+  // block. Signals "this is the section's pop" without a colour fill.
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--ink-ember);
+  }
+}
+
+.popHeading {
+  @include type(meta);
+  margin: 0;
+  color: var(--ink-iron);
+  opacity: 0.7;
+}
+
+.questionList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.question {
+  @include type(subsection);
+  color: var(--ink-iron);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  line-height: 1.2;
+  font-weight: var(--t-weight-medium);
+}
+
+.questionMark {
+  color: var(--ink-ember);
+  font-weight: var(--t-weight-bold);
+}
+
+.popCoda {
+  @include type(lede);
+  margin: 0;
+  color: var(--ink-iron);
+  font-weight: var(--t-weight-medium);
+}
+
+// ── Pop: technology tags (Create) ───────────────────────────────────────────
+
+.popTags {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.tagList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tag {
+  @include type(ui);
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--ink-rule);
+  color: var(--ink-iron);
+  background: transparent;
+  transition:
+    border-color var(--dur-state) var(--ease-house),
+    color var(--dur-state) var(--ease-house);
+
+  &:hover {
+    border-color: var(--ink-ember);
+    color: var(--ink-ember);
+  }
+}
+
+// ── Pop: dash-lead marks list (Listen) ──────────────────────────────────────
+
+.marks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.mark {
+  @include type(body);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-iron);
+}
+
+.markDash {
+  width: var(--space-3);
+  height: 1px;
+  background: var(--ink-iron);
+  opacity: 0.4;
+  display: inline-block;
+}

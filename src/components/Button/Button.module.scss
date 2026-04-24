@@ -44,6 +44,34 @@
     }
   }
 
+  // EMBER — ember outline + sweep fill (secondary geometry, accent ink).
+  &[data-variant='ember'] {
+    background: transparent;
+    color: var(--ink-ember);
+    border-color: var(--ink-ember);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--ink-ember);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform var(--dur-element) var(--ease-house);
+      z-index: -1;
+    }
+
+    &:hover::before,
+    &:focus-visible::before {
+      transform: scaleY(1);
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--ink-page);
+    }
+  }
+
   // SECONDARY — outline only.
   &[data-variant='secondary'] {
     background: transparent;

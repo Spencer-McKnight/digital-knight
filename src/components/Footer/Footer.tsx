@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Button } from '@/components/Button';
 import { SmoothLink } from '@/components/SmoothLink';
 import styles from './Footer.module.scss';
 
@@ -27,12 +28,19 @@ export function Footer() {
   return (
     <footer className={styles.root} data-ground="stone" aria-labelledby="footer-sign">
       <div className={styles.inner}>
-        <div className={styles.signBlock}>
-          <h2 id="footer-sign" className={styles.sign}>
-            Digital Knight.
-            <br />
-            <span className={styles.signEmber}>Accelerate online business</span>
-          </h2>
+        <div className={styles.signRow}>
+          <div className={styles.signBlock}>
+            <h2 id="footer-sign" className={styles.sign}>
+              Digital Knight.
+              <br />
+              <span className={styles.signEmber}>Accelerate online business</span>
+            </h2>
+          </div>
+          <div className={styles.signCta}>
+            <Button href="/#talk" variant="ember" size="md">
+              Let&apos;s talk
+            </Button>
+          </div>
         </div>
 
         <div className={styles.body}>
