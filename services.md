@@ -13,7 +13,7 @@ Overall, the idea is sticky scrollable idea containers. I explicitly don't want 
 Each monument animation is the same, keep it simple and effective.
 Content should have a subtle fade in for the entire content block simultaneously.
 
-Don't use roman numerals or numbers to count them. The headers themselves are the count. Once they're all scrolled through, have the Evolve stay open and allow scroll onto the next block.
+Don't use roman numerals or numbers to count them. The headers themselves are the count. Every phase — including Evolve — uses the same sticky stack and handover; when the reader leaves the block, the whole assembly scrolls away and the next section (e.g. footer) follows naturally.
 
 No CTA necessary, there'll be one in the footer beneath.
 

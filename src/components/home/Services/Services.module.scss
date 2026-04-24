@@ -1,64 +1,33 @@
 @use 'mixins' as *;
 
-// ============================================================================
-// Services — Systematic Partnership.
-// ----------------------------------------------------------------------------
-// Stacked sticky phases. Each phase is a [monument + content] pair that pins
-// at its slot; later phases paint over earlier ones, hiding their content
-// but leaving their monuments visible in the top-left stack.
-//
-//   ┌───────────────────────────────────────────────────┐
-//   │  Listen               (monument — always visible) │
-//   │  Ideate               (monument — always visible) │
-//   │  Create               (monument — currently top)  │
-//   │  ------------------------------------------------ │
-//   │  (Create's content — visible until Evolve pins)   │
-//   └───────────────────────────────────────────────────┘
-//
-// Mechanics — pure CSS sticky stacking:
-//
-//   .phases (shared sticky boundary)
-//     .phase[i] {
-//       position: sticky;
-//       top: calc(nav + i * slot);
-//       z-index: 1 + i;              ← later phases paint over earlier
-//       background: var(--ink-page); ← opaque, hides prior content
-//     }
-//
-// Because `.phases` is the shared parent, every phase can remain stuck
-// simultaneously for the full section height — the prior monuments are
-// preserved in the stack for free.
-//
-// ============================================================================
-
-// ── Section-local tunables ──────────────────────────────────────────────────
+// Sticky phase stack. Each phase's zone of scroll == its measured content
+// height (set inline by Services.tsx). When scroll crosses a zone boundary,
+// activeIndex flips; the previous content's grid row collapses 1fr → 0fr and
+// the monuments below flow up into place — that's the "slot in" feel.
 
 .root {
-  // Space reserved above the first monument so it clears the nav as it
-  // rises into its slot.
   --services-nav-offset: clamp(4.5rem, 4vh + 2.5rem, 6rem);
-
-  // The vertical height a pinned monument consumes in the stack. Locked
-  // to the monument's intrinsic line-box (font-size × 0.9) so slots align
-  // pixel-perfect with the text and `top: calc(nav + i*slot)` never
-  // clips glyphs as they resize fluidly.
-  //
-  //   --t-monument = clamp(4.5rem, 7vw + 2.9rem, 9rem)
-  //   line-height  = 0.9
-  //   slot         = font × 0.9 + small safety (so descenders clear)
-  --services-slot: clamp(4.2rem, 6.3vw + 2.7rem, 8.3rem);
+  --services-slot: calc(var(--t-monument) * 0.9 + var(--space-2));
+  --phase-dur: 820ms;
+  --phase-ease: cubic-bezier(0.19, 1, 0.22, 1);
 
   position: relative;
   background: var(--ink-page);
   color: var(--ink-iron);
   @include section-pad(act);
-  overflow: clip;
 }
 
-// ── Intro ───────────────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    --phase-dur: var(--dur-element);
+  }
+}
+
+.inner {
+  @include container;
+}
 
 .intro {
-  @include container;
   display: grid;
   gap: var(--space-3);
   justify-items: start;
@@ -86,51 +55,44 @@
   color: var(--ink-ember);
 }
 
-// ── Phases: the sticky stack ────────────────────────────────────────────────
-
-.phases {
-  @include container;
+.track {
   position: relative;
+  width: 100%;
+}
+
+.stage {
+  position: sticky;
+  top: var(--services-nav-offset);
   list-style: none;
   margin: 0;
   padding: 0;
-  // A modest bottom buffer lets the last phase's content sit in view for a
-  // beat before the footer arrives — matches the brief's "Evolve stays
-  // open" rule without forcing an awkwardly tall coda.
-  padding-bottom: var(--space-6);
+  display: flex;
+  flex-direction: column;
 }
 
 .phase {
-  --phase-pin: calc(var(--services-nav-offset) + var(--i, 0) * var(--services-slot));
-  position: sticky;
-  top: var(--phase-pin);
-  z-index: calc(1 + var(--i, 0));
-  background: var(--ink-page);
-  // Minimum scroll distance before the next phase arrives to cover this
-  // one. Kept tight — the brief asks for less height, so cards hand off
-  // briskly rather than lingering.
-  min-height: calc(var(--services-slot) + 34vh);
-  // Monument at the top, content below — block flow is all we need.
-  display: block;
-  padding-bottom: var(--space-6);
+  display: grid;
+  grid-template-rows: auto 0fr;
+  transition: grid-template-rows var(--phase-dur) var(--phase-ease);
+
+  &[data-state='active'] {
+    grid-template-rows: auto 1fr;
+  }
 
   @include respond-to(md) {
-    min-height: calc(var(--services-slot) + 40vh);
-    padding-bottom: var(--space-7);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto;
+    column-gap: var(--space-6);
+    align-items: start;
+    transition: none;
+
+    &[data-state='active'] {
+      grid-template-rows: auto;
+    }
   }
 }
 
-// The last phase (Evolve) doesn't need extra scroll slack — it holds open
-// until the footer takes over. A smaller min-height lands the footer in
-// view sooner without cutting off its content.
-.phase:last-child {
-  min-height: auto;
-}
-
-// ── Monument — clickable, full cinematic size, pins at its slot ─────────────
-
 .monument {
-  // Button reset — the monument is a scroll-to-phase trigger.
   appearance: none;
   background: transparent;
   border: 0;
@@ -142,18 +104,15 @@
   cursor: pointer;
 
   position: relative;
-  // Flex so the monument text aligns to the top of its slot. The slot
-  // height is locked to the monument's own line-box (font × 0.9) in
-  // `--services-slot`, so the fit is tight on every breakpoint.
   display: inline-flex;
   align-items: flex-start;
-  height: var(--services-slot);
-  will-change: transform, opacity;
-  z-index: 1;
+  min-height: var(--services-slot);
 
-  // Pointer ring sits in front; reveal on hover/focus as the only ember
-  // accent in the idle state. No underline — the brief explicitly asks
-  // not to mark monuments as "done".
+  @include respond-to(md) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
   &:hover .monumentLabel,
   &:focus-visible .monumentLabel {
     color: var(--ink-ember);
@@ -179,7 +138,9 @@
   line-height: 0.9;
   letter-spacing: var(--t-tracking-tight);
   color: var(--ink-iron);
-  transition: color var(--dur-element) var(--ease-house);
+  transition:
+    color var(--phase-dur) var(--phase-ease),
+    opacity var(--phase-dur) var(--phase-ease);
 }
 
 .monumentGhost {
@@ -194,6 +155,17 @@
   position: relative;
 }
 
+.phase[data-state='active'] .monumentLabel {
+  color: var(--ink-ember);
+}
+
+.phase[data-state='incoming'] {
+  .monumentLabel,
+  .monumentGhost {
+    opacity: 0.4;
+  }
+}
+
 .srOnly {
   position: absolute;
   width: 1px;
@@ -206,17 +178,33 @@
   border: 0;
 }
 
-// ── Content — sits beneath its monument, covered by the next phase ──────────
-
 .content {
-  position: relative;
-  z-index: 0;
-  // A small top gap between monument and content. Less than the slot so
-  // the pair still reads as one unit, more than zero so they don't crowd.
-  padding-top: var(--space-4);
+  overflow: hidden;
+  min-height: 0;
+  opacity: 0;
+  transform: translateY(var(--space-3));
+  transition:
+    opacity var(--phase-dur) var(--phase-ease),
+    transform var(--phase-dur) var(--phase-ease);
 
   @include respond-to(md) {
-    padding-top: var(--space-5);
+    grid-column: 2;
+    grid-row: 1;
+    max-height: 0;
+    transform: translateY(var(--space-2));
+    transition:
+      max-height var(--phase-dur) var(--phase-ease),
+      opacity var(--phase-dur) var(--phase-ease),
+      transform var(--phase-dur) var(--phase-ease);
+  }
+}
+
+.phase[data-state='active'] .content {
+  opacity: 1;
+  transform: none;
+
+  @include respond-to(md) {
+    max-height: 140vh;
   }
 }
 
@@ -225,13 +213,14 @@
   gap: var(--space-4);
   max-width: 62ch;
   width: 100%;
-  will-change: transform, opacity;
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-6);
 
   @include respond-to(md) {
     gap: var(--space-5);
-    // Let the content breathe to the right of the monument's x-origin.
-    // Keeps rhythm clean when monuments and content share the same grid.
     padding-left: var(--space-3);
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-7);
   }
 }
 
@@ -251,8 +240,6 @@
   max-width: 58ch;
 }
 
-// ── Pop: Could my business… questions (Ideate) ──────────────────────────────
-
 .popQuestions {
   display: grid;
   gap: var(--space-4);
@@ -261,7 +248,6 @@
   border: 1px solid var(--ink-rule);
   position: relative;
 
-  // A single ember left-edge — the one allowed accent in this block.
   &::before {
     content: '';
     position: absolute;
@@ -310,8 +296,6 @@
   font-weight: var(--t-weight-medium);
 }
 
-// ── Pop: technology tags (Create) ───────────────────────────────────────────
-
 .popTags {
   display: grid;
   gap: var(--space-3);
@@ -344,8 +328,6 @@
     color: var(--ink-ember);
   }
 }
-
-// ── Pop: dash-lead marks list (Listen) ──────────────────────────────────────
 
 .marks {
   list-style: none;

@@ -1,31 +1,14 @@
-/**
- * Content for the four Services monuments.
- *
- * Kept here (not in the markup) so the visual composition below reads as
- * structure, not copy. Copy lives close to the brief; layout lives close to
- * the eye. See `services.md` for the authored source.
- */
+/** Copy for Services — source: `services.md`. */
 
 export type ServiceContent = {
-  /** The monument header. One word. */
   id: 'listen' | 'ideate' | 'create' | 'evolve';
   label: string;
-  /** Short lede — the promise of this phase. */
   lede: string;
-  /**
-   * Body paragraphs. Business-effective concise sentences. Each array entry
-   * renders as its own paragraph so rhythm stays intentional.
-   */
   body?: string[];
-  /**
-   * Optional list block with a distinct visual pop — used for "Could my
-   * business…" on Ideate, and for the technology chips on Create.
-   */
   pop?: {
     kind: 'questions' | 'tags' | 'marks';
     heading?: string;
     items: string[];
-    /** Short coda beneath the pop block. */
     coda?: string;
   };
 };

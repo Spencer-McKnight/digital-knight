@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { Button } from '@/components/Button';
 import { SmoothLink } from '@/components/SmoothLink';
 import styles from './Footer.module.scss';
+import { Button } from '../Button';
 
 const SCROLL_OFFSET = 0;
 
@@ -28,18 +28,16 @@ export function Footer() {
   return (
     <footer className={styles.root} data-ground="stone" aria-labelledby="footer-sign">
       <div className={styles.inner}>
-        <div className={styles.signRow}>
-          <div className={styles.signBlock}>
+        <div className={styles.signBlock}>
+          <div className={styles.signColumn}>
             <h2 id="footer-sign" className={styles.sign}>
               Digital Knight.
               <br />
               <span className={styles.signEmber}>Accelerate online business</span>
             </h2>
           </div>
-          <div className={styles.signCta}>
-            <Button href="/#talk" variant="ember" size="md">
-              Let&apos;s talk
-            </Button>
+          <div className={styles.signButton}>
+            <Button href="/#talk" variant="secondary" size="md">Start with a conversation</Button>
           </div>
         </div>
 

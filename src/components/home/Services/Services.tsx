@@ -1,129 +1,116 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
-import { gsap, ScrollTrigger } from '@/lib/gsap';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ScrollTrigger } from '@/lib/gsap';
 import { SERVICES } from './content';
 import styles from './Services.module.scss';
 
-/**
- * Services — Systematic Partnership (`services.md`).
- *
- *   Four monuments — Listen, Ideate, Create, Evolve — stacked as a
- *   portfolio assembly. As the reader scrolls, each phase slides up from
- *   below and pins at its slot: monument first, content beneath it. The
- *   next phase pins at the next slot down, visually burying the prior
- *   phase's content behind its own opaque [monument + content] pair.
- *   All prior monuments remain visible in the top-left stack.
- *
- *   Sticky-stack mechanics (pure CSS, see Services.module.scss)
- *   -----------------------------------------------------------
- *   Every `.phase` is `position: sticky` inside a single parent `.phases`:
- *
- *     .phase[i] { top: calc(nav + i * slot); z-index: 1 + i; background: page; }
- *
- *   - `.phases` is the shared sticky boundary, so every phase can remain
- *     stuck simultaneously for the full section height.
- *   - `top` increases with index, placing each monument one slot lower
- *     than the previous one — that's the vertical stack.
- *   - `z-index` increases with index, so later phases paint over earlier
- *     ones. With each phase's `background: var(--ink-page)`, the later
- *     phase's opaque pair covers the prior phase's content.
- *   - The phase's `min-height` determines scroll-length-before-handover.
- *     Kept tight (just over one slot of slack) so the next card arrives
- *     early — per the brief, we want pace, not scrub.
- *
- *   Animations (GSAP)
- *   -----------------
- *   Reveal is reversible by design: `toggleActions` on ScrollTrigger
- *   replays on enter, rewinds on leave-back. No `once: true`. Scroll up
- *   restores the rested state. `prefers-reduced-motion` collapses the
- *   rails to instant opacity fades.
- *
- *   Click-to-scroll
- *   ---------------
- *   Each monument is a button that scrolls the page to the point where
- *   its phase begins pinning — i.e., the natural top of the phase minus
- *   the slot-adjusted nav offset. Feels like opening a drawer: the phase
- *   lands in its slot with its content fully visible.
- */
+type PhaseState = 'collapsed' | 'active' | 'incoming';
+
+const phaseState = (i: number, active: number): PhaseState =>
+  i < active ? 'collapsed' : i === active ? 'active' : 'incoming';
+
+type Zones = {
+  starts: number[];
+  total: number;
+};
 
 export function Services() {
   const rootRef = useRef<HTMLElement | null>(null);
-  const phasesRef = useRef<HTMLOListElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const phaseRefs = useRef<Array<HTMLLIElement | null>>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const scrollToPhase = useCallback((index: number) => {
-    const phases = phasesRef.current?.querySelectorAll<HTMLElement>(`.${styles.phase}`);
-    const phase = phases?.[index];
-    if (!phase) return;
+  const zonesRef = useRef<Zones | null>(null);
+  const lastIdxRef = useRef(-1);
 
-    // Land scroll at the point where the phase's natural top hits its
-    // sticky pin line. `getComputedStyle(phase).top` resolves the
-    // `calc(nav + i * slot)` to a px value, so we don't have to
-    // re-compute the calc in JS.
-    const pinLine = parseFloat(getComputedStyle(phase).top) || 0;
-    const top = phase.getBoundingClientRect().top + window.scrollY - pinLine - 1;
+  const measureAndLayout = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
 
-    window.scrollTo({ top, behavior: 'smooth' });
+    const vh = window.innerHeight;
+
+    const heights = phaseRefs.current.map((phase) => {
+      const inner = phase?.querySelector(`.${styles.contentInner}`) as HTMLElement | null;
+      // offsetHeight reports natural layout height even when clipped by an
+      // overflow:hidden ancestor.
+      return Math.max(inner?.offsetHeight ?? 0, 1);
+    });
+
+    // Each phase's scroll zone matches its measured content height, so dwell
+    // scales naturally with how much there is to read.
+    const starts: number[] = [];
+    let acc = 0;
+    heights.forEach((l) => {
+      starts.push(acc);
+      acc += l;
+    });
+
+    zonesRef.current = { starts, total: acc };
+    track.style.height = `${acc + vh}px`;
+    ScrollTrigger.refresh();
   }, []);
 
   useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
+    measureAndLayout();
 
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const observer = new ResizeObserver(() => measureAndLayout());
+    phaseRefs.current.forEach((phase) => {
+      const inner = phase?.querySelector(`.${styles.contentInner}`);
+      if (inner) observer.observe(inner);
+    });
 
-    const ctx = gsap.context(() => {
-      const phases = gsap.utils.toArray<HTMLElement>(`.${styles.phase}`);
+    window.addEventListener('resize', measureAndLayout);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measureAndLayout);
+    };
+  }, [measureAndLayout]);
 
-      phases.forEach((phase) => {
-        const content = phase.querySelector<HTMLElement>(`.${styles.contentInner}`);
-        const monument = phase.querySelector<HTMLElement>(`.${styles.monument}`);
-        if (!content || !monument) return;
+  const scrollToPhase = useCallback((index: number) => {
+    const track = trackRef.current;
+    const zones = zonesRef.current;
+    if (!track || !zones) return;
+    const rect = track.getBoundingClientRect();
+    const trackTop = rect.top + window.scrollY;
+    const start = zones.starts[index] ?? 0;
+    window.scrollTo({
+      top: trackTop + start + 4,
+      behavior: 'smooth',
+    });
+  }, []);
 
-        // Entry reveal. Reversible by design — `toggleActions: play none
-        // none reverse` replays on scroll-down entry and rewinds on
-        // scroll-up exit, so the animation honours the scroll axis.
-        gsap.fromTo(
-          monument,
-          { yPercent: prefersReduced ? 0 : 18, opacity: 0 },
-          {
-            yPercent: 0,
-            opacity: 1,
-            duration: prefersReduced ? 0.25 : 0.7,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: phase,
-              start: 'top 85%',
-              toggleActions: 'play none none reverse',
-            },
-          },
-        );
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
 
-        gsap.fromTo(
-          content,
-          { y: prefersReduced ? 0 : 16, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: prefersReduced ? 0.25 : 0.65,
-            delay: prefersReduced ? 0 : 0.08,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: phase,
-              start: 'top 80%',
-              toggleActions: 'play none none reverse',
-            },
-          },
-        );
-      });
+    const st = ScrollTrigger.create({
+      trigger: track,
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (self) => {
+        const zones = zonesRef.current;
+        if (!zones) return;
+        const scrollable = track.offsetHeight - window.innerHeight;
+        const scrolled = self.progress * scrollable;
 
-      // Re-measure once fonts/images settle so triggers align with the
-      // final layout. Cheap; prevents first-scroll misalignment.
-      const t = window.setTimeout(() => ScrollTrigger.refresh(), 120);
-      return () => window.clearTimeout(t);
-    }, root);
+        let idx = 0;
+        for (let i = zones.starts.length - 1; i >= 0; i--) {
+          const s = zones.starts[i];
+          if (s !== undefined && scrolled >= s) {
+            idx = i;
+            break;
+          }
+        }
 
-    return () => ctx.revert();
+        if (idx !== lastIdxRef.current) {
+          lastIdxRef.current = idx;
+          setActiveIndex(idx);
+        }
+      },
+    });
+
+    return () => st.kill();
   }, []);
 
   return (
@@ -134,56 +121,66 @@ export function Services() {
       aria-labelledby="services-heading"
       ref={rootRef}
     >
-      <header className={styles.intro}>
-        <p className={styles.eyebrow}>The partnership</p>
-        <h2 id="services-heading" className={styles.heading}>
-          Systematic <span className={styles.ember}>Partnership</span>
-        </h2>
-      </header>
+      <div className={styles.inner}>
+        <header className={styles.intro}>
+          <p className={styles.eyebrow}>The partnership</p>
+          <h2 id="services-heading" className={styles.heading}>
+            Systematic <span className={styles.ember}>Partnership</span>
+          </h2>
+        </header>
 
-      <ol
-        className={styles.phases}
-        role="list"
-        aria-label="Phases"
-        ref={phasesRef}
-      >
-        {SERVICES.map((service, i) => (
-          <li
-            key={service.id}
-            className={styles.phase}
-            style={{ ['--i' as string]: i }}
-            data-service={service.id}
-          >
-            <button
-              type="button"
-              className={styles.monument}
-              onClick={() => scrollToPhase(i)}
-              aria-label={`Open ${service.label}`}
-            >
-              <span className={styles.monumentInner} aria-hidden="true">
-                <span className={styles.monumentGhost}>{service.label}</span>
-                <span className={styles.monumentLabel}>{service.label}</span>
-              </span>
-              <span className={styles.srOnly}>{service.label}</span>
-            </button>
+        <div ref={trackRef} className={styles.track}>
+          <ol className={styles.stage} role="list" aria-label="Phases">
+            {SERVICES.map((service, i) => {
+              const state = phaseState(i, activeIndex);
+              return (
+                <li
+                  key={service.id}
+                  className={styles.phase}
+                  ref={(el) => {
+                    phaseRefs.current[i] = el;
+                  }}
+                  data-state={state}
+                  data-service={service.id}
+                >
+                  <button
+                    type="button"
+                    className={styles.monument}
+                    onClick={() => scrollToPhase(i)}
+                    aria-current={state === 'active' ? 'true' : undefined}
+                    aria-label={`Open ${service.label}`}
+                  >
+                    <span className={styles.monumentInner} aria-hidden="true">
+                      <span className={styles.monumentGhost}>{service.label}</span>
+                      <span className={styles.monumentLabel}>{service.label}</span>
+                    </span>
+                    <span className={styles.srOnly}>{service.label}</span>
+                  </button>
 
-            <div className={styles.content} aria-labelledby={`service-${service.id}`}>
-              <span id={`service-${service.id}`} className={styles.srOnly}>
-                {service.label}
-              </span>
-              <div className={styles.contentInner}>
-                {service.lede ? <p className={styles.lede}>{service.lede}</p> : null}
-                {service.body?.map((p, idx) => (
-                  <p key={idx} className={styles.body}>
-                    {p}
-                  </p>
-                ))}
-                {service.pop ? <Pop pop={service.pop} /> : null}
-              </div>
-            </div>
-          </li>
-        ))}
-      </ol>
+                  <div
+                    className={styles.content}
+                    aria-hidden={state !== 'active'}
+                    aria-labelledby={`service-${service.id}`}
+                  >
+                    <span id={`service-${service.id}`} className={styles.srOnly}>
+                      {service.label}
+                    </span>
+                    <div className={styles.contentInner}>
+                      {service.lede ? <p className={styles.lede}>{service.lede}</p> : null}
+                      {service.body?.map((p, idx) => (
+                        <p key={idx} className={styles.body}>
+                          {p}
+                        </p>
+                      ))}
+                      {service.pop ? <Pop pop={service.pop} /> : null}
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </div>
     </section>
   );
 }
