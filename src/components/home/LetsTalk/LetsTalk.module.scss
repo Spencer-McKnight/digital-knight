@@ -31,6 +31,14 @@
   gap: var(--space-7);
   justify-items: center;
   text-align: center;
+
+  @include respond-to(xl) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr);
+    align-items: start;
+    gap: var(--space-8);
+    justify-items: stretch;
+    text-align: left;
+  }
 }
 
 .header {
@@ -38,23 +46,12 @@
   gap: var(--space-3);
   max-width: 640px;
   justify-items: center;
-}
 
-.eyebrow {
-  @include type(meta);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--ink-iron);
-  opacity: 0.85;
-  margin: 0;
-}
-
-.eyebrowDot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  background: var(--ink-ember);
+  @include respond-to(xl) {
+    gap: var(--space-5);
+    justify-items: start;
+    max-width: none;
+  }
 }
 
 .title {
@@ -63,7 +60,6 @@
   color: var(--ink-iron);
   font-weight: var(--t-weight-bold);
   letter-spacing: -0.02em;
-  max-width: 16ch;
 }
 
 .emberWord {
@@ -84,4 +80,20 @@
   width: 100%;
   display: flex;
   justify-content: center;
+
+  @include respond-to(xl) {
+    justify-content: flex-end;
+  }
 }
+
+// ── Confirmed state ───────────────────────────────────────────────────────────
+// Replaces the two-column header + canvas layout once a booking is committed.
+// Single centred column — the CTA copy is no longer relevant.
+
+.innerConfirmed {
+  @include container;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+

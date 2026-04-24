@@ -38,14 +38,13 @@ Token architecture and file structure are defined below.
 
 **Package:** `gsap@3`
 
-The loading sequence, text reveals, scroll-linked parallax, stat counters, custom cursor — all of this demands a professional animation timeline engine. GSAP is the industry standard for cinematic web animation and the unambiguous choice here.
+Text reveals, scroll-linked parallax, stat counters, and the custom cursor all demand a professional animation timeline engine. GSAP is the industry standard for cinematic web animation and the unambiguous choice here.
 
 - **ScrollTrigger** plugin drives all scroll-linked effects (parallax on imagery, section entrances, footer lock)
 - **SplitText** (GSAP Club, included with paid license) enables the per-character/per-word heading reveals specified in the design
-- Timeline composition makes the loading sequence (`DK` → `DIGITAL KNIGHT` → settle to nav) straightforward to build and tune
 - `prefers-reduced-motion` collapses by toggling timeline `timeScale(0)` or swapping to opacity-only fallbacks — one place, clean implementation
 
-Framer Motion is not used. It overlaps with GSAP, adds bundle weight, and its declarative model resists the imperative sequence control the loading beat and cursor need.
+Framer Motion is not used. It overlaps with GSAP, adds bundle weight, and its declarative model resists the imperative sequence control the scroll and cursor system need.
 
 ---
 
@@ -65,7 +64,6 @@ The design constraint — matte metal, no glassy chrome — means scenes are sma
 
 The site has a small set of genuinely global states:
 
-- `loadingComplete` — gates the loading sequence; components subscribe to know when to animate in
 - `cursorVariant` — the custom cursor ring changes on hover over interactables
 - `reducedMotion` — read from `prefers-reduced-motion` once, consumed everywhere
 
@@ -139,9 +137,6 @@ src/
       page.tsx
 
   components/
-    Loader/
-      Loader.tsx
-      Loader.module.scss
     Nav/
       Nav.tsx
       Nav.module.scss
@@ -173,10 +168,9 @@ src/
     motion.ts                   ← prefers-reduced-motion detection; exports gate for GSAP timelines
 
   store/
-    ui.ts                       ← Zustand: loadingComplete, cursorVariant, reducedMotion
+    ui.ts                       ← Zustand: cursorVariant, reducedMotion
 
   hooks/
-    useLoadGate.ts              ← subscribes to loadingComplete; returns boolean for animation entry
     useCursorVariant.ts         ← sets cursorVariant from pointer events; consumed by Cursor
 ```
 
@@ -201,9 +195,9 @@ src/
 **TypeScript / Components**
 
 - Component: PascalCase directory + matching filename (`Nav/Nav.tsx`, `Nav/Nav.module.scss`)
-- Hooks: `use` prefix, camelCase, named for what they return (`useLoadGate`, `useCursorVariant`)
+- Hooks: `use` prefix, camelCase, named for what they return (`useCursorVariant`)
 - Store file: feature-named (`ui.ts`), not `store.ts`
-- GSAP timelines: named string IDs at creation — `gsap.timeline({ id: 'loader-sequence' })`. One timeline per named sequence, not per component.
+- GSAP timelines: named string IDs at creation — `gsap.timeline({ id: 'services-row-enter' })`. One timeline per named sequence, not per component.
 
 **File-level rules**
 

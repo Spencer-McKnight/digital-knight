@@ -13,15 +13,19 @@ html {
   color: var(--ink-iron);
   font-family: var(--t-family);
   -webkit-text-size-adjust: 100%;
-  // Scrollbar channel never reserves layout space — `design.md` §8.
-  scrollbar-gutter: auto;
+  // Keep a stable scrollbar channel to prevent width hops when content grows.
+  scrollbar-gutter: stable;
 }
 
 body {
   @include type(body);
   background: inherit;
   color: inherit;
-  min-height: 100dvh;
+  // `svh` (smallest viewport) stays constant while mobile browser chrome
+  // shows/hides. `dvh` recomputes mid-scroll and registers as CLS on many
+  // devices (performance.md). The body only needs to guarantee the page
+  // fills the visible area on cold load — sections own their own heights.
+  min-height: 100svh;
   overflow-x: clip;
 }
 
@@ -38,19 +42,16 @@ body {
   border-radius: 1px;
 }
 
-// The custom Cursor component (`components/Cursor`) is the *only* cursor
-// treatment on pointer-fine devices — anything the system would otherwise
-// draw (the default arrow, `grab`, `pointer`, `text`, `crosshair` …) is
-// suppressed here so it never shows alongside or through the ring. Each
-// affordance those native cursors once carried is re-expressed as a
-// distinct variant of the custom cursor. Touch devices fall through.
-@media (pointer: fine) {
-  *,
-  *::before,
-  *::after {
-    cursor: none !important;
-  }
-}
+// Custom cursor suppression — disabled (see `lib/features.ts`).
+// Uncomment to re-enable alongside `CUSTOM_CURSOR_ENABLED = true`.
+//
+// @media (pointer: fine) {
+//   *,
+//   *::before,
+//   *::after {
+//     cursor: none !important;
+//   }
+// }
 
 // Custom scrollbar — thin, right-edge, appears on activity. Native cursor
 // pointer devices only; touch falls back to system scrollbar.

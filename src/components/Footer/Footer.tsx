@@ -21,13 +21,6 @@ const SITEMAP = [
     ]
   },
   {
-    heading: 'Studio', links: [
-      { label: 'Method', href: '/method' },
-      { label: 'Soul', href: '/soul' },
-      { label: 'Design system', href: '/design' },
-    ]
-  },
-  {
     heading: 'Contact', links: [
       { label: 'hello@digital-knight.au', href: 'mailto:hello@digital-knight.au' },
       { label: 'LinkedIn', href: 'https://www.linkedin.com/', external: true },
@@ -43,10 +36,6 @@ export function Footer() {
     <footer className={styles.root} data-ground="stone" aria-labelledby="footer-sign">
       {/* Cinematic sign-off — the last monumental moment. */}
       <div className={styles.signBlock}>
-        <p className={styles.signEyebrow}>
-          <span className={styles.signDot} aria-hidden />
-          The landing · 05
-        </p>
         <h2 id="footer-sign" className={styles.sign}>
           Digital Knight.
           <br />

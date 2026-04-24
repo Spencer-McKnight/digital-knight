@@ -161,7 +161,7 @@ export function Nav() {
       frame = requestAnimationFrame(detect);
     };
 
-    detect();
+    schedule();
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule);
     return () => {

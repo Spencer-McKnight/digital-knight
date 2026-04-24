@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import styles from './Services.module.scss';
 
 type Service = {
   n: string;
-  eyebrow: string;
   title: string;
   ember: string; // one ember word inside the title
   body: string;
@@ -16,7 +15,6 @@ type Service = {
 const SERVICES: ReadonlyArray<Service> = [
   {
     n: '01',
-    eyebrow: 'Partnership',
     title: 'Long-term digital partnerships.',
     ember: 'partnerships',
     body: 'Advisory, ideation, strategy and development under one continuing engagement — so the work compounds instead of resetting every quarter.',
@@ -24,7 +22,6 @@ const SERVICES: ReadonlyArray<Service> = [
   },
   {
     n: '02',
-    eyebrow: 'Web craft',
     title: 'Websites built as the pillar of the business.',
     ember: 'pillar',
     body: 'Design, build, evolve and maintain — a single surface the rest of your digital work can relate through. No CMS sprawl, no template drift.',
@@ -32,7 +29,6 @@ const SERVICES: ReadonlyArray<Service> = [
   },
   {
     n: '03',
-    eyebrow: 'AI integration',
     title: 'Process integrations that evolve past manual labour.',
     ember: 'evolve',
     body: 'Agents, pipelines and production tooling wired into the business you actually run — prepared to build on ideas, not just demo them.',
@@ -40,7 +36,6 @@ const SERVICES: ReadonlyArray<Service> = [
   },
   {
     n: '04',
-    eyebrow: 'Research',
     title: 'Evolution research — understand the market, set the trend.',
     ember: 'trend',
     body: 'Specialist market and technology research. Input new ideas. Pressure-test assumptions. Inform every other decision in the engagement.',
@@ -61,7 +56,7 @@ const SERVICES: ReadonlyArray<Service> = [
 export function Services() {
   const rootRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return;
 
@@ -109,10 +104,6 @@ export function Services() {
       aria-labelledby="services-title"
     >
       <header className={styles.header}>
-        <p className={styles.eyebrow}>
-          <span className={styles.eyebrowDot} aria-hidden />
-          Services · The studio&apos;s four pillars
-        </p>
         <h2 id="services-title" className={styles.sectionTitle}>
           Spencer McKnight&apos;s personal agency,
           <br />
@@ -130,7 +121,6 @@ export function Services() {
             </span>
 
             <div className={styles.rowContent}>
-              <p className={styles.rowEyebrow}>{s.eyebrow}</p>
               <h3 data-row-title className={styles.rowTitle}>
                 {renderWithEmber(s.title, s.ember)}
               </h3>
@@ -139,7 +129,7 @@ export function Services() {
               </p>
             </div>
 
-            <ul className={styles.rowRail} aria-label={`${s.eyebrow} rail`}>
+            <ul className={styles.rowRail}>
               {s.rail.map((r) => (
                 <li key={r} data-row-chip className={styles.rowChip}>
                   {r}

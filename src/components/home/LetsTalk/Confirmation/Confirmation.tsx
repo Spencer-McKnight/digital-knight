@@ -32,12 +32,10 @@ export function Confirmation({
 }: ConfirmationProps) {
   return (
     <div className={styles.root} role="status" aria-live="polite">
-      <p className={styles.eyebrow}>CONFIRMED</p>
-
       <h3 className={styles.title}>
-        <span className={styles.emberWord}>Booked</span> —
+        Meeting confirmed.
         <br />
-        see you on the call.
+        Check your email for the google meets link, or add it to your calendar.
       </h3>
 
       <dl className={styles.details}>

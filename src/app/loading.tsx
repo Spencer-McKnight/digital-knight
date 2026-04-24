@@ -1,9 +1,9 @@
 /**
  * Root-level loading boundary. Streaming fallback during server work.
  *
- * Stays empty by design — the loading *experience* for first-visit is the
- * `Loader` component (DK → DIGITAL KNIGHT sequence). This boundary is a
- * quiet hand-off, not a second beat.
+ * Stays empty by design. The page shell renders immediately and keeps its
+ * own layout reservations, so this fallback should never inject a second UI
+ * layer that could flash or shift content.
  */
 export default function Loading() {
   return null;

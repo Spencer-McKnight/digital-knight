@@ -3,57 +3,38 @@
 import styles from './WeekNav.module.scss';
 
 /**
- * WeekNav — previous / next week arrows with a range label between.
+ * NavArrow — a single week-navigation arrow.
  *
- *   Arrows are labelled for assistive tech and disabled at the current-week
- *   boundary and the horizon. The range label is the week summary rendered
- *   in the visitor's timezone.
+ *   Rendered twice inside the WeekGrid frame so the arrows flank the day
+ *   headers directly. Accessible labels still announce direction.
  */
 
-export type WeekNavProps = {
-  rangeLabel: string;
-  prevDisabled: boolean;
-  nextDisabled: boolean;
-  onPrev: () => void;
-  onNext: () => void;
-  /** When true, mirror the navigation as a subtle indicator. */
+export type NavArrowProps = {
+  direction: 'prev' | 'next';
+  disabled: boolean;
+  onClick: () => void;
   pending?: boolean;
+  className?: string;
 };
 
-export function WeekNav({
-  rangeLabel,
-  prevDisabled,
-  nextDisabled,
-  onPrev,
-  onNext,
+export function NavArrow({
+  direction,
+  disabled,
+  onClick,
   pending,
-}: WeekNavProps) {
+  className,
+}: NavArrowProps) {
   return (
-    <nav className={styles.root} aria-label="Week navigation" data-pending={pending || undefined}>
-      <button
-        type="button"
-        onClick={onPrev}
-        disabled={prevDisabled}
-        aria-label="Previous week"
-        className={styles.btn}
-      >
-        <Chevron direction="left" />
-      </button>
-
-      <span className={styles.range} aria-live="polite">
-        {rangeLabel}
-      </span>
-
-      <button
-        type="button"
-        onClick={onNext}
-        disabled={nextDisabled}
-        aria-label="Next week"
-        className={styles.btn}
-      >
-        <Chevron direction="right" />
-      </button>
-    </nav>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={direction === 'prev' ? 'Previous week' : 'Next week'}
+      data-pending={pending || undefined}
+      className={[styles.btn, className].filter(Boolean).join(' ')}
+    >
+      <Chevron direction={direction === 'prev' ? 'left' : 'right'} />
+    </button>
   );
 }
 

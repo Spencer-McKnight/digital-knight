@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import { aeonik } from './fonts';
 import './globals.scss';
-import { Loader } from '@/components/Loader';
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
 import { Cursor } from '@/components/Cursor';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://digital-knight.au'),
@@ -50,11 +50,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={aeonik.variable}>
       <body>
-        <Loader />
         <Nav />
         <Cursor />
         {children}
         <Footer />
+        <Analytics />
       </body>
     </html>
   );

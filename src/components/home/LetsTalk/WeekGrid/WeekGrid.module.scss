@@ -3,26 +3,32 @@
 // ============================================================================
 // WeekGrid — the focal artefact of the Let's Talk block.
 // ----------------------------------------------------------------------------
-// Layout:
-//   [subtitle]
-//   [week nav]
+// Layout (X = days, Y = times):
 //
-//   ┌───────────┬──────┬──────┬──────┬──────┐
-//   │           │ MON  │ TUE  │ WED  │ THU  │  <- dayHeaders
-//   ├───────────┼──────┴──────┴──────┴──────┤
-//   │ 10:00     │                           │  <- timeRail (left col)
-//   │ 10:30     │   4 × 10 grid of slots    │     grid (right area)
-//   │  …        │                           │
-//   └───────────┴───────────────────────────┘
+//                 ┌──────────────────────────────────┐
+//                 │ MON │ TUE │ WED │ THU            │  <- dayHeaders
+//   ┌────┬────────┼──────────────────────────────────┼────┐  (absolute, float
+//   │    │ 10am   │                                  │    │   above grid area
+//   │ <  │ 10:30  │  4 × 10 grid of slots             │ >  │   so they do not
+//   │    │  …     │                                  │    │   dictate section
+//   │    │ 2:30   │                                  │    │   y-padding)
+//   └────┴────────┴──────────────────────────────────┴────┘
+//     ^       ^                  ^                      ^
+//   prev    times               grid                   next
 //
-// Geometry is a CSS grid on `.gridFrame`. Cells are laid out row-major in
-// `.grid` with explicit grid-template areas — no JS-calculated offsets.
+// Geometry is a CSS grid on `.gridFrame`. The frame is a single row whose
+// height is defined by the grid cells (and, to their left, the time rail).
+// The day headers and nav arrows are deliberately lifted out of the vertical
+// flow — headers float above the grid column via absolute positioning, arrows
+// centre-align against the grid row — so that the enclosing section's
+// y-padding lands on the grid cells rather than the axis furniture.
 // ============================================================================
 
 .root {
   display: grid;
   gap: var(--space-5);
   align-content: start;
+  width: 100%;
 }
 
 .subtitle {
@@ -33,38 +39,75 @@
   letter-spacing: 0.14em;
 }
 
-.navRow {
-  display: flex;
-  justify-content: center;
-}
-
-// Grid frame — holds day headers, the time rail, and the slot grid.
+// Grid frame — the cell square expands to fill the available container width.
+// Single-row grid: the vertical axis furniture (day headers) is lifted out
+// of flow via absolute positioning so the frame's height is anchored by the
+// slot grid itself, not the header labels.
 .gridFrame {
   --_day-cols: 4;
-  --_slot-rows: 10;
-  --_rail-width: clamp(56px, 8vw, 80px);
+  --_time-rows: 10;
+  --_rail-width: clamp(64px, 8vw, 92px);
+  --_cell-min-w: 0px;
+  --_cell-min-h: 40px;
+  --_header-gap: 0px;
 
+  position: relative;
   display: grid;
-  grid-template-columns: var(--_rail-width) 1fr;
-  grid-template-rows: auto 1fr;
-  grid-template-areas:
-    'rail-top days'
-    'rail     grid';
+  grid-template-columns: auto auto 1fr auto;
+  grid-template-rows: auto;
+  grid-template-areas: 'prev times grid next';
   width: 100%;
-  max-width: 960px;
-  margin-inline: auto;
   transition: opacity var(--dur-element) var(--ease-house);
 
   &[aria-busy='true'] {
     opacity: 0.55;
   }
+
+  @include respond-to(sm) {
+    --_cell-min-h: 42px;
+  }
+
+  @include respond-to(md) {
+    --_cell-min-h: 44px;
+  }
+
+  @include respond-to(lg) {
+    --_cell-min-h: 48px;
+  }
+
+  @include respond-to(xl) {
+    --_cell-min-h: 52px;
+  }
 }
 
+// Nav arrows — pinned to the grid row so they centre on the slot grid's
+// vertical midpoint, not on the day headers above.
+.prevArrow {
+  grid-area: prev;
+  align-self: center;
+  justify-self: end;
+  margin-right: var(--space-3);
+}
+
+.nextArrow {
+  grid-area: next;
+  align-self: center;
+  justify-self: start;
+  margin-left: var(--space-3);
+}
+
+// Day headers — horizontal axis (Mon 27, Tue 28, …). Floated above the grid
+// column via absolute positioning so they do not push the grid cells down
+// and do not count toward the section's top y-padding.
 .dayHeaders {
-  grid-area: days;
+  position: absolute;
+  grid-area: grid;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + var(--_header-gap));
   display: grid;
-  grid-template-columns: repeat(var(--_day-cols), 1fr);
-  border-left: 1px solid var(--ink-rule);
+  grid-template-columns: repeat(var(--_day-cols), minmax(var(--_cell-min-w), 1fr));
+  pointer-events: none;
 }
 
 .dayHeader {
@@ -75,15 +118,6 @@
   gap: var(--space-1);
   padding: var(--space-3) var(--space-2);
   border-bottom: 1px solid var(--ink-rule);
-
-  // Active-day hairline (future hook): the current-day column gets an ember
-  // nub underneath. Kept as a no-op marker until `data-today` is wired.
-  &[data-today]::after {
-    content: '';
-    position: absolute;
-    height: 1px;
-    background: var(--ink-ember);
-  }
 }
 
 .dayName {
@@ -99,12 +133,14 @@
   font-variant-numeric: tabular-nums;
 }
 
+// Time rail — vertical axis showing times (10 am, 10:30 am, etc.)
 .timeRail {
-  grid-area: rail;
+  grid-area: times;
+  width: var(--_rail-width);
+  justify-self: end;
   display: grid;
-  grid-template-rows: repeat(var(--_slot-rows), 1fr);
+  grid-template-rows: repeat(var(--_time-rows), minmax(var(--_cell-min-h), 1fr));
   padding-right: var(--space-3);
-  padding-top: 0;
 }
 
 .timeTick {
@@ -113,22 +149,21 @@
   align-items: center;
   justify-content: flex-end;
   color: var(--ink-iron);
-  opacity: 0.55;
+  opacity: 0.85;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.06em;
-  min-height: 44px;
+  font-weight: var(--t-weight-medium);
+  white-space: nowrap;
 }
 
 .grid {
   grid-area: grid;
   display: grid;
-  grid-template-columns: repeat(var(--_day-cols), 1fr);
-  grid-template-rows: repeat(var(--_slot-rows), minmax(44px, 1fr));
+  grid-template-columns: repeat(var(--_day-cols), minmax(var(--_cell-min-w), 1fr));
+  grid-template-rows: repeat(var(--_time-rows), minmax(var(--_cell-min-h), 1fr));
   border-left: 1px solid var(--ink-rule);
-  // Stagger the entrance on week changes via a class hook consumed from JS.
 }
 
-// Error notice and the form surface that slides in under the grid.
+// Error notice shown when no slot is selected.
 .error {
   @include type(meta);
   text-transform: none;
@@ -139,54 +174,6 @@
   margin: 0;
 }
 
-.formSurface {
-  margin-top: var(--space-3);
-  border-top: 1px solid var(--ink-rule);
-  animation: slide-up var(--dur-scene) var(--ease-house) both;
-}
-
-@keyframes slide-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.bookAgain {
-  display: flex;
-  justify-content: center;
-  margin-top: var(--space-3);
-}
-
-.bookAgainBtn {
-  @include type(ui);
-  background: transparent;
-  border: 0;
-  color: var(--ink-iron);
-  opacity: 0.75;
-  padding: var(--space-2) 0;
-  position: relative;
-  cursor: pointer;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 1px;
-    background: var(--ink-ember);
-    transform-origin: left;
-    transform: scaleX(0);
-    transition: transform var(--dur-element) var(--ease-house);
-  }
-
-  &:hover,
-  &:focus-visible {
-    opacity: 1;
-    outline: none;
-
-    &::after { transform: scaleX(1); }
-  }
-}
 
 .noscript {
   @include type(body);
@@ -212,22 +199,11 @@
 
 // ── Narrow viewports ───────────────────────────────────────────────────────
 @include respond-below(md) {
-  .gridFrame {
-    --_rail-width: 56px;
-  }
-
   .dayName {
     font-size: calc(var(--t-meta) * 0.9);
   }
 
   .timeTick {
     font-size: calc(var(--t-meta) * 0.85);
-    padding-right: var(--space-2);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .formSurface {
-    animation: none;
   }
 }

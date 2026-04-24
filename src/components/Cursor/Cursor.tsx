@@ -3,6 +3,7 @@
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { gsap } from '@/lib/gsap';
 import { useUiStore, type CursorVariant } from '@/store/ui';
+import { CUSTOM_CURSOR_ENABLED } from '@/lib/features';
 import styles from './Cursor.module.scss';
 
 const POINTER_FINE_QUERY = '(pointer: fine)';
@@ -80,7 +81,7 @@ export function Cursor() {
   );
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!CUSTOM_CURSOR_ENABLED || !mounted) return;
     const el = rootRef.current;
     if (!el) return;
 
@@ -141,7 +142,7 @@ export function Cursor() {
     };
   }, [mounted, setCursorVariant]);
 
-  if (!mounted) return null;
+  if (!CUSTOM_CURSOR_ENABLED || !mounted) return null;
 
   return (
     <div ref={rootRef} className={styles.root} data-variant={variant} aria-hidden>

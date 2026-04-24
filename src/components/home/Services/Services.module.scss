@@ -13,21 +13,6 @@
   max-width: calc(var(--grid-max) - 0px);
 }
 
-.eyebrow {
-  @include type(meta);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--ink-iron);
-}
-
-.eyebrowDot {
-  width: 6px;
-  height: 6px;
-  background: var(--ink-ember);
-  display: inline-block;
-}
-
 .sectionTitle {
   @include type(section);
   max-width: 22ch;
@@ -99,12 +84,6 @@
   display: grid;
   gap: var(--space-3);
   align-self: start;
-}
-
-.rowEyebrow {
-  @include type(meta);
-  color: var(--ink-iron);
-  opacity: 0.55;
 }
 
 .rowTitle {

@@ -1,15 +1,9 @@
-import { useUiStore } from '@/store/ui';
-
 /**
- * Reads `loadingComplete` from the UI store.
+ * Legacy nav load gate.
  *
- *   const loaded = useLoadGate();
- *   useEffect(() => { if (loaded) openTimeline.play(); }, [loaded]);
- *
- * Subscribed components re-render only when the gate flips — Zustand selector
- * semantics — so `loadingComplete` is safe to pipe through cinematic
- * components without render storms.
+ * The cinematic loader was removed, but `Nav` still reads this hook after the
+ * manual rollback. Keep the hook as a stable compatibility shim.
  */
 export function useLoadGate(): boolean {
-  return useUiStore((state) => state.loadingComplete);
+  return true;
 }

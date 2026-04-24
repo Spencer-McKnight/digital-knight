@@ -9,13 +9,6 @@
   padding-block: var(--space-6);
 }
 
-.eyebrow {
-  @include type(meta);
-  color: var(--ink-iron);
-  opacity: 0.6;
-  margin: 0;
-}
-
 .title {
   @include type(section);
   margin: 0;

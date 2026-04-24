@@ -2,7 +2,10 @@
 
 .root {
   position: relative;
-  min-height: 100dvh;
+  // Pin to the smallest-viewport height so mobile URL-bar show/hide doesn't
+  // resize the hero mid-scroll (counts as CLS on many browsers). See
+  // performance.md — "stable-first" load rule.
+  min-height: 100svh;
   display: grid;
   align-items: center;
   overflow: hidden;
@@ -49,26 +52,6 @@
     // Leave canvas room for the seal on the right.
     padding-right: clamp(0px, 20vw, 22rem);
   }
-}
-
-.eyebrow {
-  @include type(meta);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--ink-iron);
-}
-
-.eyebrowDot {
-  width: 6px;
-  height: 6px;
-  background: var(--ink-ember);
-  display: inline-block;
-}
-
-.eyebrowSlash {
-  opacity: 0.45;
-  padding-inline: 0.25ch;
 }
 
 .title {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import styles from './Tech.module.scss';
 
@@ -86,7 +86,7 @@ export function Tech() {
   const rootRef = useRef<HTMLElement>(null);
   const [activeRail, setActiveRail] = useState<number | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return;
 
@@ -128,10 +128,6 @@ export function Tech() {
       aria-labelledby="tech-title"
     >
       <header className={styles.header}>
-        <p className={styles.eyebrow}>
-          <span className={styles.eyebrowDot} aria-hidden />
-          Tech · The stack, stated
-        </p>
         <h2 id="tech-title" className={styles.title}>
           A modern React stack, argued <span className={styles.emberWord}>into</span>{' '}
           its parts.
