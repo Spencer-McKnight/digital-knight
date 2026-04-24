@@ -101,7 +101,7 @@ export function Footer() {
             <span className={styles.metaValue}>Working from Melbourne, Australia</span>
           </p>
           <p className={styles.metaItem}>
-            <span className={styles.metaLabel}>Built with</span>
+            <span className={styles.metaLabel}>Site Stack</span>
             <span className={styles.metaValue}>
               Next · React · GSAP · R3F · Supabase · Resend
             </span>

@@ -15,6 +15,7 @@ export function Services() {
   const rootRef = useRef<HTMLElement | null>(null);
   const monumentRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [bgExtend, setBgExtend] = useState(false);
   const [isDesktopView, setIsDesktopView] = useState(false);
 
   useEffect(() => {
@@ -56,6 +57,21 @@ export function Services() {
         if (monument && monument.getBoundingClientRect().top <= threshold) idx = i;
       });
       setActiveIndex((prev) => (prev === idx ? prev : idx));
+
+      // Extend the bg-backtrack only after the active monument has been stuck
+      // for at least its own height — otherwise it covers the outgoing
+      // monument/content during the handoff. stuckDepth is measured as the
+      // gap the sticky monument has opened between its own top and the top
+      // of its phase container (grows from 0 once sticky kicks in).
+      const active = monumentRefs.current[idx];
+      const phase = active?.parentElement ?? null;
+      let extend = false;
+      if (active && phase) {
+        const stuckDepth =
+          active.getBoundingClientRect().top - phase.getBoundingClientRect().top;
+        extend = stuckDepth > active.offsetHeight;
+      }
+      setBgExtend((prev) => (prev === extend ? prev : extend));
     };
 
     const st = ScrollTrigger.create({
@@ -94,6 +110,7 @@ export function Services() {
                 className={styles.phase}
                 data-state={state}
                 data-service={service.id}
+                data-bg-extend={state === 'active' && bgExtend ? 'true' : undefined}
               >
                 <button
                   type="button"

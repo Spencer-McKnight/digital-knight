@@ -100,6 +100,36 @@
   background: var(--ink-page);
   padding: var(--space-3) 0;
 
+  // Mobile hack: paint the page bg upward behind the translucent nav so the
+  // outgoing phase's content can't bleed through the glass while the monument
+  // is pinned. Gated by JS (data-bg-extend) so the extension only kicks in
+  // once the active phase has scrolled past the monument's own height —
+  // before that, the outgoing monument/content still sits in this band.
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(-1 * var(--services-nav-offset));
+    height: var(--services-nav-offset);
+    background: var(--ink-page);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--dur-element) var(--ease-house);
+  }
+
+  // Ember hairline matching the nav's underline language.
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--ink-ember);
+    pointer-events: none;
+  }
+
   @include respond-to(md) {
     position: relative;
     top: auto;
@@ -109,6 +139,11 @@
     width: auto;
     grid-column: 1;
     margin-bottom: var(--space-7);
+
+    &::before,
+    &::after {
+      content: none;
+    }
   }
 
   &:hover .monumentLabel,
@@ -155,6 +190,10 @@
 
 .phase[data-state='active'] .monumentLabel {
   color: var(--ink-ember);
+}
+
+.phase[data-bg-extend='true'] .monument::before {
+  opacity: 1;
 }
 
 .phase:last-child .monument {
