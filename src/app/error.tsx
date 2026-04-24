@@ -21,7 +21,7 @@ export default function RouteError({
       <div className={styles.inner}>
         <p className={styles.eyebrow}>Error</p>
         <h1 className={styles.heading}>
-          Still <em className={styles.ember}>forging</em>.
+          Broke it.. <em className={styles.ember}>sorry!</em>.
         </h1>
         <p className={styles.note}>
           I&apos;m testing new features — this one slipped through. Email{' '}

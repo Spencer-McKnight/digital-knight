@@ -12,28 +12,18 @@ const phaseState = (i: number, active: number): PhaseState =>
 
 export function Services() {
   const rootRef = useRef<HTMLElement | null>(null);
-  const phaseRefs = useRef<Array<HTMLLIElement | null>>([]);
+  const monumentRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-
-  const getThresholdPx = useCallback((): number => {
-    const content = phaseRefs.current[0]?.querySelector(
-      `.${styles.content}`,
-    ) as HTMLElement | null;
-    if (content) {
-      const v = parseFloat(getComputedStyle(content).top);
-      if (Number.isFinite(v) && v > 0) return v;
-    }
-    return 120;
-  }, []);
 
   const scrollToPhase = useCallback(
     (index: number) => {
-      const phase = phaseRefs.current[index];
-      if (!phase) return;
-      const y = phase.getBoundingClientRect().top + window.scrollY - getThresholdPx() - 4;
+      const monument = monumentRefs.current[index];
+      if (!monument) return;
+      const y =
+        monument.getBoundingClientRect().top + window.scrollY - window.innerHeight / 2 + 4;
       window.scrollTo({ top: y, behavior: 'smooth' });
     },
-    [getThresholdPx],
+    [],
   );
 
   useEffect(() => {
@@ -41,10 +31,10 @@ export function Services() {
     if (!root) return;
 
     const compute = () => {
-      const threshold = getThresholdPx() + 8;
+      const threshold = window.innerHeight / 2;
       let idx = 0;
-      phaseRefs.current.forEach((phase, i) => {
-        if (phase && phase.getBoundingClientRect().top <= threshold) idx = i;
+      monumentRefs.current.forEach((monument, i) => {
+        if (monument && monument.getBoundingClientRect().top <= threshold) idx = i;
       });
       setActiveIndex((prev) => (prev === idx ? prev : idx));
     };
@@ -58,7 +48,7 @@ export function Services() {
     compute();
 
     return () => st.kill();
-  }, [getThresholdPx]);
+  }, []);
 
   return (
     <section
@@ -83,15 +73,15 @@ export function Services() {
               <li
                 key={service.id}
                 className={styles.phase}
-                ref={(el) => {
-                  phaseRefs.current[i] = el;
-                }}
                 data-state={state}
                 data-service={service.id}
               >
                 <button
                   type="button"
                   className={styles.monument}
+                  ref={(el) => {
+                    monumentRefs.current[i] = el;
+                  }}
                   onClick={() => scrollToPhase(i)}
                   aria-current={state === 'active' ? 'true' : undefined}
                   aria-label={`Open ${service.label}`}

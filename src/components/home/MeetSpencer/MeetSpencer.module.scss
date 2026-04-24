@@ -16,18 +16,10 @@
     grid-template-columns: 1fr 1fr;
     gap: var(--space-8);
   }
-
-  @include respond-to(lg) {
-    gap: var(--space-9);
-  }
 }
 
 .imageColumn {
-  order: 1;
-
-  @include respond-to(md) {
-    order: 0;
-  }
+  order: 0;
 }
 
 .figure {
@@ -40,20 +32,26 @@
 .image {
   display: block;
   width: 100%;
-  height: auto;
-  max-height: 480px;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   object-position: center top;
   border-radius: var(--space-3);
+
+  @include respond-to(sm) {
+    aspect-ratio: 3 / 4;
+  }
+
+  @include respond-to(lg) {
+    aspect-ratio: 1 / 1;
+  }
 }
 
 .contentColumn {
   display: grid;
   gap: var(--space-5);
-  order: 0;
+  order: 1;
 
   @include respond-to(md) {
-    order: 1;
     gap: var(--space-6);
   }
 }

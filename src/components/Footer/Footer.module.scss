@@ -37,7 +37,7 @@
   @include respond-to(md) {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: stretch;
-    gap: var(--space-6);
+    gap: var(--space-8);
   }
 }
 
@@ -94,7 +94,7 @@
 
   @include respond-to(lg) {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--space-6);
+    gap: var(--space-8);
   }
 }
 
