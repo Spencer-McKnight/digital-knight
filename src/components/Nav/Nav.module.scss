@@ -100,12 +100,15 @@
     }
   }
 
-  // When the mobile drawer is open the bar floats on top of a dark panel.
-  // Force text/icon ink to page so the wordmark and burger stay legible
-  // regardless of the ground that would otherwise be detected beneath.
+  // When the mobile drawer is open the bar floats on top of a stone panel.
+  // Force text/icon ink to page and the glass tint to a near-solid stone so
+  // the bar reads as a continuation of the drawer surface rather than a
+  // translucent strip showing the page beneath.
   &[data-menu-open] {
     --ink-upper: var(--ink-page);
     --ink-lower: var(--ink-page);
+    --surface-upper: #{rgba(colors.$ink-stone, 0.92)};
+    --surface-lower: #{rgba(colors.$ink-stone, 0.92)};
   }
 }
 
@@ -314,12 +317,13 @@
 }
 
 // ── Drawer modal ─────────────────────────────────────────────────────────────
-// Full-viewport, fixed. On narrow phones the panel covers the whole screen;
-// from xs upward it shrinks to a tall drawer anchored to the right edge. The
-// scrim carries the darkening against anything behind, the panel carries
-// the stagger. Closed state is fully non-interactive via pointer-events +
-// visibility (visibility flips after the out-transition so focus can't land
-// inside a hidden panel).
+// Full-viewport takeover. The panel always covers the entire screen — width
+// AND height — so the menu reads as a complete overlay rather than a side
+// drawer with the page peeking past it. The scrim sits beneath the panel
+// and provides the wash for the cross-fade entrance; the panel itself
+// carries the stagger of its contents. Closed state is fully non-interactive
+// via pointer-events + visibility (visibility flips after the out-transition
+// so focus can't land inside a hidden panel).
 .drawer {
   position: fixed;
   inset: 0;
@@ -340,10 +344,13 @@
   }
 }
 
+// Stone-tinted wash beneath the panel. With the panel fully opaque the scrim
+// is mostly hidden once the entrance settles, but it carries the early
+// frames of the open transition so the page doesn't pop straight to grey.
 .drawerScrim {
   position: absolute;
   inset: 0;
-  background: #{rgba(colors.$ink-iron, 0.72)};
+  background: #{rgba(colors.$ink-stone, 0.85)};
   opacity: 0;
   transition: opacity var(--dur-scene) var(--ease-house);
 
@@ -354,55 +361,53 @@
 
 .drawerPanel {
   position: absolute;
-  inset-block: 0;
-  inset-inline-end: 0;
-  width: 100%;
+  inset: 0;
 
-  @media (min-width: 26rem) {
-    width: min(86vw, 24rem);
-    border-inline-start: 1px solid #{rgba(colors.$ink-ember, 0.35)};
-  }
-
-  // Iron is the deepest ink we use — the drawer is a modal surface and
-  // earns its own context, always darker than either ground.
-  background: var(--ink-iron);
-  color: var(--ink-page);
+  // Stone is our charcoal grey — softer than iron but unmistakably an
+  // overlay surface. Painted from the SCSS primitive (rather than the
+  // `--ink-stone` custom property) so an ancestor with `ground-invert`
+  // can't redefine the token out from under us — the panel is its own
+  // surface, not a continuation of any ground beneath.
+  background: colors.$ink-stone;
+  color: colors.$ink-page;
 
   display: flex;
   flex-direction: column;
-  // No gap on the panel — the links group, divider, and CTA manage their
-  // own spacing via margins so `margin-block-start: auto` on the divider
-  // can do its alignment work cleanly.
+  // Content is bottom-aligned so the link stack and CTA fall close to the
+  // thumb on a phone — the burger lives at the top of the bar, but the
+  // tappable targets belong at the bottom of the reach arc.
+  justify-content: flex-end;
 
-  // Top padding clears the nav bar so the burger's X still reads against
-  // the panel without overlapping the first link. Bottom padding is a
-  // generous landing for the CTA.
-  padding-block: calc(var(--space-7) + var(--space-5)) var(--space-7);
+  // Modest top padding (the nav bar already clears its own space at the
+  // top of the panel — the X is paintable against stone). Bottom padding
+  // is a generous landing for the CTA so it doesn't crowd the device's
+  // home indicator / safe area.
+  padding-block: var(--space-5) calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
   padding-inline: var(--grid-margin);
 
-  transform: translateX(6%);
+  // A full-screen surface needs a softer entrance than a side drawer — a
+  // gentle drift up paired with the cross-fade reads as the surface
+  // settling into place rather than sliding past the viewport edge.
+  transform: translateY(8px);
   opacity: 0;
   transition:
     transform var(--dur-scene) var(--ease-house),
     opacity var(--dur-scene) var(--ease-house);
 
   [data-open] > & {
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
 // Thin hairline between the link stack and the CTA — mirrors the nav's own
-// underline language without introducing a new divider style. `margin-block
-// -start: auto` pushes the divider and everything below it to the bottom of
-// the panel, so the CTA always lands at the foot regardless of viewport
-// height — the "dynamic alignment" that keeps the layout balanced on any
-// device size.
+// underline language without introducing a new divider style. The panel
+// itself bottom-aligns the whole stack via `justify-content: flex-end`, so
+// the divider only owns its own breathing room.
 .drawerDivider {
   height: 1px;
   background: #{rgba(colors.$ink-page, 0.14)};
-  margin-block-start: auto;
-  margin-block-end: var(--space-4);
+  margin-block: var(--space-5) var(--space-4);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform var(--dur-scene) var(--ease-house);
@@ -480,8 +485,8 @@
     transition-delay: calc(var(--dur-state) + var(--i, 0) * 70ms);
   }
 
-  // The CTA sits on iron — the Button's default iron-on-page reads poorly
-  // here, so we flip its tokens locally to page-on-iron with an ember
+  // The CTA sits on stone — the Button's default iron-on-page reads poorly
+  // here, so we flip its tokens locally to page-on-stone with an ember
   // hover that matches the link underline language.
   :global([data-variant='primary']) {
     background: var(--ink-page);

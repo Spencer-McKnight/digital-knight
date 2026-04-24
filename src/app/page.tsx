@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Hero } from '@/components/home/Hero';
 import { Services } from '@/components/home/Services';
-import { Tech } from '@/components/home/Tech';
 import { LetsTalk } from '@/components/home/LetsTalk';
 
 export const metadata: Metadata = {
@@ -17,8 +16,7 @@ export const metadata: Metadata = {
  *     1. Entry  — Hero (Page)
  *     2. Call   — Let's Talk (Stone)
  *     3. Act    — Services (Page)
- *     4. Act    — Tech (Stone)    ─┐
- *        Landing — Footer (Stone)  ─┘ continuous ground, landing lock
+ *        Landing — Footer (Stone)
  *
  *   Ground alternates Page → Stone to mark act changes. Every section is
  *   self-contained and ground-agnostic: the transitions belong to the page.
@@ -29,7 +27,6 @@ export default function HomePage() {
       <Hero />
       <LetsTalk />
       <Services />
-      <Tech />
     </main>
   );
 }

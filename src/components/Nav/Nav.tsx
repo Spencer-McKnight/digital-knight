@@ -2,17 +2,19 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useLoadGate } from '@/hooks/useLoadGate';
 import { Button } from '@/components/Button';
+import { SmoothLink } from '@/components/SmoothLink';
 import styles from './Nav.module.scss';
+
+const NAV_SCROLL_OFFSET = 0;
 
 type NavLink = { label: string; href: string; section?: string };
 
 const LINKS: ReadonlyArray<NavLink> = [
   { label: 'Talk', href: '/#talk', section: 'talk' },
   { label: 'Services', href: '/#services', section: 'services' },
-  { label: 'Tech', href: '/#tech', section: 'tech' },
-  { label: 'Method', href: '/method' },
 ];
 
 type Ground = 'page' | 'stone';
@@ -54,9 +56,13 @@ type Ground = 'page' | 'stone';
  *   Mobile drawer
  *   -------------
  *   Below `sm`, the link row is replaced by a burger trigger that opens a
- *   full-viewport panel. The panel is always stone-themed (dark) regardless
- *   of the ground beneath the nav bar, so it reads consistently as an
- *   overlay surface rather than a continuation of the page.
+ *   full-viewport panel. The panel itself is rendered via `MobileMenu` —
+ *   a sibling component that portals into `document.body`, escaping the
+ *   nav's fixed/backdrop-filter stacking context so the overlay can occupy
+ *   the entire viewport without clipping. The panel is always stone-themed
+ *   (charcoal grey) regardless of the ground beneath the nav bar, so it
+ *   reads consistently as an overlay surface rather than a continuation of
+ *   the page.
  */
 export function Nav() {
   const loaded = useLoadGate();
@@ -239,26 +245,29 @@ export function Nav() {
       data-menu-open={menuOpen || undefined}
       aria-label="Primary"
     >
-      <Link href="/" className={styles.wordmark} aria-label="Digital Knight — home">
+      <SmoothLink href="/" className={styles.wordmark} aria-label="Digital Knight — home">
         <span className={styles.word} data-ink-split>
           DIGITAL KNIGHT
         </span>
-      </Link>
+      </SmoothLink>
 
       <ul className={styles.links}>
         {LINKS.map((link) => {
           const isActive = link.section ? active === link.section : false;
+          const isHashLink = link.href.includes('#');
+          const LinkComponent = isHashLink ? SmoothLink : Link;
           return (
             <li key={link.href}>
-              <Link
+              <LinkComponent
                 href={link.href}
                 className={styles.link}
                 data-active={isActive || undefined}
+                {...(isHashLink ? { offset: NAV_SCROLL_OFFSET } : {})}
               >
                 <span className={styles.linkLabel} data-ink-split>
                   {link.label}
                 </span>
-              </Link>
+              </LinkComponent>
             </li>
           );
         })}
@@ -280,56 +289,95 @@ export function Nav() {
         </span>
       </button>
 
-      <div
-        id="mobile-menu"
-        className={styles.drawer}
-        data-open={menuOpen || undefined}
-        aria-hidden={!menuOpen}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Menu"
-      >
-        <div className={styles.drawerScrim} onClick={closeMenu} aria-hidden />
-        <div className={styles.drawerPanel}>
-          <ul className={styles.drawerLinks}>
-            {LINKS.map((link, i) => {
-              const isActive = link.section ? active === link.section : false;
-              return (
-                <li
-                  key={link.href}
-                  className={styles.drawerItem}
-                  style={{ '--i': i } as React.CSSProperties}
-                >
-                  <Link
-                    href={link.href}
-                    className={styles.drawerLink}
-                    data-active={isActive || undefined}
-                    onClick={closeMenu}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-
-          <span className={styles.drawerDivider} aria-hidden />
-
-          <div
-            className={styles.drawerCta}
-            style={{ '--i': LINKS.length + 1 } as React.CSSProperties}
-          >
-            <span className={styles.drawerCtaLabel}>Start a conversation</span>
-            <Button href="/#talk" variant="primary" size="md" onClick={closeMenu}>
-              Free Strategy Consult
-            </Button>
-          </div>
-        </div>
-      </div>
-
       <span className={styles.hairline} aria-hidden />
+
+      <MobileMenu
+        open={menuOpen}
+        onClose={closeMenu}
+        active={active}
+      />
     </nav>
   );
+}
+
+// =============================================================================
+// MobileMenu — portalled, top-level overlay
+// -----------------------------------------------------------------------------
+// Rendered into `document.body` via React portal. Keeping this OUTSIDE the
+// `<nav>` element matters: the nav is `position: fixed` with its own
+// stacking/backdrop-filter context, which clipped and reordered any descendant
+// trying to occupy the full viewport. As a body-level sibling the drawer
+// behaves as a true overlay — predictable z-index, no inherited filter,
+// nothing fighting the cascade.
+// =============================================================================
+type MobileMenuProps = {
+  open: boolean;
+  onClose: () => void;
+  active: string | null;
+};
+
+function MobileMenu({ open, onClose, active }: MobileMenuProps) {
+  // Portal target is window/DOM-only — gate render on a mounted flag so SSR
+  // and the first client render agree (no hydration mismatch).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) return null;
+
+  const overlay = (
+    <div
+      id="mobile-menu"
+      className={styles.drawer}
+      data-open={open || undefined}
+      aria-hidden={!open}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menu"
+    >
+      <div className={styles.drawerScrim} onClick={onClose} aria-hidden />
+      <div className={styles.drawerPanel}>
+        <ul className={styles.drawerLinks}>
+          {LINKS.map((link, i) => {
+            const isActive = link.section ? active === link.section : false;
+            const isHashLink = link.href.includes('#');
+            const LinkComponent = isHashLink ? SmoothLink : Link;
+            return (
+              <li
+                key={link.href}
+                className={styles.drawerItem}
+                style={{ '--i': i } as React.CSSProperties}
+              >
+                <LinkComponent
+                  href={link.href}
+                  className={styles.drawerLink}
+                  data-active={isActive || undefined}
+                  onClick={onClose}
+                  {...(isHashLink ? { offset: NAV_SCROLL_OFFSET } : {})}
+                >
+                  {link.label}
+                </LinkComponent>
+              </li>
+            );
+          })}
+        </ul>
+
+        <span className={styles.drawerDivider} aria-hidden />
+
+        <div
+          className={styles.drawerCta}
+          style={{ '--i': LINKS.length + 1 } as React.CSSProperties}
+        >
+          <span className={styles.drawerCtaLabel}>Start a conversation</span>
+          <Button href="/#talk" variant="primary" size="md" onClick={onClose}>
+            Free Strategy Consult
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return createPortal(overlay, document.body);
 }
 
 function groundOf(el: HTMLElement): Ground {

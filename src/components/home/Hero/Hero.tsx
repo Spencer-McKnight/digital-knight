@@ -11,12 +11,6 @@ const ForgeSeal = dynamic(() => import('./ForgeSeal').then((m) => m.ForgeSeal), 
   loading: () => null,
 });
 
-/**
- * Hero — the Entry beat (`design.md` §9 beat 1).
- *
- *   Asymmetric layout. The seal holds the right; the promise holds the left.
- *   One monument headline, one ember word ("prevail").
- */
 export function Hero() {
   return (
     <section

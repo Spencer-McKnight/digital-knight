@@ -103,11 +103,11 @@ export default function BookingConfirmation(props: BookingConfirmationProps) {
 
           <Text style={body1}>
             If you'd like to prepare for the call, please consider:
-            - Is your website generating leads, and representing your current goals?
-            - Would you like to modernise your design, add new features, attract new business?
-            - Are there things you do manually that you suspect should be automatic?
-            During the call, we'll discuss some context and I'll provide candid ideas for your business.
-            No obligation either way, I'd be happy to meet you just to connect, learn and share.
+            <br />- Is your website generating leads, and representing your current goals?
+            <br />- Would you like to modernise your design, add new features, attract new business?
+            <br />- Are there things you do manually that you suspect should be automatic?
+            <br /> During the call, we'll discuss some context and I'll provide candid ideas for your business.
+            <br />No obligation either way, I'd be happy to meet you just to connect, learn and share.
           </Text>
 
           <Hr style={rule} />

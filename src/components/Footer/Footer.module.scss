@@ -2,11 +2,8 @@
 
 .root {
   @include ground-invert;
-  @include section-pad(xl);
-  @include container;
   position: relative;
-  display: grid;
-  gap: var(--space-8);
+  width: 100%;
 
   // Ember hairline across the top — mirrors the nav (design.md §8).
   &::before {
@@ -20,16 +17,31 @@
   }
 }
 
+.inner {
+  @include section-pad(sm);
+  @include container;
+  display: grid;
+  gap: var(--space-5);
+
+  @include respond-to(md) {
+    gap: var(--space-7);
+  }
+}
+
 // --- Sign-off --------------------------------------------------------------
 .signBlock {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-2);
 }
 
 .sign {
   @include type(hero-display);
   max-width: 16ch;
   color: var(--ink-iron);
+
+  @include respond-below(md) {
+    font-size: clamp(2.2rem, 8vw, 3.5rem);
+  }
 }
 
 .signEmber {
@@ -41,18 +53,18 @@
 // --- Body (colophon + sitemap) --------------------------------------------
 .body {
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-4);
   align-items: start;
 
   @include respond-to(lg) {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--space-7);
+    gap: var(--space-6);
   }
 }
 
 .colophon {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-2);
   max-width: 42ch;
 }
 
@@ -70,12 +82,16 @@
 .sitemap {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-5);
+  gap: var(--space-4);
+
+  @include respond-below(md) {
+    gap: var(--space-3);
+  }
 }
 
 .column {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-2);
   align-content: start;
 }
 
@@ -86,7 +102,7 @@
 
 .columnList {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .link {
@@ -136,11 +152,11 @@
 
 .meta {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-2);
 
   @include respond-to(md) {
     grid-template-columns: auto 1fr auto;
-    gap: var(--space-5);
+    gap: var(--space-4);
     align-items: baseline;
   }
 }
