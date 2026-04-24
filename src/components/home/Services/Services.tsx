@@ -105,7 +105,7 @@ export function Services() {
     >
       <header className={styles.header}>
         <h2 id="services-title" className={styles.sectionTitle}>
-          Spencer McKnight&apos;s personal agency,
+          Spencer McKnight&apos;s agency,
           <br />
           built around <span className={styles.sectionEmber}>four commitments</span>.
         </h2>

@@ -3,38 +3,24 @@
 // ============================================================================
 // WeekGrid — the focal artefact of the Let's Talk block.
 // ----------------------------------------------------------------------------
-// Two responsive shapes, one structure:
+// One layout shape at every breakpoint:
 //
-//   Desktop (sm+): arrows flank the grid row — one axis, compact footprint.
+//   Arrows sit beside the day-headers row (top axis). The time rail lifts out
+//   of flow and paints into the left gutter; the right gutter mirrors its
+//   width — so the cell grid sits exactly centred on the page regardless of
+//   how wide the time labels are.
 //
-//                     ┌──────────────────────────────────┐
-//                     │ MON │ TUE │ WED │ THU │ FRI      │  <- dayHeaders
-//       ┌────┬────────┼──────────────────────────────────┼────┐
-//       │    │ 10am   │                                  │    │
-//       │ <  │ 10:30  │    BUSINESS_DAYS × SLOTS_PER_DAY │ >  │
-//       │    │  …     │                                  │    │
-//       │    │ 2:30   │                                  │    │
-//       └────┴────────┴──────────────────────────────────┴────┘
-//         ^      ^                   ^                      ^
-//       prev   times                grid                   next
-//
-//   Mobile (< sm): arrows sit *beside* the day-headers row, aligned with
-//                  the top axis. The time rail lifts out of flow and paints
-//                  into the left gutter (the same trick headers use on
-//                  desktop), and the right gutter mirrors its width — so
-//                  the cells column is exactly centred on the page.
-//
-//         ┌─────────┬──────────────────────────┬─────────┐
-//         │   <     │ MON TUE WED THU FRI      │    >    │  headers row
-//         ├─────────┼──────────────────────────┼─────────┤
-//         │ 10am    │                          │         │
-//         │ 10:30   │        grid cells        │         │
-//         │  …      │                          │         │
-//         │ 2:30    │                          │         │
-//         └─────────┴──────────────────────────┴─────────┘
-//         ↑ rail overlays the left gutter      ↑ mirrored
-//           (absolute-positioned, paints          empty gutter
-//           outside cells' layout flow)          keeps centering
+//       ┌─────────┬──────────────────────────┬─────────┐
+//       │   <     │ MON  TUE  WED  THU  FRI  │    >    │  headers row
+//       ├─────────┼──────────────────────────┼─────────┤
+//       │ 10 am   │                          │         │
+//       │ 10:30   │    BUSINESS_DAYS ×       │         │
+//       │  …      │    SLOTS_PER_DAY         │         │
+//       │ 2:30 pm │                          │         │
+//       └─────────┴──────────────────────────┴─────────┘
+//       ↑ rail overlays the left gutter      ↑ mirrored
+//         (absolute-positioned, paints          empty gutter
+//         outside cells' layout flow)          keeps centering
 //
 // Geometry is a CSS grid on `.gridFrame`. The frame's height is anchored by
 // the slot cells; axis furniture (day headers) is lifted out of flow so the
@@ -81,11 +67,8 @@
 
   position: relative;
   display: grid;
-  // Mobile default: arrows flank the top axis (day headers); the time rail
-  // lifts out of flow and paints into the left gutter. Col 1 / col 3 are
-  // matched rail-width gutters — empty in row 2 — so the cells column sits
-  // exactly centred on the page. The arrow sits inside col 1 on the top row;
-  // the rail's labels sit inside col 1 on the cells row (as an overlay).
+  // Arrows beside day-headers (top row); time rail absolutely positioned into
+  // the left gutter; mirrored empty right gutter keeps the cell grid centred.
   grid-template-columns: var(--_rail-width) 1fr var(--_rail-width);
   grid-template-rows: auto auto;
   grid-template-areas:
@@ -99,11 +82,8 @@
   }
 
   @include respond-to(sm) {
-    // Desktop: single row — arrows flank the grid row, rail is a real column
-    // to the left of the cells, day headers float above the cells.
-    grid-template-columns: auto auto 1fr auto;
-    grid-template-rows: auto;
-    grid-template-areas: 'prev times grid next';
+    // Wider gutter so the full "10:30 am" label fits comfortably.
+    --_rail-width: clamp(72px, 10vw, 108px);
     --_cell-min-h: 42px;
     --_rail-pad: var(--space-3);
   }
@@ -121,14 +101,8 @@
   }
 }
 
-// Nav arrows.
-//
-//   Mobile: flank the day-headers row (row 1 of the frame grid) — beside
-//   the top axis, centred on its vertical midpoint. The cells row below
-//   keeps matching empty gutters in col 1 / col 4 so the rail+cells block
-//   sits centred on the page.
-//
-//   Desktop (sm+): flank the grid row, centred on its vertical midpoint.
+// Nav arrows — flank the day-headers row at every breakpoint, centred on its
+// vertical midpoint. The empty gutter below keeps the cells column centred.
 .prevArrow {
   grid-area: prev;
   align-self: center;
@@ -152,27 +126,13 @@
 }
 
 // Day headers — horizontal axis (Mon 27, Tue 28, …).
-//
-//   Mobile: sit in the `headers` grid area (row 1, col 3) as normal-flow
-//   content so the arrows on either side can share the row and align with
-//   them vertically.
-//
-//   Desktop (sm+): lift out of flow via absolute positioning and float
-//   above the grid column so the section's y-padding lands on the cells,
-//   not the labels.
+// Sit in the `headers` grid area (row 1) at every breakpoint so the arrows
+// on either side share the row and align with them vertically.
 .dayHeaders {
   grid-area: headers;
   display: grid;
   grid-template-columns: repeat(var(--_day-cols), minmax(var(--_cell-min-w), 1fr));
   pointer-events: none;
-
-  @include respond-to(sm) {
-    position: absolute;
-    grid-area: grid;
-    left: 0;
-    right: 0;
-    bottom: calc(100% + var(--_header-gap));
-  }
 }
 
 .dayHeader {
@@ -206,15 +166,8 @@
 }
 
 // Time rail — vertical axis showing times (10 am, 10:30 am, etc.).
-//
-//   Mobile: lifted out of flow and painted to the left of the grid cells,
-//   the same trick the day headers use for "above". This keeps the cells
-//   column centred on the page without the rail's label width pushing it
-//   off-axis.
-//
-//   Desktop (sm+): a real column to the left of the cells — the frame is
-//   wide enough that the rail's footprint reads as intentional spacing
-//   rather than asymmetric drift.
+// Always lifted out of flow and painted into the left gutter so the rail's
+// label width never shifts the cell grid off-centre.
 .timeRail {
   position: absolute;
   grid-area: grid;
@@ -225,15 +178,6 @@
   display: grid;
   grid-template-rows: repeat(var(--_time-rows), minmax(var(--_cell-min-h), 1fr));
   padding-right: var(--_rail-pad);
-
-  @include respond-to(sm) {
-    position: static;
-    grid-area: times;
-    top: auto;
-    bottom: auto;
-    right: auto;
-    justify-self: end;
-  }
 }
 
 .timeTick {
