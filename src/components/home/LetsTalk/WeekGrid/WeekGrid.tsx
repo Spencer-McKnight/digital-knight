@@ -7,6 +7,7 @@ import {
   useRef,
   useSyncExternalStore,
   useTransition,
+  type CSSProperties,
 } from 'react';
 import { fromAbsolute } from '@internationalized/date';
 import {
@@ -17,6 +18,7 @@ import {
 import type { CalendarLinks } from '@/lib/booking/calendarLinks';
 import {
   BUSINESS_DAYS,
+  BUSINESS_HOUR_START,
   SLOTS_PER_DAY,
   SLOT_MINUTES,
 } from '@/lib/booking/config';
@@ -379,7 +381,16 @@ export function WeekGrid({ initial, hostEmail, onConfirmed }: WeekGridProps) {
         />
       ) : (
         <>
-          <div className={styles.gridFrame} aria-busy={isNavPending || undefined}>
+          <div
+            className={styles.gridFrame}
+            aria-busy={isNavPending || undefined}
+            style={
+              {
+                '--_day-cols': BUSINESS_DAYS.length,
+                '--_time-rows': SLOTS_PER_DAY,
+              } as CSSProperties
+            }
+          >
             <NavArrow
               direction="prev"
               disabled={prevDisabled}
@@ -393,7 +404,11 @@ export function WeekGrid({ initial, hostEmail, onConfirmed }: WeekGridProps) {
               {slots
                 .filter((s) => s.slotIndex === 0)
                 .map((s) => (
-                  <div key={s.dayIndex} className={styles.dayHeader}>
+                  <div
+                    key={s.dayIndex}
+                    className={styles.dayHeader}
+                    data-day-index={s.dayIndex}
+                  >
                     <span className={styles.dayName}>{s.dayName}</span>
                     <span className={styles.dayDate}>{s.dayDate}</span>
                   </div>
@@ -408,18 +423,29 @@ export function WeekGrid({ initial, hostEmail, onConfirmed }: WeekGridProps) {
               className={styles.nextArrow}
             />
 
-            {/* Time rail — vertical axis (Y) */}
+            {/* Time rail — vertical axis (Y). The am/pm suffix is split into
+                its own span so it can hide on narrow viewports. */}
             <div className={styles.timeRail} aria-hidden>
               {slots
                 .filter((s) => s.dayIndex === 0)
-                .map((s) => (
-                  <div key={s.slotIndex} className={styles.timeTick}>
-                    {s.timeShortBusiness}
-                  </div>
-                ))}
+                .map((s) => {
+                  const [time, period] = splitTimeAndPeriod(s.timeShortBusiness);
+                  return (
+                    <div
+                      key={s.slotIndex}
+                      className={styles.timeTick}
+                      data-slot-index={s.slotIndex}
+                    >
+                      <span>{time}</span>
+                      {period ? (
+                        <span className={styles.timeTickPeriod}>{period}</span>
+                      ) : null}
+                    </div>
+                  );
+                })}
             </div>
 
-            {/* Grid — reordered for 4 cols × 10 rows (days across, times down) */}
+            {/* Grid — reordered time-major (days across, times down) */}
             <div
               className={styles.grid}
               role="grid"
@@ -430,6 +456,8 @@ export function WeekGrid({ initial, hostEmail, onConfirmed }: WeekGridProps) {
                   key={s.utc}
                   state={resolveSlotState(s, state, availability, mounted)}
                   label={s.fullLabel}
+                  dayIndex={s.dayIndex}
+                  slotIndex={s.slotIndex}
                   onSelect={() => handleSelect(s.utc)}
                 />
               ))}
@@ -498,7 +526,7 @@ type SlotModel = {
   dateLabel: string;
   /** Time range + timezone for the booking popup, e.g. "10:00–10:30 am (AEST)". */
   timeLabel: string;
-  /** Full accessible label, visitor-local + business hours. */
+  /** Full accessible label, visitor-local. */
   fullLabel: string;
 };
 
@@ -534,11 +562,11 @@ function buildSlotModels(avail: WeekAvailability, visitorTZ: string): SlotModel[
     timeZoneName: 'short',
   });
 
-  // Anchor to business-local Monday 10:00, then walk the grid in
-  // business-local units so DST transitions are handled by the calendar
+  // Anchor to the host-local Monday at `BUSINESS_HOUR_START`, then walk the
+  // grid in host-local units so DST transitions are handled by the calendar
   // arithmetic rather than after-the-fact hour correction.
   const dayZeroStart = fromAbsolute(weekStartMs, businessTZ).set({
-    hour: 10,
+    hour: BUSINESS_HOUR_START,
     minute: 0,
     second: 0,
     millisecond: 0,
@@ -612,9 +640,10 @@ function resolveSlotState(
  * Reorder slots from day-major to time-major for the CSS grid layout.
  *
  * Input order (day-major):  Mon-10:00, Mon-10:30, ..., Mon-14:30, Tue-10:00, ...
- * Output order (time-major): Mon-10:00, Tue-10:00, Wed-10:00, Thu-10:00, Mon-10:30, ...
+ * Output order (time-major): Mon-10:00, Tue-10:00, ..., Fri-10:00, Mon-10:30, ...
  *
- * This fills a 4-column × 10-row grid correctly with days across and times down.
+ * This fills a `BUSINESS_DAYS.length`-col × `SLOTS_PER_DAY`-row grid correctly
+ * with days across and times down.
  */
 function reorderSlotsForGrid(slots: SlotModel[]): SlotModel[] {
   const reordered: SlotModel[] = [];
@@ -629,5 +658,17 @@ function reorderSlotsForGrid(slots: SlotModel[]): SlotModel[] {
   }
 
   return reordered;
+}
+
+/**
+ * Split a formatted time like "10:30 am" into ["10:30", "am"] so the rail
+ * can render the period marker as a separately styleable span (e.g. hidden
+ * on narrow viewports). Falls back to `[input, null]` if the string has no
+ * period suffix — defensive against locale-specific formats.
+ */
+function splitTimeAndPeriod(formatted: string): [string, string | null] {
+  const idx = formatted.lastIndexOf(' ');
+  if (idx === -1) return [formatted, null];
+  return [formatted.slice(0, idx), formatted.slice(idx + 1)];
 }
 

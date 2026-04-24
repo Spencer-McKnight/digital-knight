@@ -9,6 +9,8 @@
 export type CalendarLinkInput = {
   title: string;
   description: string;
+  /** Physical/virtual location — surfaces as `location` in Google/Outlook compose pages. */
+  location?: string;
   /** UTC ISO 8601 start. */
   startUTC: string;
   /** UTC ISO 8601 end. */
@@ -20,17 +22,18 @@ function toCompactUTC(iso: string): string {
   return iso.replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 }
 
-export function googleLink({ title, description, startUTC, endUTC }: CalendarLinkInput): string {
+export function googleLink({ title, description, location, startUTC, endUTC }: CalendarLinkInput): string {
   const params = new URLSearchParams({
     action: 'TEMPLATE',
     text: title,
     details: description,
     dates: `${toCompactUTC(startUTC)}/${toCompactUTC(endUTC)}`,
   });
+  if (location) params.set('location', location);
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
-export function outlookLink({ title, description, startUTC, endUTC }: CalendarLinkInput): string {
+export function outlookLink({ title, description, location, startUTC, endUTC }: CalendarLinkInput): string {
   const params = new URLSearchParams({
     path: '/calendar/action/compose',
     rru: 'addevent',
@@ -39,6 +42,7 @@ export function outlookLink({ title, description, startUTC, endUTC }: CalendarLi
     subject: title,
     body: description,
   });
+  if (location) params.set('location', location);
   return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
 }
 

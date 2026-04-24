@@ -4,10 +4,18 @@ import {
   Head,
   Hr,
   Html,
+  Link,
   Preview,
   Section,
   Text,
 } from '@react-email/components';
+import {
+  MEETING_DIAL_IN_COUNTRY,
+  MEETING_DIAL_IN_NUMBER,
+  MEETING_LOCATION_LABEL,
+  MEETING_LOCATION_URL,
+  MEETING_PIN,
+} from '@/lib/booking/config';
 
 /**
  * BookingConfirmation — React Email template.
@@ -55,15 +63,14 @@ export default function BookingConfirmation(props: BookingConfirmationProps) {
           <Hr style={emberRule} />
 
           <Text style={lede}>
-            Thanks, {name}. Here&apos;s what&apos;s on the calendar.
+            Thank you, Spencer McKnight has confirmed the consult.
+            Add the event to your calendar, or use the details below.
           </Text>
 
           <Section style={details}>
             <Text style={detailsLabel}>WHEN (YOUR TIME)</Text>
             <Text style={detailsValue}>{whenVisitor}</Text>
 
-            <Text style={detailsLabel}>BUSINESS HOURS</Text>
-            <Text style={detailsValue}>{whenBusiness}</Text>
 
             <Text style={detailsLabel}>DURATION</Text>
             <Text style={detailsValue}>30 minutes</Text>
@@ -71,22 +78,43 @@ export default function BookingConfirmation(props: BookingConfirmationProps) {
 
           <Hr style={rule} />
 
+          <Section style={details}>
+            <Text style={detailsLabel}>JOIN GOOGLE MEET</Text>
+            <Text style={detailsValue}>
+              <Link href={MEETING_LOCATION_URL} style={link}>
+                {MEETING_LOCATION_LABEL}
+              </Link>
+            </Text>
+
+            <Text style={detailsLabel}>DIAL-IN ({MEETING_DIAL_IN_COUNTRY})</Text>
+            <Text style={detailsValue}>{MEETING_DIAL_IN_NUMBER}</Text>
+
+            <Text style={detailsLabel}>PIN</Text>
+            <Text style={detailsValue}>{MEETING_PIN}</Text>
+          </Section>
+
+          <Hr style={rule} />
+
           <Text style={body1}>
-            A <strong>.ics</strong> file is attached — it&apos;ll add the meeting to
-            Apple Calendar, Google Calendar, or Outlook in one tap.
+            A <strong>.ics</strong>&nbsp;file is attached. With one tap, it&apos;ll add the meeting to
+            Apple Calendar, Google Calendar, or Outlook — the Meet link and dial-in
+            details travel with it.
           </Text>
 
           <Text style={body1}>
-            Before the call, have a think about your project goals, any pain
-            points, and what you want to ask about digital. That&apos;s all —
-            no prep forms.
+            If you'd like to prepare for the call, please consider:
+            - Is your website generating leads, and representing your current goals?
+            - Would you like to modernise your design, add new features, attract new business?
+            - Are there things you do manually that you suspect should be automatic?
+            During the call, we'll discuss some context and I'll provide candid ideas for your business.
+            No obligation either way, I'd be happy to meet you just to connect, learn and share.
           </Text>
 
           <Hr style={rule} />
 
           <Text style={small}>
-            Shown in your time ({visitorTimezone}). Need to change it?{' '}
-            Reply to this email, or reach me at{' '}
+            Shown in your time ({visitorTimezone}). Need to reschedule?{' '}
+            Just reply to this email, or reach me at{' '}
             <a href={`mailto:${hostEmail}`} style={link}>
               {hostEmail}
             </a>

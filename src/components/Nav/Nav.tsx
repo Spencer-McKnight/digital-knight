@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useLoadGate } from '@/hooks/useLoadGate';
+import { Button } from '@/components/Button';
 import styles from './Nav.module.scss';
 
 type NavLink = { label: string; href: string; section?: string };
@@ -49,12 +50,20 @@ type Ground = 'page' | 'stone';
  *   IntersectionObserver with a scan-line rootMargin) are used because we
  *   need the exact boundary Y every frame — observer entries are async and
  *   lag at high scroll velocities.
+ *
+ *   Mobile drawer
+ *   -------------
+ *   Below `sm`, the link row is replaced by a burger trigger that opens a
+ *   full-viewport panel. The panel is always stone-themed (dark) regardless
+ *   of the ground beneath the nav bar, so it reads consistently as an
+ *   overlay surface rather than a continuation of the page.
  */
 export function Nav() {
   const loaded = useLoadGate();
   const navRef = useRef<HTMLElement>(null);
   const [shrunk, setShrunk] = useState(false);
   const [active, setActive] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const nav = navRef.current;
@@ -193,20 +202,46 @@ export function Nav() {
     return () => observer.disconnect();
   }, []);
 
+  // ── Mobile drawer lifecycle ────────────────────────────────────────────────
+  // Lock body scroll while open, close on Escape, and close if the viewport
+  // widens past `sm` so desktop layout never shows a dangling open state.
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    const onResize = () => {
+      if (window.innerWidth >= 640) setMenuOpen(false);
+    };
+
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [menuOpen]);
+
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <nav
       ref={navRef}
       className={styles.root}
       data-loaded={loaded}
       data-shrunk={shrunk}
+      data-menu-open={menuOpen || undefined}
       aria-label="Primary"
     >
       <Link href="/" className={styles.wordmark} aria-label="Digital Knight — home">
         <span className={styles.word} data-ink-split>
           DIGITAL KNIGHT
-        </span>
-        <span className={styles.mark} data-ink-split aria-hidden>
-          DK
         </span>
       </Link>
 
@@ -228,6 +263,69 @@ export function Nav() {
           );
         })}
       </ul>
+
+      <button
+        type="button"
+        className={styles.burger}
+        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={menuOpen}
+        aria-controls="mobile-menu"
+        data-open={menuOpen || undefined}
+        onClick={() => setMenuOpen((v) => !v)}
+      >
+        <span className={styles.burgerInner} aria-hidden>
+          <span className={styles.burgerBar} />
+          <span className={styles.burgerBar} />
+          <span className={styles.burgerBar} />
+        </span>
+      </button>
+
+      <div
+        id="mobile-menu"
+        className={styles.drawer}
+        data-open={menuOpen || undefined}
+        aria-hidden={!menuOpen}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu"
+      >
+        <div className={styles.drawerScrim} onClick={closeMenu} aria-hidden />
+        <div className={styles.drawerPanel}>
+          <ul className={styles.drawerLinks}>
+            {LINKS.map((link, i) => {
+              const isActive = link.section ? active === link.section : false;
+              return (
+                <li
+                  key={link.href}
+                  className={styles.drawerItem}
+                  style={{ '--i': i } as React.CSSProperties}
+                >
+                  <Link
+                    href={link.href}
+                    className={styles.drawerLink}
+                    data-active={isActive || undefined}
+                    onClick={closeMenu}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+
+          <span className={styles.drawerDivider} aria-hidden />
+
+          <div
+            className={styles.drawerCta}
+            style={{ '--i': LINKS.length + 1 } as React.CSSProperties}
+          >
+            <span className={styles.drawerCtaLabel}>Start a conversation</span>
+            <Button href="/#talk" variant="primary" size="md" onClick={closeMenu}>
+              Free Strategy Consult
+            </Button>
+          </div>
+        </div>
+      </div>
 
       <span className={styles.hairline} aria-hidden />
     </nav>

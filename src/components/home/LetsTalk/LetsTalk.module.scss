@@ -3,13 +3,25 @@
 // ============================================================================
 // Let's Talk — the Call beat. Stone ground, calendar-first.
 // ----------------------------------------------------------------------------
-// Framing: top ember hairline marks the change of act. The calendar is the
-// focus; copy is short, bold, centred.
+// Single-column stack on every viewport:
+//
+//   ┌──────────────┐
+//   │   Heading    │
+//   ├──────────────┤
+//   │   Calendar   │
+//   ├──────────────┤
+//   │ Description  │
+//   └──────────────┘
+//
+// Mobile fills 100% of the viewport (minus grid margin). Desktop caps at
+// --grid-max via the `container` mixin. The WeekGrid keeps its own axis
+// labels (day headers + nav arrows) lifted out of flow so the section's
+// y-padding lands on the slot grid, not the furniture.
 // ============================================================================
 
 .root {
   @include ground-invert;
-  @include section-pad(xl);
+  @include section-pad(act);
   position: relative;
   overflow: hidden;
 
@@ -28,16 +40,16 @@
 .inner {
   @include container;
   display: grid;
-  gap: var(--space-7);
+  gap: var(--space-6);
   justify-items: center;
   text-align: center;
 
+  @include respond-to(sm) {
+    gap: var(--space-7);
+  }
+
   @include respond-to(xl) {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr);
-    align-items: start;
     gap: var(--space-8);
-    justify-items: stretch;
-    text-align: left;
   }
 }
 
@@ -49,8 +61,6 @@
 
   @include respond-to(xl) {
     gap: var(--space-5);
-    justify-items: start;
-    max-width: none;
   }
 }
 
@@ -80,15 +90,10 @@
   width: 100%;
   display: flex;
   justify-content: center;
-
-  @include respond-to(xl) {
-    justify-content: flex-end;
-  }
 }
 
 // ── Confirmed state ───────────────────────────────────────────────────────────
-// Replaces the two-column header + canvas layout once a booking is committed.
-// Single centred column — the CTA copy is no longer relevant.
+// Replaces the stack once a booking is committed.
 
 .innerConfirmed {
   @include container;
@@ -96,4 +101,3 @@
   flex-direction: column;
   align-items: center;
 }
-

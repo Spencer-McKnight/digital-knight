@@ -49,13 +49,6 @@ export function LetsTalkClient({ initial, hostEmail }: LetsTalkClientProps) {
           <br />
           <span className={styles.emberWord}>30 mins</span>, great ideas.
         </h2>
-        <p className={styles.lede}>
-          You need a digital strategy,
-          <br />
-          I need business.
-          <br />
-          My proposal? Let&apos;s talk.
-        </p>
       </header>
 
       <div className={styles.canvas}>
@@ -65,6 +58,14 @@ export function LetsTalkClient({ initial, hostEmail }: LetsTalkClientProps) {
           onConfirmed={handleConfirmed}
         />
       </div>
+
+      <p className={styles.lede}>
+        You need a digital strategy,
+        <br />
+        I want to kickstart my business.
+        <br />
+        My proposal? Let&apos;s talk.
+      </p>
     </div>
   );
 }

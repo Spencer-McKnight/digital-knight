@@ -7,8 +7,10 @@
 //                   Never declare `max-width` or `padding-inline` in a section
 //                   by hand; reach for this.
 //
-//   section-pad($size) — the block-level breathing room between acts. Four
-//                        sizes: sm / md / lg / xl, keyed to `--space-*`.
+//   section-pad($size) — the block-level breathing room between acts. Five
+//                        sizes: sm / md / lg / xl, keyed to `--space-*`, plus
+//                        `act` — the canonical size for every Act block,
+//                        driven by `--space-section` (fluid, symmetric).
 //                        `hero` is reserved for the Entry beat only.
 //
 //   hairline($side: 'top')  — single-rule divider. Side-agnostic, uses
@@ -34,10 +36,12 @@
     padding-block: var(--space-9);
   } @else if $size == xl {
     padding-block: var(--space-10);
+  } @else if $size == act {
+    padding-block: var(--space-section);
   } @else if $size == hero {
     padding-block: clamp(6rem, 12vw, 12rem);
   } @else {
-    @error "section-pad: unknown size `#{$size}`. Use sm|md|lg|xl|hero.";
+    @error "section-pad: unknown size `#{$size}`. Use sm|md|lg|xl|act|hero.";
   }
 }
 

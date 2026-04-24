@@ -270,6 +270,12 @@ Sections §§1–8, §10–§13 are the frame. Sections §9 and §14 are the pai
 | `--space-9`  | `8rem` / 128px  | Section breathing room        |
 | `--space-10` | `12rem` / 192px | Hero vertical padding         |
 
+**Semantic.** One override-point for the rhythm of every Act:
+
+| Token             | Value                          | Role                                                          |
+| ----------------- | ------------------------------ | ------------------------------------------------------------- |
+| `--space-section` | `clamp(4rem, 1.9rem + 9vw, 10rem)` | Block padding for Acts — fluid 64px → 160px, symmetric. Consumed via `section-pad(act)`. |
+
 ---
 
 ### Motion — `--dur-*`, `--ease-*`

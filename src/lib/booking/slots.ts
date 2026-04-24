@@ -29,7 +29,11 @@ export type Slot = {
   slotIndex: number;
 };
 
-/** Generate all 40 slots (4 × 10) for the week starting at `weekStart`. */
+/**
+ * Generate every slot for the week starting at `weekStart`.
+ *
+ * Shape follows `BUSINESS_DAYS` × `SLOTS_PER_DAY` from `./config`.
+ */
 export function generateWeekSlots(weekStart: ZonedDateTime): Slot[] {
   const slots: Slot[] = [];
 

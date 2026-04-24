@@ -1,7 +1,7 @@
 @use 'mixins' as *;
 
 .root {
-  @include section-pad(xl);
+  @include section-pad(act);
   position: relative;
 }
 

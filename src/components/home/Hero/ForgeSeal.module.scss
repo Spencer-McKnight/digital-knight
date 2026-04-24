@@ -9,6 +9,10 @@
   // re-opts into pointer events so drag / wheel / double-tap reach the seal.
   pointer-events: none;
 
+  // The canvas holds a transparent framebuffer until the first frame lands —
+  // fade it in from 0 the moment the seal's intro animation takes over so
+  // the scene doesn't pop. The grow + spin on the mesh itself carries the
+  // rest of the reveal.
   canvas {
     width: 100% !important;
     height: 100% !important;
@@ -17,5 +21,18 @@
     // touch-action is also set imperatively on mount (Firefox parity), but
     // declaring here reserves vertical page scroll from first paint.
     touch-action: pan-y;
+    opacity: 0;
+    transition: opacity 220ms ease-out;
+  }
+
+  &.loaded canvas {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root canvas {
+    transition: none;
+    opacity: 1;
   }
 }

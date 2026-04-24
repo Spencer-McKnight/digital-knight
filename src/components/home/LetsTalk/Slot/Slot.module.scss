@@ -70,6 +70,38 @@
   z-index: 0;
 }
 
+// Hover affordance — centred "Available" label appears on free-slot hover/focus
+// so the cell's purpose reads at a glance. Hidden by default on every device;
+// only revealed on hover-capable pointers so touch devices (which fake :hover
+// on tap) don't flash the label behind the user's finger.
+.hoverLabel {
+  @include type(meta);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-ember);
+  font-weight: var(--t-weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(2px);
+  transition:
+    opacity var(--dur-state) var(--ease-house),
+    transform var(--dur-state) var(--ease-house);
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .root[data-state='free']:hover .hoverLabel,
+  .root[data-state='free']:focus-visible .hoverLabel {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 // ── STATES ─────────────────────────────────────────────────────────────────
 
 // Shared disabled look — flat fill, faint border, a small × glyph and the
@@ -148,7 +180,8 @@
 @media (prefers-reduced-motion: reduce) {
   .root::before,
   .root::after,
-  .fill {
+  .fill,
+  .hoverLabel {
     transition-duration: var(--dur-state) !important;
     animation: none !important;
   }

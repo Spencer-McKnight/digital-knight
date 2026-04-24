@@ -8,8 +8,13 @@ import { Resend } from 'resend';
 import { env, requireEnv } from '@/lib/env';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import {
-  MEETING_DESCRIPTION,
+  BUSINESS_DAYS,
+  BUSINESS_HOUR_START,
+  MEETING_FULL_DESCRIPTION,
+  MEETING_LOCATION_URL,
   MEETING_TITLE,
+  SLOTS_PER_DAY,
+  SLOTS_PER_WEEK,
   SLOT_MINUTES,
 } from '@/lib/booking/config';
 import {
@@ -220,7 +225,6 @@ function issueSlotTokens(
 export async function getFirstAvailableWeek(): Promise<WeekAvailability> {
   const tz = env.BUSINESS_TIMEZONE;
   const horizon = env.BOOKING_HORIZON_WEEKS;
-  const totalSlotsPerWeek = 40; // 4 days × 10 slots
 
   let week = currentWeekStart(tz);
 
@@ -232,23 +236,19 @@ export async function getFirstAvailableWeek(): Promise<WeekAvailability> {
     let pastSlots = 0;
     if (i === 0) {
       const now = Date.now();
-      pastSlots = availability.bookedSlotsUTC.length; // start with booked
-      // Also need to count actual past slots based on time
       const weekStartMs = new Date(availability.weekStartUTC).getTime();
       const dayZeroStart = fromAbsolute(weekStartMs, tz).set({
-        hour: 10,
+        hour: BUSINESS_HOUR_START,
         minute: 0,
         second: 0,
         millisecond: 0,
       });
 
-      // Count how many slots are in the past
-      pastSlots = 0;
-      for (let dayIndex = 0; dayIndex < 4; dayIndex++) {
-        for (let slotIndex = 0; slotIndex < 10; slotIndex++) {
+      for (let dayIndex = 0; dayIndex < BUSINESS_DAYS.length; dayIndex++) {
+        for (let slotIndex = 0; slotIndex < SLOTS_PER_DAY; slotIndex++) {
           const slotZoned = dayZeroStart.add({
             days: dayIndex,
-            minutes: slotIndex * 30,
+            minutes: slotIndex * SLOT_MINUTES,
           });
           if (slotZoned.toDate().getTime() < now) {
             pastSlots++;
@@ -259,7 +259,7 @@ export async function getFirstAvailableWeek(): Promise<WeekAvailability> {
 
     const bookedCount = availability.bookedSlotsUTC.length;
     const unavailableCount = Math.max(pastSlots, bookedCount);
-    const freeSlots = totalSlotsPerWeek - unavailableCount;
+    const freeSlots = SLOTS_PER_WEEK - unavailableCount;
 
     if (freeSlots > 0) {
       return availability;
@@ -360,7 +360,9 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     icsBase64 = buildICS({
       uid: inserted.id,
       title: MEETING_TITLE,
-      description: MEETING_DESCRIPTION,
+      description: MEETING_FULL_DESCRIPTION,
+      location: MEETING_LOCATION_URL,
+      url: MEETING_LOCATION_URL,
       startUTC: startAtISO,
       endUTC: endAtISO,
       organizer: { name: env.BOOKING_HOST_NAME, email: env.BOOKING_HOST_EMAIL },
@@ -376,7 +378,8 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
   const links = buildCalendarLinks(
     {
       title: MEETING_TITLE,
-      description: MEETING_DESCRIPTION,
+      description: MEETING_FULL_DESCRIPTION,
+      location: MEETING_LOCATION_URL,
       startUTC: startAtISO,
       endUTC: endAtISO,
     },

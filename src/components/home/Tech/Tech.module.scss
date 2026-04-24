@@ -2,7 +2,7 @@
 
 .root {
   @include ground-invert;
-  @include section-pad(xl);
+  @include section-pad(act);
   position: relative;
 
   &::before {
