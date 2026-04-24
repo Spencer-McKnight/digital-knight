@@ -5,6 +5,7 @@ import { ScrollTrigger } from '@/lib/gsap';
 import { SERVICES } from './content';
 import styles from './Services.module.scss';
 
+type Service = (typeof SERVICES)[number];
 type PhaseState = 'collapsed' | 'active' | 'incoming';
 
 const phaseState = (i: number, active: number): PhaseState =>
@@ -14,16 +15,34 @@ export function Services() {
   const rootRef = useRef<HTMLElement | null>(null);
   const monumentRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isDesktopView, setIsDesktopView] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 48rem)');
+    const apply = () => setIsDesktopView(mql.matches);
+    apply();
+    mql.addEventListener('change', apply);
+    return () => mql.removeEventListener('change', apply);
+  }, []);
+
+  const getThreshold = useCallback(() => {
+    if (window.matchMedia('(min-width: 48rem)').matches) return window.innerHeight / 2;
+    const root = rootRef.current;
+    if (root) {
+      const v = parseFloat(getComputedStyle(root).getPropertyValue('--services-nav-offset'));
+      if (Number.isFinite(v) && v > 0) return v + 8;
+    }
+    return 96;
+  }, []);
 
   const scrollToPhase = useCallback(
     (index: number) => {
       const monument = monumentRefs.current[index];
       if (!monument) return;
-      const y =
-        monument.getBoundingClientRect().top + window.scrollY - window.innerHeight / 2 + 4;
+      const y = monument.getBoundingClientRect().top + window.scrollY - getThreshold() + 4;
       window.scrollTo({ top: y, behavior: 'smooth' });
     },
-    [],
+    [getThreshold],
   );
 
   useEffect(() => {
@@ -31,7 +50,7 @@ export function Services() {
     if (!root) return;
 
     const compute = () => {
-      const threshold = window.innerHeight / 2;
+      const threshold = getThreshold();
       let idx = 0;
       monumentRefs.current.forEach((monument, i) => {
         if (monument && monument.getBoundingClientRect().top <= threshold) idx = i;
@@ -48,7 +67,7 @@ export function Services() {
     compute();
 
     return () => st.kill();
-  }, []);
+  }, [getThreshold]);
 
   return (
     <section
@@ -95,21 +114,13 @@ export function Services() {
 
                 <div
                   className={styles.content}
-                  aria-hidden={state !== 'active'}
+                  aria-hidden={isDesktopView && state !== 'active' ? true : undefined}
                   aria-labelledby={`service-${service.id}`}
                 >
                   <span id={`service-${service.id}`} className={styles.srOnly}>
                     {service.label}
                   </span>
-                  <div className={styles.contentInner}>
-                    {service.lede ? <p className={styles.lede}>{service.lede}</p> : null}
-                    {service.body?.map((p, idx) => (
-                      <p key={idx} className={styles.body}>
-                        {p}
-                      </p>
-                    ))}
-                    {service.pop ? <Pop pop={service.pop} /> : null}
-                  </div>
+                  <ServiceBody service={service} />
                 </div>
               </li>
             );
@@ -120,7 +131,21 @@ export function Services() {
   );
 }
 
-function Pop({ pop }: { pop: NonNullable<(typeof SERVICES)[number]['pop']> }) {
+function ServiceBody({ service }: { service: Service }) {
+  return (
+    <div className={styles.contentInner}>
+      {service.lede ? <p className={styles.lede}>{service.lede}</p> : null}
+      {service.body?.map((p, idx) => (
+        <p key={idx} className={styles.body}>
+          {p}
+        </p>
+      ))}
+      {service.pop ? <Pop pop={service.pop} /> : null}
+    </div>
+  );
+}
+
+function Pop({ pop }: { pop: NonNullable<Service['pop']> }) {
   if (pop.kind === 'questions') {
     return (
       <div className={styles.popQuestions}>

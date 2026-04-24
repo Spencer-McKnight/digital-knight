@@ -11,7 +11,7 @@ const SITEMAP = [
       { label: 'Home', href: '/' },
       { label: 'Talk', href: '/#talk' },
       { label: 'Services', href: '/#services' },
-      { label: 'Meet Spencer', href: '/#meet' },
+      { label: 'Me', href: '/#meet' },
     ]
   },
   {
@@ -46,8 +46,8 @@ export function Footer() {
           <div className={styles.colophon}>
             <p className={styles.colophonTitle}>Studio</p>
             <p className={styles.colophonLine}>
-              A one-desk independent studio for long-term digital partnerships.
-              Operated by Spencer McKnight.
+              An ambitious digital agency forming strategic partnerships and web projects.
+              Founded by Spencer McKnight.
             </p>
           </div>
 

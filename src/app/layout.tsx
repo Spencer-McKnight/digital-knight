@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { aeonik } from './fonts';
+import { GtagLazyClient } from '@/lib/google/GtagLazyClient';
 import './globals.scss';
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
@@ -49,6 +50,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={aeonik.variable}>
+      <head>
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://www.google-analytics.com" />
+      </head>
       <body>
         <Nav />
         <Cursor />
@@ -56,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <Analytics />
       </body>
+      <GtagLazyClient gaId="G-FDR2H865P2" />
     </html>
   );
 }

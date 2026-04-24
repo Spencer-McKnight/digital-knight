@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLoadGate } from '@/hooks/useLoadGate';
 import { Button } from '@/components/Button';
@@ -9,14 +9,23 @@ import { SmoothLink } from '@/components/SmoothLink';
 import styles from './Nav.module.scss';
 
 const NAV_SCROLL_OFFSET = 0;
+const SCROLL_SETTLE_DELAY = 150;
 
 type NavLink = { label: string; href: string; section?: string };
 
 const LINKS: ReadonlyArray<NavLink> = [
   { label: 'Talk', href: '/#talk', section: 'talk' },
   { label: 'Services', href: '/#services', section: 'services' },
-  { label: 'Meet Spencer', href: '/#meet', section: 'meet' },
+  { label: 'About', href: '/#meet', section: 'meet' },
 ];
+
+/** Hash fragment from a nav `href` — must match the target section `id` in the DOM. */
+function sectionIdFromHref(href: string): string | null {
+  const i = href.indexOf('#');
+  if (i < 0) return null;
+  const id = href.slice(i + 1).trim();
+  return id.length > 0 ? id : null;
+}
 
 type Ground = 'page' | 'stone';
 
@@ -71,6 +80,10 @@ export function Nav() {
   const [shrunk, setShrunk] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  
+  // Track programmatic scroll to prevent observer flickering
+  const scrollingToRef = useRef<string | null>(null);
+  const scrollSettleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const nav = navRef.current;
@@ -170,6 +183,24 @@ export function Nav() {
           : r.height + 9999;
         el.style.setProperty('--nav-split', `${local}px`);
       }
+
+      // 5) Scroll spy: which in-page block owns the band just under the nav.
+      //    Re-query `getElementById` every frame so streamed sections (e.g.
+      //    LetsTalk) are picked up as soon as they mount — unlike a one-shot
+      //    IntersectionObserver list. `LINKS` order follows DOM order on `/`.
+      if (!scrollingToRef.current) {
+        const line = navRect.bottom + 6;
+        let navActiveId: string | null = null;
+        for (const link of LINKS) {
+          const id = sectionIdFromHref(link.href) ?? link.section ?? null;
+          if (!id) continue;
+          const el = document.getElementById(id);
+          if (!el) continue;
+          const r = el.getBoundingClientRect();
+          if (r.top <= line) navActiveId = id;
+        }
+        setActive((prev) => (prev === navActiveId ? prev : navActiveId));
+      }
     };
 
     const schedule = () => {
@@ -187,26 +218,36 @@ export function Nav() {
     };
   }, []);
 
+  // Detect scroll end to clear the programmatic scroll lock
   useEffect(() => {
-    const sections = LINKS.map((l) => l.section).filter(Boolean) as string[];
-    const targets = sections
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
-    if (targets.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Pick the most-visible entry that's also above the midline.
-        const top = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (top) setActive(top.target.id);
-      },
-      { rootMargin: '-30% 0px -50% 0px', threshold: [0.25, 0.5, 0.75] },
-    );
-
-    targets.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    const onScroll = () => {
+      if (!scrollingToRef.current) return;
+      
+      if (scrollSettleTimer.current) {
+        clearTimeout(scrollSettleTimer.current);
+      }
+      scrollSettleTimer.current = setTimeout(() => {
+        scrollingToRef.current = null;
+      }, SCROLL_SETTLE_DELAY);
+    };
+    
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (scrollSettleTimer.current) clearTimeout(scrollSettleTimer.current);
+    };
+  }, []);
+  
+  // Handle nav link clicks — immediately set active and lock observer
+  const handleNavClick = useCallback((section: string | undefined) => {
+    if (!section) return;
+    scrollingToRef.current = section;
+    setActive(section);
+    // Clear any existing settle timer so we wait for new scroll to settle
+    if (scrollSettleTimer.current) {
+      clearTimeout(scrollSettleTimer.current);
+      scrollSettleTimer.current = null;
+    }
   }, []);
 
   // ── Mobile drawer lifecycle ────────────────────────────────────────────────
@@ -263,6 +304,7 @@ export function Nav() {
                 href={link.href}
                 className={styles.link}
                 data-active={isActive || undefined}
+                onClick={() => handleNavClick(link.section)}
                 {...(isHashLink ? { offset: NAV_SCROLL_OFFSET } : {})}
               >
                 <span className={styles.linkLabel} data-ink-split>
@@ -296,6 +338,7 @@ export function Nav() {
         open={menuOpen}
         onClose={closeMenu}
         active={active}
+        onNavClick={handleNavClick}
       />
     </nav>
   );
@@ -315,9 +358,10 @@ type MobileMenuProps = {
   open: boolean;
   onClose: () => void;
   active: string | null;
+  onNavClick: (section: string | undefined) => void;
 };
 
-function MobileMenu({ open, onClose, active }: MobileMenuProps) {
+function MobileMenu({ open, onClose, active, onNavClick }: MobileMenuProps) {
   // Portal target is window/DOM-only — gate render on a mounted flag so SSR
   // and the first client render agree (no hydration mismatch).
   const [mounted, setMounted] = useState(false);
@@ -343,6 +387,10 @@ function MobileMenu({ open, onClose, active }: MobileMenuProps) {
             const isActive = link.section ? active === link.section : false;
             const isHashLink = link.href.includes('#');
             const LinkComponent = isHashLink ? SmoothLink : Link;
+            const handleClick = () => {
+              onNavClick(link.section);
+              onClose();
+            };
             return (
               <li
                 key={link.href}
@@ -353,7 +401,7 @@ function MobileMenu({ open, onClose, active }: MobileMenuProps) {
                   href={link.href}
                   className={styles.drawerLink}
                   data-active={isActive || undefined}
-                  onClick={onClose}
+                  onClick={handleClick}
                   {...(isHashLink ? { offset: NAV_SCROLL_OFFSET } : {})}
                 >
                   {link.label}

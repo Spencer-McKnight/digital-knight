@@ -1,9 +1,8 @@
 @use 'mixins' as *;
 
-// Active phase is driven by which monument's top has crossed the sticky
-// content's top line (see ScrollTrigger in Services.tsx).
-// Mobile: each phase's content row collapses 1fr → 0fr so only the active
-// content shows, monuments below flow up.
+// Mobile: each phase's monument sticks to the top of its own container
+// while its content scrolls underneath; the next monument pushes the
+// previous one out as its phase arrives.
 // Desktop: monuments scroll normally in col 1 with equal margins; content
 // column is sticky in col 2, with all content blocks overlaid and only the
 // active one visible (focus signalled by ember label, not by position).
@@ -64,6 +63,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
+  gap: 0;
 
   @include respond-to(md) {
     display: grid;
@@ -75,13 +75,7 @@
 }
 
 .phase {
-  display: grid;
-  grid-template-rows: auto 0fr;
-  transition: grid-template-rows var(--phase-dur) var(--phase-ease);
-
-  &[data-state='active'] {
-    grid-template-rows: auto 1fr;
-  }
+  display: block;
 
   @include respond-to(md) {
     display: contents;
@@ -90,21 +84,29 @@
 
 .monument {
   appearance: none;
-  background: transparent;
   border: 0;
-  padding: 0;
   margin: 0;
   font: inherit;
   color: inherit;
   text-align: left;
   cursor: pointer;
-
-  position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: flex-start;
+  width: 100%;
   min-height: var(--services-slot);
+  position: sticky;
+  top: var(--services-nav-offset);
+  z-index: 1;
+  background: var(--ink-page);
+  padding: var(--space-3) 0;
 
   @include respond-to(md) {
+    position: relative;
+    top: auto;
+    z-index: auto;
+    background: transparent;
+    padding: 0;
+    width: auto;
     grid-column: 1;
     margin-bottom: var(--space-7);
   }
@@ -181,13 +183,7 @@
 }
 
 .content {
-  overflow: hidden;
-  min-height: 0;
-  opacity: 0;
-  transform: translateY(var(--space-3));
-  transition:
-    opacity var(--phase-dur) var(--phase-ease),
-    transform var(--phase-dur) var(--phase-ease);
+  display: block;
 
   @include respond-to(md) {
     grid-column: 2;
@@ -198,17 +194,15 @@
     min-height: 0;
     min-width: 0;
     overflow: visible;
-    transform: none;
+    opacity: 0;
     pointer-events: none;
     transition: opacity var(--phase-dur) var(--phase-ease);
   }
 }
 
 .phase[data-state='active'] .content {
-  opacity: 1;
-  transform: none;
-
   @include respond-to(md) {
+    opacity: 1;
     pointer-events: auto;
   }
 }
