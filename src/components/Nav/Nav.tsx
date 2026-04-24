@@ -368,7 +368,6 @@ function MobileMenu({ open, onClose, active }: MobileMenuProps) {
           className={styles.drawerCta}
           style={{ '--i': LINKS.length + 1 } as React.CSSProperties}
         >
-          <span className={styles.drawerCtaLabel}>Start a conversation</span>
           <Button href="/#talk" variant="primary" size="md" onClick={onClose}>
             Free Strategy Consult
           </Button>
