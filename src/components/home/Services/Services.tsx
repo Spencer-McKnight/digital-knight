@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { SERVICES } from './content';
 import styles from './Services.module.scss';
@@ -8,41 +8,63 @@ import styles from './Services.module.scss';
 /**
  * Services — Systematic Partnership (`services.md`).
  *
- *   Four monuments — Listen, Ideate, Create, Evolve — each with its own
- *   content. As the reader scrolls, each monument enters large, then
- *   "raises" and slots into a vertical portfolio-style stack at the
- *   top-left. Prior monuments persist at their slots for the full
- *   section. Content for the active phase fades in; as the next phase
- *   takes over, prior content fades away.
+ *   Four monuments — Listen, Ideate, Create, Evolve — stacked as a
+ *   portfolio assembly. As the reader scrolls, each phase slides up from
+ *   below and pins at its slot: monument first, content beneath it. The
+ *   next phase pins at the next slot down, visually burying the prior
+ *   phase's content behind its own opaque [monument + content] pair.
+ *   All prior monuments remain visible in the top-left stack.
  *
- *   Layout (two layers, one timeline)
- *   ---------------------------------
- *   The Stack is a two-column grid:
+ *   Sticky-stack mechanics (pure CSS, see Services.module.scss)
+ *   -----------------------------------------------------------
+ *   Every `.phase` is `position: sticky` inside a single parent `.phases`:
  *
- *     [ .monuments (sticky) ]  [ .contents (in flow) ]
+ *     .phase[i] { top: calc(nav + i * slot); z-index: 1 + i; background: page; }
  *
- *   `.monuments` holds all four monument headings stacked vertically and
- *   is `position: sticky` inside `.stack`, so the whole column remains
- *   pinned at the top of the viewport for the section's entire scroll
- *   length. That's the mechanism behind "prior monuments persist at
- *   their slots".
+ *   - `.phases` is the shared sticky boundary, so every phase can remain
+ *     stuck simultaneously for the full section height.
+ *   - `top` increases with index, placing each monument one slot lower
+ *     than the previous one — that's the vertical stack.
+ *   - `z-index` increases with index, so later phases paint over earlier
+ *     ones. With each phase's `background: var(--ink-page)`, the later
+ *     phase's opaque pair covers the prior phase's content.
+ *   - The phase's `min-height` determines scroll-length-before-handover.
+ *     Kept tight (just over one slot of slack) so the next card arrives
+ *     early — per the brief, we want pace, not scrub.
  *
- *   `.contents` is a normal-flow column of four tall content blocks — one
- *   per phase. GSAP ScrollTrigger watches each content block and drives:
- *     - The matching monument's entry reveal (rise + fade).
- *     - The matching monument's `--monument-compact` 0→1 as it exits.
- *     - The matching content block's fade-out as it exits (except the
- *       final phase — Evolve holds open).
+ *   Animations (GSAP)
+ *   -----------------
+ *   Reveal is reversible by design: `toggleActions` on ScrollTrigger
+ *   replays on enter, rewinds on leave-back. No `once: true`. Scroll up
+ *   restores the rested state. `prefers-reduced-motion` collapses the
+ *   rails to instant opacity fades.
  *
- *   On narrow viewports the grid collapses to a single column and the
- *   monuments column becomes a slim header-stack above the content —
- *   still sticky, still stacked. The reveal, compact, and content-fade
- *   rails continue to work because they read scroll position only.
- *
- *   Reduced motion collapses the scrub rails to simple enter-once fades.
+ *   Click-to-scroll
+ *   ---------------
+ *   Each monument is a button that scrolls the page to the point where
+ *   its phase begins pinning — i.e., the natural top of the phase minus
+ *   the slot-adjusted nav offset. Feels like opening a drawer: the phase
+ *   lands in its slot with its content fully visible.
  */
+
 export function Services() {
   const rootRef = useRef<HTMLElement | null>(null);
+  const phasesRef = useRef<HTMLOListElement | null>(null);
+
+  const scrollToPhase = useCallback((index: number) => {
+    const phases = phasesRef.current?.querySelectorAll<HTMLElement>(`.${styles.phase}`);
+    const phase = phases?.[index];
+    if (!phase) return;
+
+    // Land scroll at the point where the phase's natural top hits its
+    // sticky pin line. `getComputedStyle(phase).top` resolves the
+    // `calc(nav + i * slot)` to a px value, so we don't have to
+    // re-compute the calc in JS.
+    const pinLine = parseFloat(getComputedStyle(phase).top) || 0;
+    const top = phase.getBoundingClientRect().top + window.scrollY - pinLine - 1;
+
+    window.scrollTo({ top, behavior: 'smooth' });
+  }, []);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -51,77 +73,48 @@ export function Services() {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const ctx = gsap.context(() => {
-      const contents = gsap.utils.toArray<HTMLElement>(`.${styles.content}`);
-      const monuments = gsap.utils.toArray<HTMLElement>(`.${styles.monument}`);
+      const phases = gsap.utils.toArray<HTMLElement>(`.${styles.phase}`);
 
-      contents.forEach((content, i) => {
-        const monument = monuments[i];
-        if (!monument) return;
+      phases.forEach((phase) => {
+        const content = phase.querySelector<HTMLElement>(`.${styles.contentInner}`);
+        const monument = phase.querySelector<HTMLElement>(`.${styles.monument}`);
+        if (!content || !monument) return;
 
-        const isLast = i === contents.length - 1;
-
-        // Entry reveal — the monument rises + fades in as its matching
-        // content block crosses into view. Plays once per phase.
+        // Entry reveal. Reversible by design — `toggleActions: play none
+        // none reverse` replays on scroll-down entry and rewinds on
+        // scroll-up exit, so the animation honours the scroll axis.
         gsap.fromTo(
           monument,
-          { yPercent: prefersReduced ? 0 : 30, opacity: 0 },
+          { yPercent: prefersReduced ? 0 : 18, opacity: 0 },
           {
             yPercent: 0,
             opacity: 1,
-            duration: prefersReduced ? 0.3 : 0.9,
+            duration: prefersReduced ? 0.25 : 0.7,
             ease: 'power3.out',
             scrollTrigger: {
-              trigger: content,
+              trigger: phase,
               start: 'top 85%',
-              once: true,
+              toggleActions: 'play none none reverse',
             },
           },
         );
 
         gsap.fromTo(
-          content.querySelector(`.${styles.contentInner}`),
-          { y: prefersReduced ? 0 : 24, opacity: 0 },
+          content,
+          { y: prefersReduced ? 0 : 16, opacity: 0 },
           {
             y: 0,
             opacity: 1,
-            duration: prefersReduced ? 0.3 : 0.8,
-            delay: prefersReduced ? 0 : 0.1,
+            duration: prefersReduced ? 0.25 : 0.65,
+            delay: prefersReduced ? 0 : 0.08,
             ease: 'power3.out',
             scrollTrigger: {
-              trigger: content,
-              start: 'top 75%',
-              once: true,
+              trigger: phase,
+              start: 'top 80%',
+              toggleActions: 'play none none reverse',
             },
           },
         );
-
-        // Handover — as the phase exits, the monument compacts into its
-        // slot and the content fades. Evolve (last phase) holds open so
-        // the footer beneath lands quietly.
-        if (!prefersReduced && !isLast) {
-          gsap.to(monument, {
-            '--monument-compact': 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: content,
-              start: 'bottom 70%',
-              end: 'bottom 30%',
-              scrub: true,
-            },
-          });
-
-          gsap.to(content.querySelector(`.${styles.contentInner}`), {
-            opacity: 0,
-            y: -12,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: content,
-              start: 'bottom 60%',
-              end: 'bottom 25%',
-              scrub: true,
-            },
-          });
-        }
       });
 
       // Re-measure once fonts/images settle so triggers align with the
@@ -148,37 +141,37 @@ export function Services() {
         </h2>
       </header>
 
-      <div className={styles.stack}>
-        <ol className={styles.monuments} role="list" aria-label="Phases">
-          {SERVICES.map((service, i) => (
-            <li
-              key={service.id}
+      <ol
+        className={styles.phases}
+        role="list"
+        aria-label="Phases"
+        ref={phasesRef}
+      >
+        {SERVICES.map((service, i) => (
+          <li
+            key={service.id}
+            className={styles.phase}
+            style={{ ['--i' as string]: i }}
+            data-service={service.id}
+          >
+            <button
+              type="button"
               className={styles.monument}
-              style={{ ['--i' as string]: i }}
-              data-service={service.id}
+              onClick={() => scrollToPhase(i)}
+              aria-label={`Open ${service.label}`}
             >
               <span className={styles.monumentInner} aria-hidden="true">
                 <span className={styles.monumentGhost}>{service.label}</span>
                 <span className={styles.monumentLabel}>{service.label}</span>
               </span>
               <span className={styles.srOnly}>{service.label}</span>
-            </li>
-          ))}
-        </ol>
+            </button>
 
-        <div className={styles.contents}>
-          {SERVICES.map((service, i) => (
-            <article
-              key={service.id}
-              className={styles.content}
-              style={{ ['--i' as string]: i }}
-              data-service={service.id}
-              aria-labelledby={`service-${service.id}`}
-            >
+            <div className={styles.content} aria-labelledby={`service-${service.id}`}>
+              <span id={`service-${service.id}`} className={styles.srOnly}>
+                {service.label}
+              </span>
               <div className={styles.contentInner}>
-                <h3 id={`service-${service.id}`} className={styles.contentLabel}>
-                  {service.label}
-                </h3>
                 {service.lede ? <p className={styles.lede}>{service.lede}</p> : null}
                 {service.body?.map((p, idx) => (
                   <p key={idx} className={styles.body}>
@@ -187,10 +180,10 @@ export function Services() {
                 ))}
                 {service.pop ? <Pop pop={service.pop} /> : null}
               </div>
-            </article>
-          ))}
-        </div>
-      </div>
+            </div>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
