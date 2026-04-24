@@ -20,7 +20,7 @@ A modern forge. Antique paper, charcoal stone, blackened steel, one ember of ora
 
 **Three inherited instincts, used as seasoning, not recipe:**
 
-- _Lusion_ — cinema. Restraint, atmosphere, the reel is the argument.
+- _Lusion_ — cinema. Restraint, atmosphere.
 - _Oryzo_ — wit. Each section is its own small demonstration of craft.
 - _Supernova_ — clarity. Numbered, structured, trustable.
 
@@ -272,8 +272,8 @@ Sections §§1–8, §10–§13 are the frame. Sections §9 and §14 are the pai
 
 **Semantic.** One override-point for the rhythm of every Act:
 
-| Token             | Value                          | Role                                                          |
-| ----------------- | ------------------------------ | ------------------------------------------------------------- |
+| Token             | Value                              | Role                                                                                     |
+| ----------------- | ---------------------------------- | ---------------------------------------------------------------------------------------- |
 | `--space-section` | `clamp(4rem, 1.9rem + 9vw, 10rem)` | Block padding for Acts — fluid 64px → 160px, symmetric. Consumed via `section-pad(act)`. |
 
 ---

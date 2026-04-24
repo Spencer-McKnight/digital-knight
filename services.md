@@ -1,3 +1,26 @@
+# Design Concept
+
+Heading: Systematic Partnership
+
+Each idea listen,ideate,create,evolve is a monument that at first animates in nicely. Then as you scroll, the monument typography raises before slotting itself fixed to the top-left where only the header is positioned in a verticle stacked portfolio-style assembly of each header.
+
+Each idea also has its own content area. Fundamentally a simple formatted description, but the "could my business" questions have their own visual pop, as well as the create technology labels.
+
+Each content section doesn't need to be pinned to a viewport height.
+
+Overall, the idea is sticky scrollable idea containers. I explicitly don't want card styling (rounded corners and white bg), but typically something like this would use cards.
+
+Each monument animation is the same, keep it simple and effective.
+Content should have a subtle fade in for the entire content block simultaneously.
+
+Don't use roman numerals or numbers to count them. The headers themselves are the count. Once they're all scrolled through, have the Evolve stay open and allow scroll onto the next block.
+
+No CTA necessary, there'll be one in the footer beneath.
+
+Feel free to tweak content below slightly, using the same specific tone and words but formatting sentences in a business-effective concise manner if necessary.
+
+---
+
 Systematic Partnership
 
 # Listen
@@ -42,5 +65,5 @@ Supabase
 
 # Evolve
 
-Continual improvement, ensuring that you continue to benefit from modern technology.
-Security, uptime, optimisiation, changing with your business.
+A continuous relationship is established for continual improvement, ensuring that you benefit from modern technology.
+Security, uptime, optimisiation, building on core with more features that boost effectiveness.
