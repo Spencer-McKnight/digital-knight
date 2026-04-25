@@ -56,7 +56,7 @@ export function MeetSpencer() {
               At Inlight, I helped create award winning work for clients like AHM, Nando's, Chadstone, UrbanRest and more.
             </p>
             <p className={styles.copy}>
-              My skills expanded holistically; now I'm able to personally deliver comprehensive projects like the{' '}
+              My skills expanded holistically; now I'm able to manage and deliver comprehensive projects like the{' '}
               <a href="https://sogif.au" className={styles.link} target="_blank" rel="noreferrer">
                 sogif.au
               </a>{' '}
