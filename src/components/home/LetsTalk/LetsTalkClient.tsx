@@ -72,7 +72,7 @@ export function LetsTalkClient({ initial, hostEmail }: LetsTalkClientProps) {
           <Typewriter className={styles.typewriter} />
         </p>
         <p className={styles.lede}>
-          I need to kickstart my business.
+          I need to awesome clients like you.
           <br />
           My proposal? Let&apos;s talk.
         </p>

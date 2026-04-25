@@ -94,7 +94,7 @@ export function BookingForm({
             disabled={submitting}
             onChange={(e) => onChange({ name: e.target.value })}
             className={styles.input}
-            placeholder="Your name"
+            placeholder="Your name and business"
           />
         </label>
 
