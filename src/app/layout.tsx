@@ -10,7 +10,7 @@ import { Analytics } from '@vercel/analytics/next';
 export const metadata: Metadata = {
   metadataBase: new URL('https://digital-knight.au'),
   title: {
-    default: 'Digital Knight — Strategy, design, code that prevails.',
+    default: 'Digital Knight — Website, Design, Automation, AI.',
     template: '%s · Digital Knight',
   },
   description:
@@ -21,16 +21,14 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'Digital Knight',
     title: 'Digital Knight',
-    description: 'Strategy, design, code that prevails.',
+    description: 'Digital Knight — Website, Design, Automation, AI.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Digital Knight',
-    description: 'Strategy, design, code that prevails.',
+    description: 'Digital Knight — Website, Design, Automation, AI.',
   },
-  icons: {
-    icon: '/favicon.ico',
-  },
+  manifest: '/site.webmanifest',
   robots: {
     index: true,
     follow: true,
