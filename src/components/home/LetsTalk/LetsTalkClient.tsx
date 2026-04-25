@@ -2,8 +2,10 @@
 
 import { useState, useCallback } from 'react';
 import type { WeekAvailability } from '@/app/_actions/booking.types';
+import { Reveal } from '@/components/Reveal';
 import { WeekGrid, type ConfirmationPayload } from './WeekGrid/WeekGrid';
 import { Confirmation } from './Confirmation/Confirmation';
+import { Typewriter } from './Typewriter';
 import styles from './LetsTalk.module.scss';
 
 /**
@@ -43,13 +45,13 @@ export function LetsTalkClient({ initial, hostEmail }: LetsTalkClientProps) {
 
   return (
     <div className={styles.inner}>
-      <header className={styles.header}>
+      <Reveal as="header" className={styles.header} amount="md">
         <h2 id="talk-title" className={styles.title}>
           Free strategy consult.
           <br />
           <span className={styles.emberWord}>30 mins</span>, great ideas.
         </h2>
-      </header>
+      </Reveal>
 
       <div className={styles.canvas}>
         <WeekGrid
@@ -59,13 +61,18 @@ export function LetsTalkClient({ initial, hostEmail }: LetsTalkClientProps) {
         />
       </div>
 
-      <p className={styles.lede}>
-        You need a digital strategy,
-        <br />
-        I want to kickstart my business.
-        <br />
-        My proposal? Let&apos;s talk.
-      </p>
+      <Reveal as="div" className={styles.ledeBlock} amount="md">
+        <p className={styles.ledePrompt}>
+          You need
+          <br />
+          <Typewriter className={styles.typewriter} />
+        </p>
+        <p className={styles.lede}>
+          I need to kickstart my business.
+          <br />
+          My proposal? Let&apos;s talk.
+        </p>
+      </Reveal>
     </div>
   );
 }

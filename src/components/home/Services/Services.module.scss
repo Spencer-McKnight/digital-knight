@@ -8,7 +8,7 @@
 // active one visible (focus signalled by ember label, not by position).
 
 .root {
-  --services-nav-offset: clamp(4.5rem, 4vh + 2.5rem, 6rem);
+  --services-nav-offset: clamp(5.5rem, 5vh + 3rem, 7rem);
   --services-slot: calc(var(--t-monument) * 0.9 + var(--space-2));
   --phase-dur: 820ms;
   --phase-ease: cubic-bezier(0.19, 1, 0.22, 1);
@@ -235,7 +235,7 @@
     overflow: visible;
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--phase-dur) var(--phase-ease);
+    transition: opacity var(--dur-element) ease-out;
   }
 }
 
@@ -243,6 +243,7 @@
   @include respond-to(md) {
     opacity: 1;
     pointer-events: auto;
+    transition: opacity var(--dur-scene) var(--phase-ease) var(--dur-element);
   }
 }
 
@@ -256,8 +257,8 @@
 
   @include respond-to(md) {
     gap: var(--space-5);
-    padding-top: 0;
-    padding-bottom: var(--space-7);
+    padding-top: var(--space-3);
+    padding-bottom: 0;
   }
 }
 
@@ -314,9 +315,6 @@
 .question {
   @include type(subsection);
   color: var(--ink-iron);
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
   line-height: 1.2;
   font-weight: var(--t-weight-medium);
 }
@@ -324,6 +322,7 @@
 .questionMark {
   color: var(--ink-ember);
   font-weight: var(--t-weight-bold);
+  margin-left: var(--space-2);
 }
 
 .popCoda {
@@ -373,7 +372,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-4);
-  margin-top: var(--space-3);
 }
 
 .mark {

@@ -1,6 +1,7 @@
 @use 'mixins' as *;
 
 .root {
+  overflow: hidden;
   position: relative;
   // Height ladder, tier by tier:
   //   mobile  — min(100svh, 850px): svh avoids URL-bar CLS; cap stops the
