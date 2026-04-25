@@ -46,7 +46,7 @@ export const SERVICES: ReadonlyArray<ServiceContent> = [
         'Benefit from a brand experience that stands out',
         'Use AI to service customers or boost productivity',
         'Proactively analyse and respond to customers',
-        'Enjoy reliable automation',
+        'Optimise with automation',
       ],
       coda: 'Yes. It can',
     },
