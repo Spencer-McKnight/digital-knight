@@ -51,24 +51,20 @@
   // that the nav is part of the surface it floats over.
   --ink-upper: var(--ink-iron);
   --ink-lower: var(--ink-iron);
-  --surface-upper: #{rgba(colors.$ink-page, 0.72)};
-  --surface-lower: #{rgba(colors.$ink-page, 0.72)};
+  --surface-upper: #{colors.$ink-page};
+  --surface-lower: #{colors.$ink-page};
 
-  &[data-upper-ground='stone'] {
-    --ink-upper: var(--ink-page);
-    --surface-upper: #{rgba(colors.$ink-stone, 0.72)};
-  }
-  &[data-lower-ground='stone'] {
-    --ink-lower: var(--ink-page);
-    --surface-lower: #{rgba(colors.$ink-stone, 0.72)};
+  @include respond-to(sm) {
+    &[data-upper-ground='stone'] {
+      --ink-upper: var(--ink-page);
+      --surface-upper: #{colors.$ink-stone};
+    }
+    &[data-lower-ground='stone'] {
+      --ink-lower: var(--ink-page);
+      --surface-lower: #{colors.$ink-stone};
+    }
   }
 
-  // ── Glass: split-tinted fill + backdrop blur ─────────────────────────────
-  // The tint gradient tracks `--nav-split` exactly like the ink (`%split-ink`)
-  // — the nav root is itself a paint target in the JS pass, so the stop Y
-  // matches the boundary crossing the bar. Backdrop-filter softens whatever
-  // ground and artwork passes beneath, so the translucent tint never lets
-  // crisp content clip through to the glyphs above.
   background-image: linear-gradient(
     to bottom,
     var(--surface-upper) 0,
@@ -76,8 +72,11 @@
     var(--surface-lower) var(--nav-split, 9999px),
     var(--surface-lower) 100%
   );
-  backdrop-filter: saturate(170%) blur(28px);
-  -webkit-backdrop-filter: saturate(170%) blur(28px);
+
+  @include respond-below(sm) {
+    background-image: none;
+    background-color: var(--surface-upper);
+  }
 
   opacity: 0;
   transform: translateY(-12px);
@@ -107,8 +106,8 @@
   &[data-menu-open] {
     --ink-upper: var(--ink-page);
     --ink-lower: var(--ink-page);
-    --surface-upper: #{rgba(colors.$ink-stone, 0.92)};
-    --surface-lower: #{rgba(colors.$ink-stone, 0.92)};
+    --surface-upper: #{colors.$ink-stone};
+    --surface-lower: #{colors.$ink-stone};
   }
 }
 
@@ -172,6 +171,14 @@
 .word {
   @extend %split-ink;
   display: inline-block;
+
+  @include respond-below(sm) {
+    background-image: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: unset;
+    color: var(--ink-upper);
+  }
 }
 
 .links {
@@ -293,6 +300,11 @@
   );
   transform-origin: center;
   will-change: transform, opacity;
+
+  @include respond-below(sm) {
+    background-image: none;
+    background-color: var(--ink-upper);
+  }
 
   // Closing choreography (default): outer bars untuck first, middle bar
   // fades back in last. Using explicit delays on each property lets the

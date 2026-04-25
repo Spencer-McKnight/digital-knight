@@ -88,31 +88,27 @@ export function Nav() {
     if (!nav) return;
 
     const SHRINK_THRESHOLD = 48;
+    const smQuery = window.matchMedia('(min-width: 640px)');
+    let isDesktop = smQuery.matches;
     let lastY = window.scrollY;
     let frame = 0;
     let currentShrunk = false;
 
-    // Paint targets are static across the component's lifetime.
-    const paintTargets = [
-      nav,
-      ...Array.from(nav.querySelectorAll<HTMLElement>('[data-ink-split]')),
-    ];
+    // Paint targets are only needed on desktop for split-ink.
+    let paintTargets: HTMLElement[] = [];
+    const refreshPaintTargets = () => {
+      paintTargets = isDesktop
+        ? [nav, ...Array.from(nav.querySelectorAll<HTMLElement>('[data-ink-split]'))]
+        : [];
+    };
+    refreshPaintTargets();
 
-    // ── Section cache ──────────────────────────────────────────────────
-    // Ground sections are few (~5) and their document-flow positions only
-    // change on resize or DOM mutation — not on scroll. Cache their
-    // document-relative offsets so the per-frame handler never calls
-    // querySelectorAll or getBoundingClientRect on sections.
     type SectionEntry = { ground: Ground; docTop: number; docBottom: number };
     let sectionCache: SectionEntry[] = [];
 
-    // Scroll-spy targets (section wrappers referenced by LINKS).
     type SpyEntry = { id: string; docTop: number };
     let spyCache: SpyEntry[] = [];
 
-    // Track whether the previous frame had a boundary in the nav so we
-    // can skip the paint-target loop entirely on consecutive no-boundary
-    // frames (the common case during most of a scroll).
     let hadBoundary = false;
 
     const refreshCaches = () => {
@@ -142,7 +138,6 @@ export function Nav() {
     };
     refreshCaches();
 
-    // Re-cache when sections mount/unmount or resize changes layout.
     let refreshTimer: ReturnType<typeof setTimeout> | null = null;
     const scheduleRefresh = () => {
       if (refreshTimer) clearTimeout(refreshTimer);
@@ -163,7 +158,6 @@ export function Nav() {
       frame = 0;
       const y = window.scrollY;
 
-      // Scroll-settle: clear programmatic scroll lock after pause.
       if (scrollingToRef.current) {
         if (scrollSettleTimer.current) clearTimeout(scrollSettleTimer.current);
         scrollSettleTimer.current = setTimeout(() => {
@@ -171,72 +165,69 @@ export function Nav() {
         }, SCROLL_SETTLE_DELAY);
       }
 
-      // 1) Shrink — direct DOM write, no React state.
-      const goingDown = y > lastY;
-      lastY = y;
-      const shouldShrink = y >= SHRINK_THRESHOLD && goingDown;
-      if (shouldShrink !== currentShrunk) {
-        currentShrunk = shouldShrink;
-        nav.dataset.shrunk = String(currentShrunk);
-      }
-
-      // 2) Ground boundary: cached doc offsets → viewport via scrollY.
-      //    No per-section getBoundingClientRect.
       const navRect = nav.getBoundingClientRect();
 
-      let upperGround: Ground = 'page';
-      let lowerGround: Ground = 'page';
-      let splitViewportY = Infinity;
-
-      for (let i = 0; i < sectionCache.length; i++) {
-        const entry = sectionCache[i]!;
-        const viewportTop = entry.docTop - y;
-        if (viewportTop > navRect.top - 0.5 && viewportTop < navRect.bottom + 0.5) {
-          lowerGround = entry.ground;
-          upperGround = i > 0 ? sectionCache[i - 1]!.ground : entry.ground;
-          splitViewportY = viewportTop;
-          break;
+      if (isDesktop) {
+        // ── Desktop: shrink + split-ink boundary tracking ──
+        const goingDown = y > lastY;
+        lastY = y;
+        const shouldShrink = y >= SHRINK_THRESHOLD && goingDown;
+        if (shouldShrink !== currentShrunk) {
+          currentShrunk = shouldShrink;
+          nav.dataset.shrunk = String(currentShrunk);
         }
-      }
 
-      if (!Number.isFinite(splitViewportY)) {
-        const scanDocY = y + navRect.top + navRect.height / 2;
-        let single: Ground = 'page';
-        for (const entry of sectionCache) {
-          if (entry.docTop <= scanDocY && entry.docBottom > scanDocY) {
-            single = entry.ground;
+        let upperGround: Ground = 'page';
+        let lowerGround: Ground = 'page';
+        let splitViewportY = Infinity;
+
+        for (let i = 0; i < sectionCache.length; i++) {
+          const entry = sectionCache[i]!;
+          const viewportTop = entry.docTop - y;
+          if (viewportTop > navRect.top - 0.5 && viewportTop < navRect.bottom + 0.5) {
+            lowerGround = entry.ground;
+            upperGround = i > 0 ? sectionCache[i - 1]!.ground : entry.ground;
+            splitViewportY = viewportTop;
             break;
           }
         }
-        upperGround = single;
-        lowerGround = single;
+
+        if (!Number.isFinite(splitViewportY)) {
+          const scanDocY = y + navRect.top + navRect.height / 2;
+          let single: Ground = 'page';
+          for (const entry of sectionCache) {
+            if (entry.docTop <= scanDocY && entry.docBottom > scanDocY) {
+              single = entry.ground;
+              break;
+            }
+          }
+          upperGround = single;
+          lowerGround = single;
+        }
+
+        if (nav.dataset.upperGround !== upperGround)
+          nav.dataset.upperGround = upperGround;
+        if (nav.dataset.lowerGround !== lowerGround)
+          nav.dataset.lowerGround = lowerGround;
+
+        const hasBoundary = Number.isFinite(splitViewportY);
+        if (hasBoundary) {
+          for (const el of paintTargets) {
+            el.style.setProperty(
+              '--nav-split',
+              `${splitViewportY - el.getBoundingClientRect().top}px`,
+            );
+          }
+        } else if (hadBoundary) {
+          for (const el of paintTargets) {
+            el.style.setProperty('--nav-split', '9999px');
+          }
+        }
+        hadBoundary = hasBoundary;
+      } else {
+        lastY = y;
       }
 
-      // 3) Ground attributes.
-      if (nav.dataset.upperGround !== upperGround)
-        nav.dataset.upperGround = upperGround;
-      if (nav.dataset.lowerGround !== lowerGround)
-        nav.dataset.lowerGround = lowerGround;
-
-      // 4) Split offsets — only read paint-target rects when a boundary is
-      //    actually threading the nav. On consecutive no-boundary frames
-      //    (the majority of scroll), skip entirely.
-      const hasBoundary = Number.isFinite(splitViewportY);
-      if (hasBoundary) {
-        for (const el of paintTargets) {
-          el.style.setProperty(
-            '--nav-split',
-            `${splitViewportY - el.getBoundingClientRect().top}px`,
-          );
-        }
-      } else if (hadBoundary) {
-        for (const el of paintTargets) {
-          el.style.setProperty('--nav-split', '9999px');
-        }
-      }
-      hadBoundary = hasBoundary;
-
-      // 5) Scroll spy: cached doc offsets → viewport comparison.
       if (!scrollingToRef.current) {
         const line = navRect.bottom + 6;
         let navActiveId: string | null = null;
@@ -257,12 +248,29 @@ export function Nav() {
       schedule();
     };
 
+    const onMediaChange = () => {
+      isDesktop = smQuery.matches;
+      refreshPaintTargets();
+      if (!isDesktop) {
+        currentShrunk = false;
+        nav.dataset.shrunk = 'false';
+        nav.style.removeProperty('--nav-split');
+        for (const el of nav.querySelectorAll<HTMLElement>('[data-ink-split]')) {
+          el.style.removeProperty('--nav-split');
+        }
+      }
+      hadBoundary = false;
+      schedule();
+    };
+
     schedule();
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', onResize);
+    smQuery.addEventListener('change', onMediaChange);
     return () => {
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', onResize);
+      smQuery.removeEventListener('change', onMediaChange);
       if (frame) cancelAnimationFrame(frame);
       if (refreshTimer) clearTimeout(refreshTimer);
       if (scrollSettleTimer.current) clearTimeout(scrollSettleTimer.current);
