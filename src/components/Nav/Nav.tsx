@@ -77,11 +77,9 @@ type Ground = 'page' | 'stone';
 export function Nav() {
   const loaded = useLoadGate();
   const navRef = useRef<HTMLElement>(null);
-  const [shrunk, setShrunk] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  
-  // Track programmatic scroll to prevent observer flickering
+
   const scrollingToRef = useRef<string | null>(null);
   const scrollSettleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -92,71 +90,121 @@ export function Nav() {
     const SHRINK_THRESHOLD = 48;
     let lastY = window.scrollY;
     let frame = 0;
+    let currentShrunk = false;
 
-    // Cache the list of elements participating in split-ink. They're static
-    // across the component's lifetime, so we query once. The nav root itself
-    // is included so the glass contrast fill (painted via `::before`) picks
-    // up the same split as the text inside it.
+    // Paint targets are static across the component's lifetime.
     const paintTargets = [
       nav,
       ...Array.from(nav.querySelectorAll<HTMLElement>('[data-ink-split]')),
     ];
 
+    // ── Section cache ──────────────────────────────────────────────────
+    // Ground sections are few (~5) and their document-flow positions only
+    // change on resize or DOM mutation — not on scroll. Cache their
+    // document-relative offsets so the per-frame handler never calls
+    // querySelectorAll or getBoundingClientRect on sections.
+    type SectionEntry = { ground: Ground; docTop: number; docBottom: number };
+    let sectionCache: SectionEntry[] = [];
+
+    // Scroll-spy targets (section wrappers referenced by LINKS).
+    type SpyEntry = { id: string; docTop: number };
+    let spyCache: SpyEntry[] = [];
+
+    // Track whether the previous frame had a boundary in the nav so we
+    // can skip the paint-target loop entirely on consecutive no-boundary
+    // frames (the common case during most of a scroll).
+    let hadBoundary = false;
+
+    const refreshCaches = () => {
+      const scrollY = window.scrollY;
+
+      const els = document.querySelectorAll<HTMLElement>('[data-ground]');
+      sectionCache = Array.from(els)
+        .map((el) => {
+          const rect = el.getBoundingClientRect();
+          return {
+            ground: groundOf(el),
+            docTop: rect.top + scrollY,
+            docBottom: rect.bottom + scrollY,
+          };
+        })
+        .sort((a, b) => a.docTop - b.docTop);
+
+      spyCache = [];
+      for (const link of LINKS) {
+        const id = sectionIdFromHref(link.href) ?? link.section ?? null;
+        if (!id) continue;
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        spyCache.push({ id, docTop: rect.top + scrollY });
+      }
+    };
+    refreshCaches();
+
+    // Re-cache when sections mount/unmount or resize changes layout.
+    let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+    const scheduleRefresh = () => {
+      if (refreshTimer) clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(() => {
+        refreshTimer = null;
+        refreshCaches();
+      }, 100);
+    };
+
+    const mo = new MutationObserver(scheduleRefresh);
+    mo.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributeFilter: ['data-ground'],
+    });
+
     const detect = () => {
       frame = 0;
-
-      // 1) Shrink from scroll direction.
       const y = window.scrollY;
+
+      // Scroll-settle: clear programmatic scroll lock after pause.
+      if (scrollingToRef.current) {
+        if (scrollSettleTimer.current) clearTimeout(scrollSettleTimer.current);
+        scrollSettleTimer.current = setTimeout(() => {
+          scrollingToRef.current = null;
+        }, SCROLL_SETTLE_DELAY);
+      }
+
+      // 1) Shrink — direct DOM write, no React state.
       const goingDown = y > lastY;
       lastY = y;
-      if (y < SHRINK_THRESHOLD) setShrunk(false);
-      else setShrunk(goingDown);
+      const shouldShrink = y >= SHRINK_THRESHOLD && goingDown;
+      if (shouldShrink !== currentShrunk) {
+        currentShrunk = shouldShrink;
+        nav.dataset.shrunk = String(currentShrunk);
+      }
 
-      // 2) Find a ground boundary that currently sweeps through the nav.
-      //    A "boundary" is the top edge of a section that sits in document
-      //    order after another section — i.e. the moment one ground hands
-      //    off to the next. We walk sections in DOM order and pick the
-      //    first whose top falls inside the nav's vertical band.
+      // 2) Ground boundary: cached doc offsets → viewport via scrollY.
+      //    No per-section getBoundingClientRect.
       const navRect = nav.getBoundingClientRect();
-      const sections = Array.from(
-        document.querySelectorAll<HTMLElement>('[data-ground]'),
-      );
 
       let upperGround: Ground = 'page';
       let lowerGround: Ground = 'page';
-      // Default split is pushed below every text box so a single-ground nav
-      // resolves the gradient to one colour (ink-upper).
-      let splitViewportY = Number.POSITIVE_INFINITY;
+      let splitViewportY = Infinity;
 
-      // Sort by current top to be resilient to layout surprises — normally
-      // DOM order equals visual order, but we don't assume.
-      const ordered = sections
-        .map((el) => ({ el, top: el.getBoundingClientRect().top }))
-        .sort((a, b) => a.top - b.top);
-
-      for (let i = 0; i < ordered.length; i++) {
-        const entry = ordered[i];
-        if (!entry) continue;
-        const { el, top } = entry;
-        if (top > navRect.top - 0.5 && top < navRect.bottom + 0.5) {
-          const incoming = groundOf(el);
-          const prev = i > 0 ? ordered[i - 1] : undefined;
-          const outgoing = prev ? groundOf(prev.el) : incoming;
-          upperGround = outgoing;
-          lowerGround = incoming;
-          splitViewportY = top;
+      for (let i = 0; i < sectionCache.length; i++) {
+        const entry = sectionCache[i]!;
+        const viewportTop = entry.docTop - y;
+        if (viewportTop > navRect.top - 0.5 && viewportTop < navRect.bottom + 0.5) {
+          lowerGround = entry.ground;
+          upperGround = i > 0 ? sectionCache[i - 1]!.ground : entry.ground;
+          splitViewportY = viewportTop;
           break;
         }
       }
 
       if (!Number.isFinite(splitViewportY)) {
-        // No boundary threading the nav — one ground owns the whole bar.
-        const scanY = navRect.top + navRect.height / 2;
+        const scanDocY = y + navRect.top + navRect.height / 2;
         let single: Ground = 'page';
-        for (const { el } of ordered) {
-          const r = el.getBoundingClientRect();
-          if (r.top <= scanY && r.bottom > scanY) {
-            single = groundOf(el);
+        for (const entry of sectionCache) {
+          if (entry.docTop <= scanDocY && entry.docBottom > scanDocY) {
+            single = entry.ground;
             break;
           }
         }
@@ -164,40 +212,36 @@ export function Nav() {
         lowerGround = single;
       }
 
-      // 3) Apply upper/lower ground state at the nav root. CSS resolves
-      //    these into `--ink-upper` / `--ink-lower` via the token layer.
-      if (nav.dataset.upperGround !== upperGround) {
+      // 3) Ground attributes.
+      if (nav.dataset.upperGround !== upperGround)
         nav.dataset.upperGround = upperGround;
-      }
-      if (nav.dataset.lowerGround !== lowerGround) {
+      if (nav.dataset.lowerGround !== lowerGround)
         nav.dataset.lowerGround = lowerGround;
-      }
 
-      // 4) Write per-element split offsets. The element's local split is
-      //    the boundary's viewport-Y minus its own top edge. Values outside
-      //    the element's box are fine — the gradient clamps gracefully.
-      for (const el of paintTargets) {
-        const r = el.getBoundingClientRect();
-        const local = Number.isFinite(splitViewportY)
-          ? splitViewportY - r.top
-          : r.height + 9999;
-        el.style.setProperty('--nav-split', `${local}px`);
+      // 4) Split offsets — only read paint-target rects when a boundary is
+      //    actually threading the nav. On consecutive no-boundary frames
+      //    (the majority of scroll), skip entirely.
+      const hasBoundary = Number.isFinite(splitViewportY);
+      if (hasBoundary) {
+        for (const el of paintTargets) {
+          el.style.setProperty(
+            '--nav-split',
+            `${splitViewportY - el.getBoundingClientRect().top}px`,
+          );
+        }
+      } else if (hadBoundary) {
+        for (const el of paintTargets) {
+          el.style.setProperty('--nav-split', '9999px');
+        }
       }
+      hadBoundary = hasBoundary;
 
-      // 5) Scroll spy: which in-page block owns the band just under the nav.
-      //    Re-query `getElementById` every frame so streamed sections (e.g.
-      //    LetsTalk) are picked up as soon as they mount — unlike a one-shot
-      //    IntersectionObserver list. `LINKS` order follows DOM order on `/`.
+      // 5) Scroll spy: cached doc offsets → viewport comparison.
       if (!scrollingToRef.current) {
         const line = navRect.bottom + 6;
         let navActiveId: string | null = null;
-        for (const link of LINKS) {
-          const id = sectionIdFromHref(link.href) ?? link.section ?? null;
-          if (!id) continue;
-          const el = document.getElementById(id);
-          if (!el) continue;
-          const r = el.getBoundingClientRect();
-          if (r.top <= line) navActiveId = id;
+        for (const { id, docTop } of spyCache) {
+          if (docTop - y <= line) navActiveId = id;
         }
         setActive((prev) => (prev === navActiveId ? prev : navActiveId));
       }
@@ -208,33 +252,21 @@ export function Nav() {
       frame = requestAnimationFrame(detect);
     };
 
+    const onResize = () => {
+      refreshCaches();
+      schedule();
+    };
+
     schedule();
     window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', schedule);
+    window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('scroll', schedule);
-      window.removeEventListener('resize', schedule);
+      window.removeEventListener('resize', onResize);
       if (frame) cancelAnimationFrame(frame);
-    };
-  }, []);
-
-  // Detect scroll end to clear the programmatic scroll lock
-  useEffect(() => {
-    const onScroll = () => {
-      if (!scrollingToRef.current) return;
-      
-      if (scrollSettleTimer.current) {
-        clearTimeout(scrollSettleTimer.current);
-      }
-      scrollSettleTimer.current = setTimeout(() => {
-        scrollingToRef.current = null;
-      }, SCROLL_SETTLE_DELAY);
-    };
-    
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', onScroll);
+      if (refreshTimer) clearTimeout(refreshTimer);
       if (scrollSettleTimer.current) clearTimeout(scrollSettleTimer.current);
+      mo.disconnect();
     };
   }, []);
   
@@ -283,7 +315,6 @@ export function Nav() {
       ref={navRef}
       className={styles.root}
       data-loaded={loaded}
-      data-shrunk={shrunk}
       data-menu-open={menuOpen || undefined}
       aria-label="Primary"
     >

@@ -33,10 +33,10 @@
   display: grid;
   gap: var(--space-3);
   justify-items: start;
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-6);
 
   @include respond-to(md) {
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-7);
   }
 }
 
@@ -111,11 +111,10 @@
     left: 0;
     right: 0;
     top: calc(-1 * var(--services-nav-offset));
-    height: var(--services-nav-offset);
+    height: calc(var(--services-nav-offset) + 1px);
     background: var(--ink-page);
     pointer-events: none;
     opacity: 0;
-    transition: opacity var(--dur-element) var(--ease-house);
   }
 
   // Ember hairline matching the nav's underline language.
@@ -309,7 +308,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .question {

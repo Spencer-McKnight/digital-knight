@@ -38,14 +38,14 @@ export const SERVICES: ReadonlyArray<ServiceContent> = [
   {
     id: 'ideate',
     label: 'Ideate',
-    lede: 'Imagine what is possible.',
+    lede: 'Websites are the core, but can be so much more.',
     pop: {
       kind: 'questions',
       heading: 'Could your business…',
       items: [
         'Benefit from a brand experience that stands out',
         'Use AI to service customers or boost productivity',
-        'Dynamically understand and satisfy customer preferences',
+        'Proactively analyse and respond to customers',
         'Enjoy reliable automation',
       ],
       coda: 'Yes. It can',
@@ -82,7 +82,7 @@ export const SERVICES: ReadonlyArray<ServiceContent> = [
     lede: 'Evolution is what keeps your product competitive.',
     body: [
       'I mean real, planned or reactive changes to better suit your use cases. Not paying just to keep the lights on. Improving features until they feel just right.',
-      'Most importantly, forming a loyal partnership to benefit from new eras in technology withour restarting.'
+      'Most importantly, forming a loyal partnership to benefit from new eras in technology without restarting.'
     ],
   },
 ];

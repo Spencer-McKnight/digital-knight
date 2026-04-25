@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { WeekAvailability } from '@/app/_actions/booking.types';
 import { Reveal } from '@/components/Reveal';
 import { WeekGrid, type ConfirmationPayload } from './WeekGrid/WeekGrid';
@@ -27,6 +27,10 @@ export function LetsTalkClient({ initial, hostEmail }: LetsTalkClientProps) {
   const handleConfirmed = useCallback((payload: ConfirmationPayload) => {
     setConfirmed(payload);
   }, []);
+
+  useEffect(() => {
+    if (confirmed) document.getElementById('talk')?.scrollIntoView({ behavior: 'smooth' });
+  }, [confirmed]);
 
   if (confirmed) {
     return (

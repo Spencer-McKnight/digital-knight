@@ -30,11 +30,11 @@ export function Hero() {
         </h1>
 
         <p className={styles.lede}>
-          Knowledge and strength to create.
+          Champion your brand identity
           <br />
-          Strategic vision that invites the future.
+          Secure your digital future
           <br />
-          Courage to consider what is right.
+          Win business with your website
         </p>
 
         <div className={styles.actions}>
