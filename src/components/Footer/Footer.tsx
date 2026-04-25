@@ -99,7 +99,7 @@ export function Footer() {
           </p>
           <p className={styles.metaItem}>
             <span className={styles.metaLabel}>Location</span>
-            <span className={styles.metaValue}>Working from Melbourne, Australia</span>
+            <span className={styles.metaValue}>Melbourne, Australia</span>
           </p>
           <p className={styles.metaItem}>
             <span className={styles.metaLabel}>Site Stack</span>

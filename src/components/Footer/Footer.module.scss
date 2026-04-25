@@ -188,22 +188,30 @@
 
 .meta {
   display: grid;
-  gap: var(--space-2);
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-3);
+  align-items: baseline;
 
   @include respond-to(lg) {
     grid-template-columns: auto 1fr auto;
     gap: var(--space-4);
-    align-items: baseline;
   }
 }
 
 .metaItem {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-2);
   @include type(meta);
   color: var(--ink-iron);
   opacity: 0.68;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+
+  @include respond-to(lg) {
+    grid-column: auto;
+    display: inline-flex;
+    gap: var(--space-2);
+  }
 }
 
 .metaLabel {
