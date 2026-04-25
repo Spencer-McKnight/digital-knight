@@ -56,7 +56,7 @@ export const SERVICES: ReadonlyArray<ServiceContent> = [
     label: 'Create',
     lede: 'Unlock technology\u2019s true potential.',
     body: [
-      'Using the most development modern tools available, I create quality ideas with surprising pace.',
+      'Using cutting-edge development tools, I create quality ideas with surprising pace.',
       'My progress board gives you real-time visibility into work progress. Weekly demonstrations and refinements. You own all infrastructure.',
     ],
     pop: {
