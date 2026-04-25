@@ -326,9 +326,9 @@ export function Nav() {
         onClick={() => setMenuOpen((v) => !v)}
       >
         <span className={styles.burgerInner} aria-hidden>
-          <span className={styles.burgerBar} />
-          <span className={styles.burgerBar} />
-          <span className={styles.burgerBar} />
+          <span className={styles.burgerBar} data-ink-split />
+          <span className={styles.burgerBar} data-ink-split />
+          <span className={styles.burgerBar} data-ink-split />
         </span>
       </button>
 

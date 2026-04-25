@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollTrigger } from '@/lib/gsap';
+import { Reveal } from '@/components/Reveal';
 import { SERVICES } from './content';
 import styles from './Services.module.scss';
 
@@ -94,12 +95,12 @@ export function Services() {
       ref={rootRef}
     >
       <div className={styles.inner}>
-        <header className={styles.intro}>
-          <p className={styles.eyebrow}>The partnership</p>
+        <Reveal as="header" className={styles.intro} amount="md">
+          <p className={styles.eyebrow}>Services</p>
           <h2 id="services-heading" className={styles.heading}>
-            Systematic <span className={styles.ember}>Partnership</span>
+            What I will do
           </h2>
-        </header>
+        </Reveal>
 
         <ol className={styles.stage} role="list" aria-label="Phases">
           {SERVICES.map((service, i) => {

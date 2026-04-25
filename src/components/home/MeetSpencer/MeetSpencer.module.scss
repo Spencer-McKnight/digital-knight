@@ -98,6 +98,16 @@
   margin: 0;
 }
 
+.link {
+  color: var(--ink-ember);
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+
+  &:hover {
+    text-decoration-thickness: 0.12em;
+  }
+}
+
 .actions {
   display: flex;
   align-items: center;

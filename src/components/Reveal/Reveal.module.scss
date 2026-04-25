@@ -1,0 +1,40 @@
+// =============================================================================
+// Reveal — entry motion primitive.
+// -----------------------------------------------------------------------------
+// Honors `--ease-house` and `--dur-scene`. The base state lifts the block
+// downward by a token-sized rise so the reveal pulls *upward*. Reduced motion
+// keeps the opacity fade and drops translate.
+// =============================================================================
+
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-rise, 1.25rem), 0);
+  transition:
+    opacity var(--dur-scene) var(--ease-house),
+    transform var(--dur-scene) var(--ease-house);
+  will-change: opacity, transform;
+}
+
+.reveal[data-revealed='true'] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.sm {
+  --reveal-rise: 0.5rem;
+}
+
+.md {
+  --reveal-rise: 1.25rem;
+}
+
+.lg {
+  --reveal-rise: 2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transform: none;
+    transition: opacity var(--dur-element) var(--ease-house);
+  }
+}

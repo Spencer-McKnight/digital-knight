@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/Button';
+import { Reveal } from '@/components/Reveal';
 import styles from './Hero.module.scss';
 
 // The R3F canvas is client-only and heavyweight — load it off the critical
@@ -23,7 +24,7 @@ export function Hero() {
         <ForgeSeal />
       </div>
 
-      <div className={styles.grid}>
+      <Reveal as="div" className={styles.grid} amount="md">
         <h1 id="hero-title" className={styles.title}>
           Digital Knight
         </h1>
@@ -41,7 +42,7 @@ export function Hero() {
             Free Strategy Consult
           </Button>
         </div>
-      </div>
+      </Reveal>
 
     </section>
   );

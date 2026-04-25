@@ -277,7 +277,20 @@
   left: 0;
   right: 0;
   height: 1.5px;
-  background: currentColor;
+  // Same two-stop gradient as `%split-ink`, but painted directly (no
+  // `background-clip: text` — bars aren't glyphs). Each bar is its own
+  // `data-ink-split` target, so `--nav-split` here is pixels from THIS
+  // bar's top to the ground boundary. Because the bar is only 1.5px tall,
+  // the stop falls outside its box in the overwhelmingly common case and
+  // the gradient resolves to a single ink — upper or lower — matching
+  // whichever ground that bar sits over.
+  background-image: linear-gradient(
+    to bottom,
+    var(--ink-upper) 0,
+    var(--ink-upper) var(--nav-split, 9999px),
+    var(--ink-lower) var(--nav-split, 9999px),
+    var(--ink-lower) 100%
+  );
   transform-origin: center;
   will-change: transform, opacity;
 

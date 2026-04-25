@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Button } from '@/components/Button';
+import { Reveal } from '@/components/Reveal';
 import styles from './MeetSpencer.module.scss';
 
 /**
@@ -23,7 +24,7 @@ export function MeetSpencer() {
       className={styles.root}
       aria-labelledby="meet-heading"
     >
-      <div className={styles.inner}>
+      <Reveal as="div" className={styles.inner}>
         <div className={styles.imageColumn}>
           <figure className={styles.figure}>
             <Image
@@ -48,20 +49,19 @@ export function MeetSpencer() {
 
           <div className={styles.body}>
             <p className={styles.lede}>
-              I'm an independent strategist, designer, and engineer building
-              long-term digital partnerships from Melbourne.
+              I have created hundreds of captivating user experiences that are loved by clients and developers alike.
             </p>
             <p className={styles.copy}>
-              With a decade of experience across startups, scale-ups, and
-              enterprise, I've learned that the best work comes from genuine
-              collaboration — not handoffs. That's why Digital Knight is a
-              one-desk studio: you work directly with me from first sketch to
-              final deploy.
+              After graduating with a Bachelor of Business Information Technology (Computer Science), I spent five years in Australian digital agencies as a full stack developer.
+              At Inlight, I helped create award winning work for clients like AHM, Nando's, Chadstone, UrbanRest and more.
             </p>
             <p className={styles.copy}>
-              I believe in clarity over complexity, restraint over feature-creep,
-              and building things that last. If you're looking for a partner who
-              cares as much about your business as you do, let's talk.
+              My skills expanded holistically; now I'm to personally deliver comprehensive projects like the{' '}
+              <a href="https://sogif.au" className={styles.link}>
+                sogif.au
+              </a>{' '}
+              website.
+              I'm bringing my personality, experience and intelligence to the digital space, to see what mark I can make.
             </p>
           </div>
 
@@ -71,7 +71,7 @@ export function MeetSpencer() {
             </Button>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

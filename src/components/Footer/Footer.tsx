@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { SmoothLink } from '@/components/SmoothLink';
+import { Reveal } from '@/components/Reveal';
 import styles from './Footer.module.scss';
 import { Button } from '../Button';
 
@@ -29,7 +30,7 @@ export function Footer() {
   return (
     <footer className={styles.root} data-ground="stone" aria-labelledby="footer-sign">
       <div className={styles.inner}>
-        <div className={styles.signBlock}>
+        <Reveal as="div" className={styles.signBlock} amount="md">
           <div className={styles.signColumn}>
             <h2 id="footer-sign" className={styles.sign}>
               Digital Knight.
@@ -40,13 +41,13 @@ export function Footer() {
           <div className={styles.signButton}>
             <Button href="/#talk" variant="secondary" size="md">Start with a conversation</Button>
           </div>
-        </div>
+        </Reveal>
 
         <div className={styles.body}>
           <div className={styles.colophon}>
             <p className={styles.colophonTitle}>Studio</p>
             <p className={styles.colophonLine}>
-              An ambitious digital agency forming strategic partnerships and web projects.
+              An ambitious digital agency for strategic partnerships and web projects.
               Founded by Spencer McKnight.
             </p>
           </div>
