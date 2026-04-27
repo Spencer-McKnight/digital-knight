@@ -25,6 +25,10 @@ type Amount = 'sm' | 'md' | 'lg';
 type RevealOwnProps = {
   children: ReactNode;
   className?: string;
+  /** Kill-switch: when false (default) the wrapper renders with no animation. */
+  enabled?: boolean;
+  /** Opacity-only — no vertical translate. */
+  fadeOnly?: boolean;
   /** Stagger after intersection, in ms. */
   delay?: number;
   /** Translate distance preset. Default `md` (1.25rem). */
@@ -44,6 +48,8 @@ export function Reveal<T extends ElementType = 'div'>(props: RevealProps<T>) {
     children,
     as,
     className,
+    enabled = false,
+    fadeOnly = false,
     delay = 0,
     amount = 'md',
     threshold = 0.15,
@@ -53,7 +59,7 @@ export function Reveal<T extends ElementType = 'div'>(props: RevealProps<T>) {
   const Tag = as ?? 'div';
   const generatedId = useId();
   const elementId = (rest as { id?: string }).id ?? generatedId;
-  const [revealed, setRevealed] = useState(false);
+  const [revealed, setRevealed] = useState(!enabled);
 
   useEffect(() => {
     if (revealed) return;
@@ -85,7 +91,12 @@ export function Reveal<T extends ElementType = 'div'>(props: RevealProps<T>) {
     return () => io.disconnect();
   }, [elementId, revealed, threshold, rootMargin]);
 
-  const cls = [styles.reveal, styles[amount], className].filter(Boolean).join(' ');
+  const cls = [
+    enabled && styles.reveal,
+    enabled && !fadeOnly && styles[amount],
+    enabled && fadeOnly && styles.fadeOnly,
+    className,
+  ].filter(Boolean).join(' ');
   const style: CSSProperties | undefined = delay
     ? { transitionDelay: `${delay}ms` }
     : undefined;

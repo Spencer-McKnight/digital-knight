@@ -4,7 +4,6 @@ import { GtagLazyClient } from '@/lib/google/GtagLazyClient';
 import './globals.scss';
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
-import { Cursor } from '@/components/Cursor';
 import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
@@ -55,7 +54,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div style={{ minHeight: '100vh', backgroundColor: '#FFEDD7' }}>
           <Nav />
-          <Cursor />
           {children}
         </div>
         <Footer />

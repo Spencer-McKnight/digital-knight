@@ -1,7 +1,6 @@
 'use client';
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Environment, Float } from '@react-three/drei';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Group, Mesh, RectAreaLight } from 'three';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
@@ -96,15 +95,8 @@ export function ForgeSeal() {
         frameloop={active ? 'always' : 'demand'}
       >
         <Lighting />
-        <Environment preset="warehouse" environmentIntensity={0.22} />
 
-        <Float
-          speed={reduced ? 0 : 0.6}
-          rotationIntensity={reduced ? 0 : 0.25}
-          floatIntensity={reduced ? 0 : 0.35}
-        >
-          <Seal reduced={reduced} active={active} onReady={() => setLoaded(true)} />
-        </Float>
+        <Seal reduced={reduced} active={active} onReady={() => setLoaded(true)} />
       </Canvas>
     </div>
   );
@@ -130,10 +122,10 @@ function Lighting() {
     // Front bank — the viewer's hemisphere. Four panels fan around the
     // front so every camera-facing facet has a panel aligned with its
     // normal.
-    { p: [0, 2.0, 3.4], i: 6.0 },
-    { p: [0, -1.8, 3.4], i: 5.2 },
-    { p: [2.6, 0.4, 3.2], i: 5.6 },
-    { p: [-2.6, 0.4, 3.2], i: 5.6 },
+    { p: [0, 2.0, 3.4], i: 7.2 },
+    { p: [0, -1.8, 3.4], i: 6.2 },
+    { p: [2.6, 0.4, 3.2], i: 6.6 },
+    { p: [-2.6, 0.4, 3.2], i: 6.6 },
     // Shoulders — rim/fill on the sides.
     { p: [3.4, 0.6, 0.4], i: 4.0 },
     { p: [-3.4, 0.6, 0.4], i: 4.0 },
@@ -166,8 +158,12 @@ function Lighting() {
         width={1.6}
         height={1.6}
         position={[0, 0, 4.0]}
-        intensity={9.0}
+        intensity={10.5}
       />
+
+      {/* Hemisphere fill — replaces the HDR environment map's ambient
+          contribution without the network fetch + decode cost. */}
+      <hemisphereLight args={['#FFEDD7', '#0D0D0D', 0.35]} />
     </>
   );
 }
@@ -181,10 +177,12 @@ function Seal({
   active: boolean;
   onReady: () => void;
 }) {
+  const floatRef = useRef<Group>(null);
   const groupRef = useRef<Group>(null);
   const sealRef = useRef<Mesh>(null);
   const ringRef = useRef<Mesh>(null);
   const innerRingRef = useRef<Mesh>(null);
+  const floatOffset = useRef(Math.random() * 10000);
   const { viewport, gl } = useThree();
 
   // Intro reveal — the scene can't draw anything until WebGL has compiled the
@@ -449,12 +447,25 @@ function Seal({
     [viewport.width],
   );
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
+    const fl = floatRef.current;
     const g = groupRef.current;
     const s = sealRef.current;
     const r = ringRef.current;
     const ir = innerRingRef.current;
-    if (!g || !s || !r || !ir) return;
+    if (!fl || !g || !s || !r || !ir) return;
+
+    if (!reduced) {
+      const ft = floatOffset.current + state.clock.getElapsedTime();
+      const spd = 0.6;
+      fl.rotation.x = (Math.cos((ft / 4) * spd) / 8) * 0.25;
+      fl.rotation.y = (Math.sin((ft / 4) * spd) / 8) * 0.25;
+      fl.rotation.z = (Math.cos((ft / 4) * spd) / 20) * 0.25;
+      fl.position.y = (Math.sin((ft / 4) * spd) / 10) * 0.35;
+    } else {
+      fl.rotation.set(0, 0, 0);
+      fl.position.y = 0;
+    }
 
     // First frame to actually execute is our "WebGL has drawn something"
     // signal — kick off the intro and let the parent fade the canvas in.
@@ -603,6 +614,7 @@ function Seal({
   });
 
   return (
+    <group ref={floatRef}>
     <group ref={groupRef}>
       {/* The central gem is the only part of the scene that can be grabbed.
           R3F raycasts against just this mesh (the rings below opt out with
@@ -622,8 +634,8 @@ function Seal({
         <icosahedronGeometry args={[1, 0]} />
         <meshStandardMaterial
           color="#1B1B1A"
-          metalness={0.92}
-          roughness={0.42}
+          metalness={0.68}
+          roughness={0.36}
           flatShading
         />
       </mesh>
@@ -641,6 +653,7 @@ function Seal({
         <torusGeometry args={[1.28, 0.01, 12, 180]} />
         <meshBasicMaterial color="#FFEDD7" transparent opacity={0.55} />
       </mesh>
+    </group>
     </group>
   );
 }

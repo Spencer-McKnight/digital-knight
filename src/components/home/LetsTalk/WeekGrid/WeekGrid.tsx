@@ -626,9 +626,9 @@ function resolveSlotState(
 ): SlotState {
   const booked = new Set(avail.bookedSlotsUTC.map((iso) => new Date(iso).getTime()));
 
-  // Past gating uses the wall clock, so we defer it until after mount to
-  // avoid hydration mismatches between the server's "now" and the client's.
-  if (mounted && s.absoluteMs < Date.now()) return 'past';
+  // Past gating uses the wall clock + the server-declared minimum notice
+  // window. Deferred until after mount to avoid hydration mismatches.
+  if (mounted && s.absoluteMs < Date.now() + avail.minNoticeMs) return 'past';
   if (booked.has(s.absoluteMs)) return 'taken';
   if (state.selectedSlotUTC && new Date(state.selectedSlotUTC).getTime() === s.absoluteMs) {
     return state.phase.kind === 'submitting' ? 'submitting' : 'selected';

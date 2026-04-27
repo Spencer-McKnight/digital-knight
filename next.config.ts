@@ -14,7 +14,7 @@ const config: NextConfig = {
   },
 
   experimental: {
-    optimizePackageImports: ['gsap', '@react-three/drei', 'three'],
+    optimizePackageImports: ['gsap', 'three'],
   },
 
   images: {

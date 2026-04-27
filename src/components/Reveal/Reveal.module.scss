@@ -32,6 +32,11 @@
   --reveal-rise: 2rem;
 }
 
+.fadeOnly {
+  transform: none;
+  transition: opacity var(--dur-scene) var(--ease-house);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     transform: none;

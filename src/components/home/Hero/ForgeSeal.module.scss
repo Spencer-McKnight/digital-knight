@@ -1,6 +1,7 @@
 @use 'mixins' as *;
 
 .root {
+  background-color: transparent;
   position: absolute;
   inset: 0;
   width: 100%;

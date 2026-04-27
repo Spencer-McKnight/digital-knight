@@ -49,6 +49,10 @@ const schema = z.object({
   BOOKING_HOST_NAME: z.string().default('Digital Knight'),
   BOOKING_HOST_DOMAIN: z.string().default('digital-knight.au'),
 
+  // Minimum hours between now and the earliest bookable slot. Prevents
+  // last-second bookings the host can't prepare for.
+  BOOKING_MIN_NOTICE_HOURS: z.coerce.number().min(0).max(168).default(24),
+
   // HMAC key that signs per-slot booking tokens (see `lib/booking/slotToken`).
   // Required in production; dev fallback is wired in above.
   BOOKING_SLOT_SIGNING_KEY: z.string().min(32),

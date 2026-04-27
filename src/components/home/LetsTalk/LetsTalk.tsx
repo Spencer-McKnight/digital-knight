@@ -38,6 +38,7 @@ async function loadInitialAvailability(): Promise<WeekAvailability> {
     // No backend → no bookable tokens. The client will surface the soft
     // "slot expired" path on submit, which is the correct behaviour.
     slotTokens: {},
+    minNoticeMs: env.BOOKING_MIN_NOTICE_HOURS * 3_600_000,
   };
 
   try {

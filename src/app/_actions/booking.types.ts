@@ -33,6 +33,8 @@ export type WeekAvailability = {
    * Issued per request; never cached alongside the booked-slots payload.
    */
   slotTokens: Record<string, string>;
+  /** Minimum notice period in ms. Slots before `now + minNoticeMs` are unbookable. */
+  minNoticeMs: number;
 };
 
 export type BookingInput = {

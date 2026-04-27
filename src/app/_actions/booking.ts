@@ -66,6 +66,8 @@ export type WeekAvailability = {
    * Issued per request; never cached alongside the booked-slots payload.
    */
   slotTokens: Record<string, string>;
+  /** Minimum notice period in ms. Slots before `now + minNoticeMs` are unbookable. */
+  minNoticeMs: number;
 };
 
 export type BookingInput = {
@@ -184,7 +186,8 @@ export async function getWeekAvailability(weekISO: string): Promise<WeekAvailabi
   // Issue slot tokens for every *free* slot in the week. Booked or past
   // slots are deliberately absent so the UI can't pass a token for a slot
   // it shouldn't offer in the first place.
-  const slotTokens = issueSlotTokens(requested, bookedSlotsUTC);
+  const minNoticeMs = env.BOOKING_MIN_NOTICE_HOURS * 3_600_000;
+  const slotTokens = issueSlotTokens(requested, bookedSlotsUTC, minNoticeMs);
 
   return {
     weekISO: parsed.data,
@@ -194,6 +197,7 @@ export async function getWeekAvailability(weekISO: string): Promise<WeekAvailabi
     horizonReached: delta === horizon,
     atCurrentWeek: delta === 0,
     slotTokens,
+    minNoticeMs,
   };
 }
 
@@ -205,12 +209,13 @@ export async function getWeekAvailability(weekISO: string): Promise<WeekAvailabi
 function issueSlotTokens(
   weekStartZoned: ZonedDateTime,
   bookedSlotsUTC: string[],
+  minNoticeMs: number,
 ): Record<string, string> {
   const booked = new Set(bookedSlotsUTC.map((iso) => new Date(iso).getTime()));
-  const nowMs = Date.now();
+  const cutoffMs = Date.now() + minNoticeMs;
   const out: Record<string, string> = {};
   for (const slot of generateWeekSlots(weekStartZoned)) {
-    if (slot.absoluteMs < nowMs) continue;
+    if (slot.absoluteMs < cutoffMs) continue;
     if (booked.has(slot.absoluteMs)) continue;
     out[slot.utc] = signSlotToken(slot.utc);
   }
@@ -232,10 +237,10 @@ export async function getFirstAvailableWeek(): Promise<WeekAvailability> {
     const weekISO = toWeekISO(week);
     const availability = await getWeekAvailability(weekISO);
 
-    // Count past slots in the current week (they're not bookable)
+    // Count unbookable slots (past + within the notice window)
     let pastSlots = 0;
     if (i === 0) {
-      const now = Date.now();
+      const cutoffMs = Date.now() + env.BOOKING_MIN_NOTICE_HOURS * 3_600_000;
       const weekStartMs = new Date(availability.weekStartUTC).getTime();
       const dayZeroStart = fromAbsolute(weekStartMs, tz).set({
         hour: BUSINESS_HOUR_START,
@@ -250,7 +255,7 @@ export async function getFirstAvailableWeek(): Promise<WeekAvailability> {
             days: dayIndex,
             minutes: slotIndex * SLOT_MINUTES,
           });
-          if (slotZoned.toDate().getTime() < now) {
+          if (slotZoned.toDate().getTime() < cutoffMs) {
             pastSlots++;
           }
         }
@@ -326,9 +331,10 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     return { ok: false, reason: 'slot_invalid' };
   }
 
-  // Also reject slots in the past — cheap last-mile guard against stale UIs.
-  if (startAtMs < Date.now()) {
-    return { ok: false, reason: 'slot_invalid', message: 'Slot is in the past' };
+  // Reject slots that fall within the minimum notice window.
+  const minNoticeMs = env.BOOKING_MIN_NOTICE_HOURS * 3_600_000;
+  if (startAtMs < Date.now() + minNoticeMs) {
+    return { ok: false, reason: 'slot_invalid', message: 'Slot is too soon' };
   }
 
   // 5. Insert the booking. Unique (start_at) is the concurrency guard.

@@ -1,8 +1,9 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Hero } from '@/components/home/Hero';
 import { Services } from '@/components/home/Services';
 import { MeetSpencer } from '@/components/home/MeetSpencer';
-import { LetsTalk } from '@/components/home/LetsTalk';
+import { LetsTalk, LetsTalkSkeleton } from '@/components/home/LetsTalk';
 
 export const metadata: Metadata = {
   title: 'Digital Knight — Strategy, design, code that prevails.',
@@ -27,7 +28,9 @@ export default function HomePage() {
   return (
     <main>
       <Hero />
-      <LetsTalk />
+      <Suspense fallback={<LetsTalkSkeleton />}>
+        <LetsTalk />
+      </Suspense>
       <Services />
       <MeetSpencer />
     </main>
