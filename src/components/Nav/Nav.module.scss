@@ -217,6 +217,7 @@
 
   .root[data-upper-ground='stone'] & { --logo-ink-upper: var(--ink-page); }
   .root[data-lower-ground='stone'] & { --logo-ink-lower: var(--ink-page); }
+  .root[data-menu-open] & { --logo-ink-upper: var(--ink-page); }
 
   @include respond-below(sm) {
     background-image: none;
