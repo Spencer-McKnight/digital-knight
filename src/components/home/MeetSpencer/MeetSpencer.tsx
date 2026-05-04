@@ -28,7 +28,7 @@ export function MeetSpencer() {
         <div className={styles.imageColumn}>
           <figure className={styles.figure}>
             <Image
-              src="/images/me-smiling-graphic.avif"
+              src="/images/website-developer.avif"
               alt="Spencer McKnight, founder of Digital Knight"
               width={560}
               height={560}
