@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: '%s · Digital Knight',
   },
   description:
-    'Digital Knight is a studio for long-term digital partnerships. Strategy, design, development and AI, forged for businesses that intend to prevail.',
+    'Next-gen websites, AI automation and strategic vision for digital businesses. Design, infrastructure and modern development — forged by Digital Knight.',
   applicationName: 'Digital Knight',
   authors: [{ name: 'Digital Knight' }],
   icons: {
@@ -41,13 +41,13 @@ export const metadata: Metadata = {
     siteName: 'Digital Knight',
     title: 'Digital Knight',
     description:
-      'An independent studio for long-term digital partnerships. Strategy, design, development and AI for businesses that intend to prevail.',
+      'Next-gen websites, AI automation and strategic vision for digital businesses. Design, infrastructure and modern development.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Digital Knight',
     description:
-      'An independent studio for long-term digital partnerships. Strategy, design, development and AI for businesses that intend to prevail.',
+      'Next-gen websites, AI automation and strategic vision for digital businesses. Design, infrastructure and modern development.',
   },
   manifest: '/site.webmanifest',
   alternates: {

@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-export const alt = 'Digital Knight — Strategy, design, code that prevails.';
+export const alt = 'Digital Knight — Next-gen websites, AI automation and strategic vision for digital businesses.';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -70,7 +70,7 @@ export default async function OgImage() {
               opacity: 0.7,
             }}
           >
-            Strategy, design, code that prevails.
+            Secure your digital future. Win customers with your website.
           </span>
         </div>
 

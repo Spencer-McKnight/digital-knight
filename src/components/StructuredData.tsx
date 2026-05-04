@@ -4,7 +4,7 @@ const professionalService = {
   name: 'Digital Knight',
   url: 'https://digital-knight.au',
   description:
-    'An independent studio for long-term digital partnerships. Strategy, design, development and AI for businesses that intend to prevail.',
+    'Next-gen websites, AI automation and strategic vision for digital businesses. Design, infrastructure and modern development.',
   founder: {
     '@type': 'Person',
     name: 'Spencer McKnight',

@@ -6,13 +6,13 @@ import { MeetSpencer } from '@/components/home/MeetSpencer';
 import { LetsTalk, LetsTalkSkeleton } from '@/components/home/LetsTalk';
 
 export const metadata: Metadata = {
-  title: 'Digital Knight — Strategy, design, code that prevails.',
+  title: 'Digital Knight — Next-gen websites, AI automation and strategic vision for digital businesses.',
   description:
-    'An independent studio for long-term digital partnerships. Strategy, design, development and AI for businesses that intend to be here in a decade.',
+    'Next-gen websites, AI automation and strategic vision for digital businesses. Design, infrastructure and modern development.',
   openGraph: {
-    title: 'Digital Knight — Strategy, design, code that prevails.',
+    title: 'Digital Knight — Next-gen websites, AI automation and strategic vision for digital businesses.',
     description:
-      'An independent studio for long-term digital partnerships. Strategy, design, development and AI for businesses that intend to be here in a decade.',
+      'Next-gen websites, AI automation and strategic vision for digital businesses. Design, infrastructure and modern development.',
   },
 };
 
