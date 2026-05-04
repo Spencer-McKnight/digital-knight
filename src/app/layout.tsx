@@ -4,18 +4,13 @@ import { GtagLazyClient } from '@/lib/google/GtagLazyClient';
 import './globals.scss';
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
+import { StructuredData } from '@/components/StructuredData';
 import { Analytics } from '@vercel/analytics/next';
 
 const siteUrl = new URL('https://digital-knight.au');
 const brandLogoIcon = {
   url: '/images/svg-logo.svg',
   type: 'image/svg+xml',
-};
-const brandLogoImage = {
-  url: brandLogoIcon.url,
-  width: 611,
-  height: 611,
-  alt: 'Digital Knight logo',
 };
 
 export const metadata: Metadata = {
@@ -25,7 +20,7 @@ export const metadata: Metadata = {
     template: '%s · Digital Knight',
   },
   description:
-    'Digital Knight is a studio for long-term digital partnerships. Strategy, design, development and AI — forged for businesses that intend to prevail.',
+    'Digital Knight is a studio for long-term digital partnerships. Strategy, design, development and AI, forged for businesses that intend to prevail.',
   applicationName: 'Digital Knight',
   authors: [{ name: 'Digital Knight' }],
   icons: {
@@ -45,16 +40,19 @@ export const metadata: Metadata = {
     url: '/',
     siteName: 'Digital Knight',
     title: 'Digital Knight',
-    description: 'Digital Knight — Website, Design, Automation, AI.',
-    images: [brandLogoImage],
+    description:
+      'An independent studio for long-term digital partnerships. Strategy, design, development and AI for businesses that intend to prevail.',
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Digital Knight',
-    description: 'Digital Knight — Website, Design, Automation, AI.',
-    images: [brandLogoImage],
+    description:
+      'An independent studio for long-term digital partnerships. Strategy, design, development and AI for businesses that intend to prevail.',
   },
   manifest: '/site.webmanifest',
+  alternates: {
+    canonical: 'https://digital-knight.au',
+  },
   robots: {
     index: true,
     follow: true,
@@ -77,6 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
+        <StructuredData />
       </head>
       <body>
         <div style={{ minHeight: '100vh', backgroundColor: '#FFEDD7' }}>

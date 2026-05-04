@@ -8,7 +8,12 @@ import { LetsTalk, LetsTalkSkeleton } from '@/components/home/LetsTalk';
 export const metadata: Metadata = {
   title: 'Digital Knight — Strategy, design, code that prevails.',
   description:
-    'An independent studio for long-term digital partnerships. Strategy, design, development and AI — forged for businesses that intend to be here in a decade.',
+    'An independent studio for long-term digital partnerships. Strategy, design, development and AI for businesses that intend to be here in a decade.',
+  openGraph: {
+    title: 'Digital Knight — Strategy, design, code that prevails.',
+    description:
+      'An independent studio for long-term digital partnerships. Strategy, design, development and AI for businesses that intend to be here in a decade.',
+  },
 };
 
 /**

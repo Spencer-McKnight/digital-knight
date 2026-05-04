@@ -97,10 +97,10 @@ export function Footer() {
             <span className={styles.metaLabel}>©</span>
             <span className={styles.metaValue}>{year} · Digital Knight</span>
           </p>
-          <p className={styles.metaItem}>
+          <address className={styles.metaItem}>
             <span className={styles.metaLabel}>Location</span>
             <span className={styles.metaValue}>Melbourne, Australia</span>
-          </p>
+          </address>
           <p className={styles.metaItem}>
             <span className={styles.metaLabel}>Site Stack</span>
             <span className={styles.metaValue}>
