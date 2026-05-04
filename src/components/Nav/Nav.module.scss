@@ -55,14 +55,22 @@
   --surface-lower: #{colors.$ink-page};
 
   @include respond-to(sm) {
+    --surface-upper: #{rgba(colors.$ink-page, 0.72)};
+    --surface-lower: #{rgba(colors.$ink-page, 0.72)};
+
     &[data-upper-ground='stone'] {
       --ink-upper: var(--ink-page);
-      --surface-upper: #{colors.$ink-stone};
+      --surface-upper: #{rgba(colors.$ink-stone, 0.72)};
     }
     &[data-lower-ground='stone'] {
       --ink-lower: var(--ink-page);
-      --surface-lower: #{colors.$ink-stone};
+      --surface-lower: #{rgba(colors.$ink-stone, 0.72)};
     }
+
+    // Glass: split-tinted fill + backdrop blur (desktop only — mobile uses a
+    // solid bar in `respond-below(sm)`).
+    backdrop-filter: saturate(170%) blur(28px);
+    -webkit-backdrop-filter: saturate(170%) blur(28px);
   }
 
   background-image: linear-gradient(
@@ -108,6 +116,11 @@
     --ink-lower: var(--ink-page);
     --surface-upper: #{colors.$ink-stone};
     --surface-lower: #{colors.$ink-stone};
+
+    @include respond-to(sm) {
+      --surface-upper: #{rgba(colors.$ink-stone, 0.92)};
+      --surface-lower: #{rgba(colors.$ink-stone, 0.92)};
+    }
   }
 }
 
