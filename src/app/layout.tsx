@@ -16,7 +16,7 @@ const brandLogoIcon = {
 export const metadata: Metadata = {
   metadataBase: siteUrl,
   title: {
-    default: 'Digital Knight — Website, Design, Automation, AI.',
+    default: 'Digital Knight — Next-gen strategic website design, AI evolutions & automation.',
     template: '%s · Digital Knight',
   },
   description:

@@ -6,7 +6,8 @@ import { MeetSpencer } from '@/components/home/MeetSpencer';
 import { LetsTalk, LetsTalkSkeleton } from '@/components/home/LetsTalk';
 
 export const metadata: Metadata = {
-  title: 'Digital Knight — Next-gen websites, AI automation and strategic vision for digital businesses.',
+
+  title: 'Digital Knight — Next-gen strategic website design, AI evolutions & automation.',
   description:
     'Next-gen websites, AI automation and strategic vision for digital businesses. Design, infrastructure and modern development.',
   openGraph: {
