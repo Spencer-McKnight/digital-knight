@@ -96,7 +96,7 @@ export function Services() {
     >
       <div className={styles.inner}>
         <Reveal as="header" className={styles.intro} amount="md">
-          <p className={styles.eyebrow}>Services</p>
+          <p className={styles.eyebrow}>Method</p>
           <h2 id="services-heading" className={styles.heading}>
             What I will do
           </h2>

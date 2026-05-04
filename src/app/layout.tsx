@@ -6,8 +6,20 @@ import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
 import { Analytics } from '@vercel/analytics/next';
 
+const siteUrl = new URL('https://digital-knight.au');
+const brandLogoIcon = {
+  url: '/images/svg-logo.svg',
+  type: 'image/svg+xml',
+};
+const brandLogoImage = {
+  url: brandLogoIcon.url,
+  width: 611,
+  height: 611,
+  alt: 'Digital Knight logo',
+};
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://digital-knight.au'),
+  metadataBase: siteUrl,
   title: {
     default: 'Digital Knight — Website, Design, Automation, AI.',
     template: '%s · Digital Knight',
@@ -16,16 +28,31 @@ export const metadata: Metadata = {
     'Digital Knight is a studio for long-term digital partnerships. Strategy, design, development and AI — forged for businesses that intend to prevail.',
   applicationName: 'Digital Knight',
   authors: [{ name: 'Digital Knight' }],
+  icons: {
+    icon: [brandLogoIcon],
+    shortcut: [brandLogoIcon],
+    apple: [brandLogoIcon],
+    other: [
+      {
+        rel: 'mask-icon',
+        url: brandLogoIcon.url,
+        color: '#DD6637',
+      },
+    ],
+  },
   openGraph: {
     type: 'website',
+    url: '/',
     siteName: 'Digital Knight',
     title: 'Digital Knight',
     description: 'Digital Knight — Website, Design, Automation, AI.',
+    images: [brandLogoImage],
   },
   twitter: {
-    card: 'summary_large_image',
+    card: 'summary',
     title: 'Digital Knight',
     description: 'Digital Knight — Website, Design, Automation, AI.',
+    images: [brandLogoImage],
   },
   manifest: '/site.webmanifest',
   robots: {

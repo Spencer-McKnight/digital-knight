@@ -277,7 +277,7 @@ export function Nav() {
       mo.disconnect();
     };
   }, []);
-  
+
   // Handle nav link clicks — immediately set active and lock observer
   const handleNavClick = useCallback((section: string | undefined) => {
     if (!section) return;
@@ -327,6 +327,7 @@ export function Nav() {
       aria-label="Primary"
     >
       <SmoothLink href="/" className={styles.wordmark} aria-label="Digital Knight — home">
+        <span className={styles.logo} data-ink-split aria-hidden="true" />
         <span className={styles.word} data-ink-split>
           DIGITAL KNIGHT
         </span>
@@ -354,6 +355,18 @@ export function Nav() {
           );
         })}
       </ul>
+
+      <SmoothLink
+        href="/#talk"
+        className={styles.contactButton}
+        data-ink-split
+        offset={NAV_SCROLL_OFFSET}
+        onClick={() => handleNavClick('talk')}
+      >
+        <span className={styles.contactLabel} data-ink-split>
+          Contact
+        </span>
+      </SmoothLink>
 
       <button
         type="button"
@@ -405,7 +418,8 @@ function MobileMenu({ open, onClose, active, onNavClick }: MobileMenuProps) {
   // and the first client render agree (no hydration mismatch).
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    setMounted(true);
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
   if (!mounted) return null;
 
