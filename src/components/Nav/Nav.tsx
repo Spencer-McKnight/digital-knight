@@ -20,7 +20,6 @@ const LINKS: ReadonlyArray<NavLink> = [
   { label: 'Contact', href: '/contact' },
 ];
 
-/** Hash fragment from a nav `href` — must match the target section `id` in the DOM. */
 function sectionIdFromHref(href: string): string | null {
   const i = href.indexOf('#');
   if (i < 0) return null;
@@ -28,52 +27,9 @@ function sectionIdFromHref(href: string): string | null {
   return id.length > 0 ? id : null;
 }
 
-type Ground = 'page' | 'stone';
-
 /**
- * Navigation (`design.md` §8).
- *
- *   Top-left wordmark, top-right links in meta type. A translucent glass
- *   surface (split-tinted to the ground beneath) + constant backdrop blur
- *   softens whatever passes beneath so UI elements never clip crisp glyphs.
- *
- *   Pixel-accurate split-inking
- *   ---------------------------
- *   As a Page→Stone (or Stone→Page) boundary sweeps up through the nav, each
- *   glyph's top half and bottom half can be simultaneously over different
- *   grounds. The nav therefore paints every text element with a vertical
- *   linear gradient clipped to the glyph shapes (`background-clip: text`):
- *
- *     above-boundary ink   0 … split
- *     below-boundary ink   split … 100%
- *
- *   The "split" for each text element is the boundary's viewport-Y minus the
- *   element's own top edge, in pixels, set as `--nav-split` inline. Ink
- *   colours on the nav root come from two CSS vars — `--ink-upper` and
- *   `--ink-lower` — which resolve through the design token layer based on
- *   `data-upper-ground` / `data-lower-ground` attributes. Components read
- *   tokens; tokens carry the ground, not the components (`design.md` §15).
- *
- *   When no boundary is in the nav, the split is pushed outside the text box
- *   so the gradient resolves to a single ink — the same machinery handles
- *   both cases without a branch.
- *
- *   Scroll-direction shrink, ground detection and split-Y are computed in a
- *   single rAF-throttled pass. Direct rect reads (rather than
- *   IntersectionObserver with a scan-line rootMargin) are used because we
- *   need the exact boundary Y every frame — observer entries are async and
- *   lag at high scroll velocities.
- *
- *   Mobile drawer
- *   -------------
- *   Below `sm`, the link row is replaced by a burger trigger that opens a
- *   full-viewport panel. The panel itself is rendered via `MobileMenu` —
- *   a sibling component that portals into `document.body`, escaping the
- *   nav's fixed/backdrop-filter stacking context so the overlay can occupy
- *   the entire viewport without clipping. The panel is always stone-themed
- *   (charcoal grey) regardless of the ground beneath the nav bar, so it
- *   reads consistently as an overlay surface rather than a continuation of
- *   the page.
+ * Navigation — light glass bar with constant blur and 90% transparency.
+ * No scroll-direction shrink, no split-ink colour effects.
  */
 export function Nav() {
   const loaded = useLoadGate();
@@ -84,49 +40,18 @@ export function Nav() {
   const scrollingToRef = useRef<string | null>(null);
   const scrollSettleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Scroll-spy: track which section is currently in view.
   useEffect(() => {
     const nav = navRef.current;
     if (!nav) return;
 
-    const SHRINK_THRESHOLD = 48;
-    const smQuery = window.matchMedia('(min-width: 640px)');
-    let isDesktop = smQuery.matches;
-    let lastY = window.scrollY;
     let frame = 0;
-    let currentShrunk = false;
-
-    // Paint targets are only needed on desktop for split-ink.
-    let paintTargets: HTMLElement[] = [];
-    const refreshPaintTargets = () => {
-      paintTargets = isDesktop
-        ? [nav, ...Array.from(nav.querySelectorAll<HTMLElement>('[data-ink-split]'))]
-        : [];
-    };
-    refreshPaintTargets();
-
-    type SectionEntry = { ground: Ground; docTop: number; docBottom: number };
-    let sectionCache: SectionEntry[] = [];
 
     type SpyEntry = { id: string; docTop: number };
     let spyCache: SpyEntry[] = [];
 
-    let hadBoundary = false;
-
-    const refreshCaches = () => {
+    const refreshCache = () => {
       const scrollY = window.scrollY;
-
-      const els = document.querySelectorAll<HTMLElement>('[data-ground]');
-      sectionCache = Array.from(els)
-        .map((el) => {
-          const rect = el.getBoundingClientRect();
-          return {
-            ground: groundOf(el),
-            docTop: rect.top + scrollY,
-            docBottom: rect.bottom + scrollY,
-          };
-        })
-        .sort((a, b) => a.docTop - b.docTop);
-
       spyCache = [];
       for (const link of LINKS) {
         const id = sectionIdFromHref(link.href) ?? link.section ?? null;
@@ -137,23 +62,19 @@ export function Nav() {
         spyCache.push({ id, docTop: rect.top + scrollY });
       }
     };
-    refreshCaches();
+    refreshCache();
 
     let refreshTimer: ReturnType<typeof setTimeout> | null = null;
     const scheduleRefresh = () => {
       if (refreshTimer) clearTimeout(refreshTimer);
       refreshTimer = setTimeout(() => {
         refreshTimer = null;
-        refreshCaches();
-      }, 100);
+        refreshCache();
+      }, 200);
     };
 
     const mo = new MutationObserver(scheduleRefresh);
-    mo.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributeFilter: ['data-ground'],
-    });
+    mo.observe(document.body, { childList: true, subtree: true });
 
     const detect = () => {
       frame = 0;
@@ -166,70 +87,8 @@ export function Nav() {
         }, SCROLL_SETTLE_DELAY);
       }
 
-      const navRect = nav.getBoundingClientRect();
-
-      if (isDesktop) {
-        // ── Desktop: shrink + split-ink boundary tracking ──
-        const goingDown = y > lastY;
-        lastY = y;
-        const shouldShrink = y >= SHRINK_THRESHOLD && goingDown;
-        if (shouldShrink !== currentShrunk) {
-          currentShrunk = shouldShrink;
-          nav.dataset.shrunk = String(currentShrunk);
-        }
-
-        let upperGround: Ground = 'page';
-        let lowerGround: Ground = 'page';
-        let splitViewportY = Infinity;
-
-        for (let i = 0; i < sectionCache.length; i++) {
-          const entry = sectionCache[i]!;
-          const viewportTop = entry.docTop - y;
-          if (viewportTop > navRect.top - 0.5 && viewportTop < navRect.bottom + 0.5) {
-            lowerGround = entry.ground;
-            upperGround = i > 0 ? sectionCache[i - 1]!.ground : entry.ground;
-            splitViewportY = viewportTop;
-            break;
-          }
-        }
-
-        if (!Number.isFinite(splitViewportY)) {
-          const scanDocY = y + navRect.top + navRect.height / 2;
-          let single: Ground = 'page';
-          for (const entry of sectionCache) {
-            if (entry.docTop <= scanDocY && entry.docBottom > scanDocY) {
-              single = entry.ground;
-              break;
-            }
-          }
-          upperGround = single;
-          lowerGround = single;
-        }
-
-        if (nav.dataset.upperGround !== upperGround)
-          nav.dataset.upperGround = upperGround;
-        if (nav.dataset.lowerGround !== lowerGround)
-          nav.dataset.lowerGround = lowerGround;
-
-        const hasBoundary = Number.isFinite(splitViewportY);
-        if (hasBoundary) {
-          for (const el of paintTargets) {
-            el.style.setProperty(
-              '--nav-split',
-              `${splitViewportY - el.getBoundingClientRect().top}px`,
-            );
-          }
-        } else if (hadBoundary) {
-          for (const el of paintTargets) {
-            el.style.setProperty('--nav-split', '9999px');
-          }
-        }
-        hadBoundary = hasBoundary;
-      } else {
-        lastY = y;
-      }
-
       if (!scrollingToRef.current) {
+        const navRect = nav.getBoundingClientRect();
         const line = navRect.bottom + 6;
         let navActiveId: string | null = null;
         for (const { id, docTop } of spyCache) {
@@ -245,33 +104,16 @@ export function Nav() {
     };
 
     const onResize = () => {
-      refreshCaches();
-      schedule();
-    };
-
-    const onMediaChange = () => {
-      isDesktop = smQuery.matches;
-      refreshPaintTargets();
-      if (!isDesktop) {
-        currentShrunk = false;
-        nav.dataset.shrunk = 'false';
-        nav.style.removeProperty('--nav-split');
-        for (const el of nav.querySelectorAll<HTMLElement>('[data-ink-split]')) {
-          el.style.removeProperty('--nav-split');
-        }
-      }
-      hadBoundary = false;
+      refreshCache();
       schedule();
     };
 
     schedule();
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', onResize);
-    smQuery.addEventListener('change', onMediaChange);
     return () => {
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', onResize);
-      smQuery.removeEventListener('change', onMediaChange);
       if (frame) cancelAnimationFrame(frame);
       if (refreshTimer) clearTimeout(refreshTimer);
       if (scrollSettleTimer.current) clearTimeout(scrollSettleTimer.current);
@@ -279,21 +121,16 @@ export function Nav() {
     };
   }, []);
 
-  // Handle nav link clicks — immediately set active and lock observer
   const handleNavClick = useCallback((section: string | undefined) => {
     if (!section) return;
     scrollingToRef.current = section;
     setActive(section);
-    // Clear any existing settle timer so we wait for new scroll to settle
     if (scrollSettleTimer.current) {
       clearTimeout(scrollSettleTimer.current);
       scrollSettleTimer.current = null;
     }
   }, []);
 
-  // ── Mobile drawer lifecycle ────────────────────────────────────────────────
-  // Lock body scroll while open, close on Escape, and close if the viewport
-  // widens past `sm` so desktop layout never shows a dangling open state.
   useEffect(() => {
     if (!menuOpen) return;
 
@@ -328,10 +165,8 @@ export function Nav() {
       aria-label="Primary"
     >
       <SmoothLink href="/" className={styles.wordmark} aria-label="Digital Knight — home">
-        <span className={styles.logo} data-ink-split aria-hidden="true" />
-        <span className={styles.word} data-ink-split>
-          DIGITAL KNIGHT
-        </span>
+        <span className={styles.logo} aria-hidden="true" />
+        <span className={styles.word}>DIGITAL KNIGHT</span>
       </SmoothLink>
 
       <ul className={styles.links}>
@@ -348,22 +183,14 @@ export function Nav() {
                 onClick={() => handleNavClick(link.section)}
                 {...(isHashLink ? { offset: NAV_SCROLL_OFFSET } : {})}
               >
-                <span className={styles.linkLabel} data-ink-split>
-                  {link.label}
-                </span>
+                {link.label}
               </LinkComponent>
             </li>
           );
         })}
       </ul>
 
-      <Button
-        href="/contact"
-        variant="secondary"
-        className={styles.contactButton}
-        data-ink-split
-        inkSplit
-      >
+      <Button href="/contact" variant="secondary" className={styles.contactButton}>
         Contact
       </Button>
 
@@ -377,9 +204,9 @@ export function Nav() {
         onClick={() => setMenuOpen((v) => !v)}
       >
         <span className={styles.burgerInner} aria-hidden>
-          <span className={styles.burgerBar} data-ink-split />
-          <span className={styles.burgerBar} data-ink-split />
-          <span className={styles.burgerBar} data-ink-split />
+          <span className={styles.burgerBar} />
+          <span className={styles.burgerBar} />
+          <span className={styles.burgerBar} />
         </span>
       </button>
 
@@ -396,14 +223,7 @@ export function Nav() {
 }
 
 // =============================================================================
-// MobileMenu — portalled, top-level overlay
-// -----------------------------------------------------------------------------
-// Rendered into `document.body` via React portal. Keeping this OUTSIDE the
-// `<nav>` element matters: the nav is `position: fixed` with its own
-// stacking/backdrop-filter context, which clipped and reordered any descendant
-// trying to occupy the full viewport. As a body-level sibling the drawer
-// behaves as a true overlay — predictable z-index, no inherited filter,
-// nothing fighting the cascade.
+// MobileMenu — portalled overlay
 // =============================================================================
 type MobileMenuProps = {
   open: boolean;
@@ -413,8 +233,6 @@ type MobileMenuProps = {
 };
 
 function MobileMenu({ open, onClose, active, onNavClick }: MobileMenuProps) {
-  // Portal target is window/DOM-only — gate render on a mounted flag so SSR
-  // and the first client render agree (no hydration mismatch).
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const frame = requestAnimationFrame(() => setMounted(true));
@@ -478,9 +296,4 @@ function MobileMenu({ open, onClose, active, onNavClick }: MobileMenuProps) {
   );
 
   return createPortal(overlay, document.body);
-}
-
-function groundOf(el: HTMLElement): Ground {
-  const g = el.dataset.ground;
-  return g === 'stone' ? 'stone' : 'page';
 }

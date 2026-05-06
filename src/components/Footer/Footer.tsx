@@ -29,6 +29,7 @@ export function Footer() {
 
   return (
     <footer className={styles.root} data-ground="stone" aria-labelledby="footer-sign">
+      <div className={styles.topHairline} aria-hidden />
       <div className={styles.inner}>
         <Reveal as="div" className={styles.signBlock} amount="md">
           <div className={styles.signColumn}>

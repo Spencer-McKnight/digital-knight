@@ -2,138 +2,96 @@
 @use 'tokens/colors' as colors;
 
 // =============================================================================
-// Nav — glass-surfaced, always-blurred, split-inked
-// -----------------------------------------------------------------------------
-// The nav floats over whatever ground scrolls beneath, softened by a constant
-// backdrop blur and a low-opacity tinted "glass" fill. Both the ink and the
-// glass tint are allowed to SPLIT across the bar so the moment a section
-// boundary sweeps through, the upper half reads against the outgoing ground
-// and the lower half reads against the incoming one. Painting is done by a
-// vertical `linear-gradient`: clipped to glyph shapes for ink, and drawn on
-// a `::before` behind the content for the contrast surface.
-//
-// CSS custom properties that carry the state:
-//   • `--ink-upper`     / `--ink-lower`     — text colour on each side.
-//   • `--surface-upper` / `--surface-lower` — glass tint on each side.
-//     Both pairs are set on `.root` via the `data-upper-ground` /
-//     `data-lower-ground` attributes and resolve through design tokens.
-//   • `--nav-split` — set inline on every `[data-ink-split]` element AND on
-//     the nav root itself, holding that element's local Y-offset from the
-//     boundary. JS writes this per rAF frame so the gradient stop tracks the
-//     exact viewport pixel where the grounds meet.
+// Nav — light glass bar, constant blur, 90% opacity
 // =============================================================================
 
 .root {
+  --_nav-inset: max(var(--grid-margin), calc((100% - var(--grid-max)) / 2 + var(--grid-margin)));
+
   position: fixed;
   top: 0;
-  left: 50%;
+  left: 0;
   z-index: 40;
-  width: min(100%, var(--grid-max));
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
 
-  padding-inline: var(--grid-margin);
+  padding-inline: var(--_nav-inset);
   padding-block: var(--space-3);
 
-  // ── Ink + surface selection ──────────────────────────────────────────────
-  // The nav itself is NOT a section — it never applies `ground-invert`. We
-  // read from the :root ink palette directly and route to upper/lower pairs
-  // based on which ground is above vs below the split line.
-  //
-  //                                     ink (text)      surface (glass)
-  //   ground=page  (light canvas)  →   iron (dark)     page tint (light)
-  //   ground=stone (dark canvas)   →   page (light)    stone tint (dark)
-  //
-  // The glass tint matches the ground beneath — it is not an inversion. It
-  // is a soft veil that lifts text contrast without breaking the illusion
-  // that the nav is part of the surface it floats over.
-  --ink-upper: var(--ink-iron);
-  --ink-lower: var(--ink-iron);
-  --surface-upper: #{colors.$ink-page};
-  --surface-lower: #{colors.$ink-page};
+  background: #{rgba(colors.$ink-page, 0.86)};
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  backdrop-filter: saturate(110%) blur(12px);
+  overflow: hidden;
+  transform: translateZ(0);
+  will-change: backdrop-filter;
+
+  color: var(--ink-iron);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    // Disabled during isolation test (root blur remains active).
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    transform: none;
+  }
+
+  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    background: #{rgba(colors.$ink-page, 0.78)};
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+
+    &::before {
+      background: transparent;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 
   @include respond-to(sm) {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     justify-content: stretch;
-
-    --surface-upper: #{rgba(colors.$ink-page, 0.72)};
-    --surface-lower: #{rgba(colors.$ink-page, 0.72)};
-
-    &[data-upper-ground='stone'] {
-      --ink-upper: var(--ink-page);
-      --surface-upper: #{rgba(colors.$ink-stone, 0.72)};
-    }
-    &[data-lower-ground='stone'] {
-      --ink-lower: var(--ink-page);
-      --surface-lower: #{rgba(colors.$ink-stone, 0.72)};
-    }
-
-    // Glass: split-tinted fill + backdrop blur (desktop only — mobile uses a
-    // solid bar in `respond-below(sm)`).
-    backdrop-filter: saturate(170%) blur(28px);
-    -webkit-backdrop-filter: saturate(170%) blur(28px);
-  }
-
-  background-image: linear-gradient(
-    to bottom,
-    var(--surface-upper) 0,
-    var(--surface-upper) var(--nav-split, 9999px),
-    var(--surface-lower) var(--nav-split, 9999px),
-    var(--surface-lower) 100%
-  );
-
-  @include respond-below(sm) {
-    background-image: none;
-    background-color: var(--surface-upper);
   }
 
   opacity: 0;
-  transform: translate(-50%, -12px);
+  transform: translateY(-12px);
   transition:
     opacity var(--dur-scene) var(--ease-house),
-    transform var(--dur-scene) var(--ease-house),
-    padding-block var(--dur-element) var(--ease-house);
+    transform var(--dur-scene) var(--ease-house);
 
   &[data-loaded='true'] {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateY(0);
   }
 
-  // Shrink only applies from `sm` upward. On mobile the wordmark stays at its
-  // full size — no compaction towards a `DK` short form — so the nav keeps a
-  // consistent silhouette while scrolling (`design.md` §8).
-  @include respond-to(sm) {
-    &[data-shrunk='true'] {
-      padding-block: var(--space-2);
-    }
-  }
-
-  // When the mobile drawer is open the bar floats on top of a stone panel.
-  // Force text/icon ink to page and the glass tint to a near-solid stone so
-  // the bar reads as a continuation of the drawer surface rather than a
-  // translucent strip showing the page beneath.
   &[data-menu-open] {
-    --ink-upper: var(--ink-page);
-    --ink-lower: var(--ink-page);
-    --surface-upper: #{colors.$ink-stone};
-    --surface-lower: #{colors.$ink-stone};
+    color: #{colors.$ink-page};
 
-    @include respond-to(sm) {
-      --surface-upper: #{rgba(colors.$ink-stone, 0.92)};
-      --surface-lower: #{rgba(colors.$ink-stone, 0.92)};
+    &::before {
+      background: #{colors.$ink-stone};
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
   }
 }
 
-// Ember hairline beneath the nav — persists, echoed at the top of the footer.
-// Ember does not invert, so this is a single solid line regardless of grounds.
 .hairline {
   position: absolute;
-  left: var(--grid-margin);
-  right: var(--grid-margin);
+  left: var(--_nav-inset);
+  right: var(--_nav-inset);
   bottom: 0;
   height: 1px;
   background: var(--ink-ember);
@@ -144,34 +102,6 @@
   [data-loaded='true'] & {
     transform: scaleX(1);
   }
-}
-
-// =============================================================================
-// Shared split-ink painter
-// -----------------------------------------------------------------------------
-// Any element carrying `data-ink-split` is painted by a clipped gradient.
-// The gradient's colour-stop sits at `--nav-split` — a pixel offset from the
-// element's own top edge. Values outside 0..height are fine: the gradient
-// clamps, so the element reads as one solid ink outside the boundary band.
-// =============================================================================
-%split-ink {
-  // Fallback for print / copy-paste / no-gradient paths.
-  color: var(--ink-upper);
-
-  background-image: linear-gradient(
-    to bottom,
-    var(--ink-upper) 0,
-    var(--ink-upper) var(--nav-split, 9999px),
-    var(--ink-lower) var(--nav-split, 9999px),
-    var(--ink-lower) 100%
-  );
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
 }
 
 .wordmark {
@@ -192,21 +122,11 @@
 }
 
 .logo {
-  --logo-ink-upper: var(--ink-stone);
-  --logo-ink-lower: var(--ink-stone);
-
   display: block;
   width: var(--logo-size);
   aspect-ratio: 1;
   flex-shrink: 0;
-
-  background-image: linear-gradient(
-    to bottom,
-    var(--logo-ink-upper) 0,
-    var(--logo-ink-upper) var(--nav-split, 9999px),
-    var(--logo-ink-lower) var(--nav-split, 9999px),
-    var(--logo-ink-lower) 100%
-  );
+  background-color: currentColor;
 
   -webkit-mask-image: url('/images/svg-logo.svg');
   mask-image: url('/images/svg-logo.svg');
@@ -214,28 +134,11 @@
   mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-
-  .root[data-upper-ground='stone'] & { --logo-ink-upper: var(--ink-page); }
-  .root[data-lower-ground='stone'] & { --logo-ink-lower: var(--ink-page); }
-  .root[data-menu-open] & { --logo-ink-upper: var(--ink-page); }
-
-  @include respond-below(sm) {
-    background-image: none;
-    background-color: var(--logo-ink-upper);
-  }
 }
 
 .word {
-  @extend %split-ink;
   display: inline-block;
-
-  @include respond-below(sm) {
-    background-image: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: unset;
-    color: var(--ink-upper);
-  }
+  color: inherit;
 }
 
 .links {
@@ -281,107 +184,19 @@
   }
 }
 
-// The label span carries the split-ink painting — we keep it separate from
-// the anchor so the anchor can host padding, the underline and hit area.
-.linkLabel {
-  @extend %split-ink;
-  display: inline-block;
-  line-height: 1;
-}
-
 .contactButton {
   display: none;
   justify-self: end;
   min-height: 44px;
   padding: var(--space-2) var(--space-3);
 
-  // Transparent base — the nav's split glass surface shows through at rest,
-  // giving the button a pixel-accurate ground match without a separate split.
-  --_btn-base: transparent;
-  --_btn-fill: #{colors.$ink-iron};
-  --_btn-hover-ink: #{colors.$ink-page};
-
-  border-color: transparent;
-
   @include respond-to(sm) {
     display: inline-flex;
-  }
-
-  // Fill & hover-ink follow the lower (incoming) ground so the wave
-  // settles to the correct palette as a boundary enters.
-  .root[data-lower-ground='stone'] & {
-    --_btn-fill: #{colors.$ink-page};
-    --_btn-hover-ink: #{colors.$ink-iron};
-  }
-
-  // ── Split gradient border ──
-  // Same mask-composite approach as the rest of the nav's split-ink system.
-  // The gradient stop sits at --nav-split so the border colour tracks the
-  // ground boundary pixel-for-pixel, identical to text and the glass surface.
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(
-      to bottom,
-      var(--ink-upper) 0,
-      var(--ink-upper) var(--nav-split, 9999px),
-      var(--ink-lower) var(--nav-split, 9999px),
-      var(--ink-lower) 100%
-    );
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-
-  // Split-ink on the label at rest — same gradient painter as nav links.
-  [data-ink-split] {
-    @extend %split-ink;
-  }
-
-  &:hover,
-  &:focus-visible {
-    border-color: var(--_btn-fill);
-
-    &::after {
-      opacity: 0;
-    }
-
-    [data-ink-split] {
-      background-image: none;
-      -webkit-background-clip: unset;
-      background-clip: unset;
-      -webkit-text-fill-color: unset;
-      color: var(--_btn-hover-ink);
-    }
   }
 }
 
 // =============================================================================
 // Mobile — burger trigger + dark drawer modal
-// -----------------------------------------------------------------------------
-// The burger is the ONLY mobile-specific element that lives in the bar. Its
-// icon morphs from three bars to an X using transforms only — no layout
-// thrash. The morph is asymmetrically timed: opening, the middle bar fades
-// first and the outer bars rotate into place after a beat; closing runs in
-// reverse so the outer bars untuck first and the middle bar settles in last.
-// That small stagger is what makes the gesture read as intentional rather
-// than mechanical.
-//
-// The drawer is a separate fixed-position overlay that sits above the page
-// but beneath the nav bar, so the burger remains tappable as a close target.
-// It is intentionally iron-themed at all times — the deepest ink we use —
-// so it reads as a distinct modal surface rather than a continuation of
-// whichever ground happens to scroll beneath (`design.md` §8).
 // =============================================================================
 
 .burger {
@@ -390,7 +205,7 @@
   border: 0;
   padding: var(--space-2);
   margin-inline-end: calc(var(--space-2) * -1);
-  color: var(--ink-upper);
+  color: inherit;
   cursor: pointer;
   display: none;
   align-items: center;
@@ -422,31 +237,10 @@
   left: 0;
   right: 0;
   height: 1.5px;
-  // Same two-stop gradient as `%split-ink`, but painted directly (no
-  // `background-clip: text` — bars aren't glyphs). Each bar is its own
-  // `data-ink-split` target, so `--nav-split` here is pixels from THIS
-  // bar's top to the ground boundary. Because the bar is only 1.5px tall,
-  // the stop falls outside its box in the overwhelmingly common case and
-  // the gradient resolves to a single ink — upper or lower — matching
-  // whichever ground that bar sits over.
-  background-image: linear-gradient(
-    to bottom,
-    var(--ink-upper) 0,
-    var(--ink-upper) var(--nav-split, 9999px),
-    var(--ink-lower) var(--nav-split, 9999px),
-    var(--ink-lower) 100%
-  );
+  background-color: currentColor;
   transform-origin: center;
   will-change: transform, opacity;
 
-  @include respond-below(sm) {
-    background-image: none;
-    background-color: var(--ink-upper);
-  }
-
-  // Closing choreography (default): outer bars untuck first, middle bar
-  // fades back in last. Using explicit delays on each property lets the
-  // opacity, top and transform resolve in the right order.
   transition:
     transform var(--dur-element) var(--ease-house) 0ms,
     top var(--dur-element) var(--ease-house) 0ms,
@@ -456,8 +250,6 @@
   &:nth-child(2) { top: 50%; transform: translateY(-50%); }
   &:nth-child(3) { top: 100%; transform: translateY(-100%); }
 
-  // Opening choreography: middle bar fades first (no delay), then the
-  // outer bars slide to the midline and rotate into an X.
   .burger[data-open] & {
     transition:
       transform var(--dur-element) var(--ease-house) var(--dur-state),
@@ -480,13 +272,6 @@
 }
 
 // ── Drawer modal ─────────────────────────────────────────────────────────────
-// Full-viewport takeover. The panel always covers the entire screen — width
-// AND height — so the menu reads as a complete overlay rather than a side
-// drawer with the page peeking past it. The scrim sits beneath the panel
-// and provides the wash for the cross-fade entrance; the panel itself
-// carries the stagger of its contents. Closed state is fully non-interactive
-// via pointer-events + visibility (visibility flips after the out-transition
-// so focus can't land inside a hidden panel).
 .drawer {
   position: fixed;
   inset: 0;
@@ -507,9 +292,6 @@
   }
 }
 
-// Stone-tinted wash beneath the panel. With the panel fully opaque the scrim
-// is mostly hidden once the entrance settles, but it carries the early
-// frames of the open transition so the page doesn't pop straight to grey.
 .drawerScrim {
   position: absolute;
   inset: 0;
@@ -525,32 +307,16 @@
 .drawerPanel {
   position: absolute;
   inset: 0;
-
-  // Stone is our charcoal grey — softer than iron but unmistakably an
-  // overlay surface. Painted from the SCSS primitive (rather than the
-  // `--ink-stone` custom property) so an ancestor with `ground-invert`
-  // can't redefine the token out from under us — the panel is its own
-  // surface, not a continuation of any ground beneath.
   background: colors.$ink-stone;
   color: colors.$ink-page;
 
   display: flex;
   flex-direction: column;
-  // Content is bottom-aligned so the link stack and CTA fall close to the
-  // thumb on a phone — the burger lives at the top of the bar, but the
-  // tappable targets belong at the bottom of the reach arc.
   justify-content: flex-end;
 
-  // Modest top padding (the nav bar already clears its own space at the
-  // top of the panel — the X is paintable against stone). Bottom padding
-  // is a generous landing for the CTA so it doesn't crowd the device's
-  // home indicator / safe area.
   padding-block: var(--space-5) calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
   padding-inline: var(--grid-margin);
 
-  // A full-screen surface needs a softer entrance than a side drawer — a
-  // gentle drift up paired with the cross-fade reads as the surface
-  // settling into place rather than sliding past the viewport edge.
   transform: translateY(8px);
   opacity: 0;
   transition:
@@ -563,10 +329,6 @@
   }
 }
 
-// Thin hairline between the link stack and the CTA — mirrors the nav's own
-// underline language without introducing a new divider style. The panel
-// itself bottom-aligns the whole stack via `justify-content: flex-end`, so
-// the divider only owns its own breathing room.
 .drawerDivider {
   height: 1px;
   background: #{rgba(colors.$ink-page, 0.14)};
@@ -591,8 +353,6 @@
   align-items: flex-end;
 }
 
-// Each item stagger-reveals after the panel has arrived. The per-row delay
-// is driven by `--i` set inline on the li so we only pay for one rule.
 .drawerItem {
   opacity: 0;
   transform: translateY(10px);
@@ -663,15 +423,4 @@
       border-color: #{colors.$ink-ember};
     }
   }
-}
-
-// Meta label above the CTA — a small typographic anchor so the button
-// doesn't float, keeping the panel "dynamically aligned" top-to-bottom.
-.drawerCtaLabel {
-  @include type(meta);
-  display: block;
-  color: #{rgba(colors.$ink-page, 0.6)};
-  margin-block-end: var(--space-2);
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
 }

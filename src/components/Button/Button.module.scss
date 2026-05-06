@@ -1,7 +1,7 @@
 @use 'mixins' as *;
 
 .root {
-  --_pad-inline: var(--space-4);
+  --_pad-inline: calc(var(--space-4) + var(--space-1));
   --_pad-block: var(--space-3);
   --_gap: var(--space-2);
 
@@ -14,6 +14,7 @@
   --_btn-hover-ink: var(--ink-page);
 
   @include type(body);
+  @include type-weight(medium);
   line-height: 1;
   position: relative;
   display: inline-flex;
@@ -22,14 +23,22 @@
   padding: var(--_pad-block) var(--_pad-inline);
   border: 1px solid currentColor;
   border-radius: 8px;
+  box-shadow: 0 3px 3px -2px var(--ink-shadow);
   background: transparent;
   color: var(--ink-iron);
   text-decoration: none;
   cursor: pointer;
   isolation: isolate;
+  transform: scale(1);
+  transition: transform 0.18s ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: scale(0.985);
+  }
 
   &[data-size='lg'] {
-    --_pad-inline: var(--space-5);
+    --_pad-inline: calc(var(--space-5) + var(--space-1));
     --_pad-block: var(--space-4);
     @include type-size(lede);
   }
@@ -43,7 +52,9 @@
     background: var(--_btn-base);
     color: var(--ink-page);
     border-color: var(--_btn-base);
-    transition: border-color 0.3s ease;
+    transition:
+      border-color 0.3s ease,
+      transform 0.18s ease;
 
     &::before {
       content: '';
@@ -96,7 +107,8 @@
     color: var(--ink-iron);
     transition:
       color 0.3s ease,
-      border-color 0.3s ease;
+      border-color 0.3s ease,
+      transform 0.18s ease;
 
     &::before {
       content: '';
@@ -122,7 +134,8 @@
       border-color: var(--_btn-fill);
       transition:
         color 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s,
-        border-color 0.3s ease;
+        border-color 0.3s ease,
+        transform 0.18s ease;
 
       &::before {
         background-position: 100% 0%;
