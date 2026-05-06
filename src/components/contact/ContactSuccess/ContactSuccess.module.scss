@@ -1,0 +1,82 @@
+@use 'mixins' as *;
+
+.card {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+  text-align: center;
+  max-width: 520px;
+  margin-inline: auto;
+  padding: var(--space-8) var(--space-5);
+  background: var(--ink-page);
+  border: 1px solid var(--ink-rule);
+  border-radius: 12px;
+  box-shadow: 0 2px 16px var(--ink-shadow);
+  animation: fade-in var(--dur-scene) var(--ease-house) both;
+}
+
+.rule {
+  display: block;
+  width: 48px;
+  height: 1px;
+  background: var(--ink-ember);
+}
+
+.heading {
+  @include type(section);
+  margin: 0;
+  color: var(--ink-iron);
+}
+
+.body {
+  @include type(lede);
+  margin: 0;
+  color: var(--ink-iron);
+  opacity: 0.65;
+  max-width: 36ch;
+}
+
+.reset {
+  @include type(meta);
+  background: none;
+  border: none;
+  color: var(--ink-ember);
+  cursor: pointer;
+  padding: var(--space-1) 0;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: var(--t-weight-medium);
+  transition: opacity var(--dur-state) var(--ease-house);
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ink-ember);
+    outline-offset: 4px;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation-duration: var(--dur-state);
+    animation-name: fade-in-reduced;
+  }
+
+  @keyframes fade-in-reduced {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+}

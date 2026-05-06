@@ -18,6 +18,8 @@ type SharedProps = {
   children: ReactNode;
   /** Trailing glyph — defaults to an arrow on the ghost variant. */
   trailing?: ReactNode;
+  /** Propagate ink-split to the label span for nav gradient painting. */
+  inkSplit?: boolean;
 };
 
 type AnchorProps = SharedProps &
@@ -49,13 +51,16 @@ export function Button(props: Props) {
     size = 'md',
     children,
     trailing,
+    inkSplit,
     className,
     ...rest
   } = props;
 
   const content = (
     <>
-      <span className={styles.label}>{children}</span>
+      <span className={styles.label} {...(inkSplit ? { 'data-ink-split': true } : {})}>
+        {children}
+      </span>
       {(trailing ?? (variant === 'ghost' ? <Arrow /> : null)) ? (
         <span className={styles.trailing} aria-hidden>
           {trailing ?? (variant === 'ghost' ? <Arrow /> : null)}

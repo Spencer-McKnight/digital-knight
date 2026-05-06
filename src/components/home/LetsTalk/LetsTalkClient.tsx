@@ -5,7 +5,6 @@ import type { WeekAvailability } from '@/app/_actions/booking.types';
 import { Reveal } from '@/components/Reveal';
 import { WeekGrid, type ConfirmationPayload } from './WeekGrid/WeekGrid';
 import { Confirmation } from './Confirmation/Confirmation';
-import { Typewriter } from './Typewriter';
 import styles from './LetsTalk.module.scss';
 
 /**
@@ -64,19 +63,6 @@ export function LetsTalkClient({ initial, hostEmail }: LetsTalkClientProps) {
           onConfirmed={handleConfirmed}
         />
       </div>
-
-      <Reveal as="div" className={styles.ledeBlock} amount="md">
-        <p className={styles.ledePrompt}>
-          You need
-          <br />
-          <Typewriter className={styles.typewriter} />
-        </p>
-        <p className={styles.lede}>
-          I need awesome clients like you.
-          <br />
-          My proposal? Let&apos;s talk.
-        </p>
-      </Reveal>
     </div>
   );
 }

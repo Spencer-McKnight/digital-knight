@@ -10,8 +10,11 @@
     content: '';
     position: absolute;
     top: 0;
-    left: var(--grid-margin);
-    right: var(--grid-margin);
+    width: 100%;
+    margin-left: var(--grid-margin);
+    margin-right: var(--grid-margin);
+    left: 50%;
+    transform: translateX(-50%);
     height: 1px;
     background: var(--ink-ember);
   }

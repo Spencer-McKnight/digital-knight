@@ -1,0 +1,63 @@
+@use 'mixins' as *;
+
+.root {
+  @include section-pad(act);
+}
+
+.inner {
+  @include container;
+  display: grid;
+  gap: var(--space-6);
+  align-items: start;
+
+  @include respond-to(lg) {
+    grid-template-columns: 5fr 7fr;
+    gap: var(--space-8);
+  }
+}
+
+// ── Copy column ──────────────────────────────────────────────────────────────
+// Centered on mobile (copy sits above the card), left-aligned on desktop.
+
+.copy {
+  display: grid;
+  gap: var(--space-3);
+  text-align: center;
+  justify-items: center;
+
+  @include respond-to(lg) {
+    text-align: left;
+    justify-items: start;
+    gap: var(--space-5);
+  }
+}
+
+.eyebrow {
+  @include type(meta);
+  color: var(--ink-ember);
+}
+
+.headline {
+  @include type(hero);
+  margin: 0;
+  color: var(--ink-iron);
+}
+
+.ember {
+  color: var(--ink-ember);
+  font-style: normal;
+}
+
+.lede {
+  @include type(lede);
+  margin: 0;
+  color: var(--ink-iron);
+  opacity: 0.65;
+  max-width: 38ch;
+}
+
+// ── Form column ──────────────────────────────────────────────────────────────
+
+.form {
+  width: 100%;
+}

@@ -22,11 +22,8 @@ export function Hero() {
         </p>
 
         <div className={styles.actions}>
-          <Button href="/#talk" variant="primary" size="md">
-            Free Strategy Consult
-          </Button>
-          <Button href="/#work" variant="secondary" size="md">
-            See Our Work
+          <Button href="/contact" variant="secondary" size="md">
+            Start a project
           </Button>
         </div>
         <div className={styles.portfolio} aria-label="Featured projects">

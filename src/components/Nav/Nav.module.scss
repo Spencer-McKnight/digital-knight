@@ -26,9 +26,9 @@
 .root {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
   z-index: 40;
+  width: min(100%, var(--grid-max));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -91,7 +91,7 @@
   }
 
   opacity: 0;
-  transform: translateY(-12px);
+  transform: translate(-50%, -12px);
   transition:
     opacity var(--dur-scene) var(--ease-house),
     transform var(--dur-scene) var(--ease-house),
@@ -99,7 +99,7 @@
 
   &[data-loaded='true'] {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate(-50%, 0);
   }
 
   // Shrink only applies from `sm` upward. On mobile the wordmark stays at its
@@ -107,7 +107,7 @@
   // consistent silhouette while scrolling (`design.md` §8).
   @include respond-to(sm) {
     &[data-shrunk='true'] {
-      padding-block: var(--space-3);
+      padding-block: var(--space-2);
     }
   }
 
@@ -175,7 +175,7 @@
 }
 
 .wordmark {
-  --logo-size: clamp(2.45rem, 3.15vw, 3rem);
+  --logo-size: clamp(2rem, 3.15vw, 2.5rem);
   --logo-gap: var(--space-3);
 
   @include type(ui);
@@ -292,55 +292,76 @@
 .contactButton {
   display: none;
   justify-self: end;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+
+  // Transparent base — the nav's split glass surface shows through at rest,
+  // giving the button a pixel-accurate ground match without a separate split.
+  --_btn-base: transparent;
+  --_btn-fill: #{colors.$ink-iron};
+  --_btn-hover-ink: #{colors.$ink-page};
+
+  border-color: transparent;
 
   @include respond-to(sm) {
     display: inline-flex;
   }
 
-  // Override the secondary variant's iron-fill hover pseudo — the nav
-  // contact button uses split-ink + ember hover instead.
-  &::before {
-    display: none;
+  // Fill & hover-ink follow the lower (incoming) ground so the wave
+  // settles to the correct palette as a boundary enters.
+  .root[data-lower-ground='stone'] & {
+    --_btn-fill: #{colors.$ink-page};
+    --_btn-hover-ink: #{colors.$ink-iron};
   }
 
-  border-color: transparent;
-  border-image-source: linear-gradient(
-    to bottom,
-    var(--ink-upper) 0,
-    var(--ink-upper) var(--nav-split, 9999px),
-    var(--ink-lower) var(--nav-split, 9999px),
-    var(--ink-lower) 100%
-  );
-  border-image-slice: 1;
-
-  > :first-child {
-    background-image: linear-gradient(
+  // ── Split gradient border ──
+  // Same mask-composite approach as the rest of the nav's split-ink system.
+  // The gradient stop sits at --nav-split so the border colour tracks the
+  // ground boundary pixel-for-pixel, identical to text and the glass surface.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
       to bottom,
       var(--ink-upper) 0,
       var(--ink-upper) var(--nav-split, 9999px),
       var(--ink-lower) var(--nav-split, 9999px),
       var(--ink-lower) 100%
     );
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  // Split-ink on the label at rest — same gradient painter as nav links.
+  [data-ink-split] {
+    @extend %split-ink;
   }
 
   &:hover,
   &:focus-visible {
-    color: var(--ink-ember);
-    border-image-source: none;
-    border-color: var(--ink-ember);
-    background-color: #{rgba(colors.$ink-ember, 0.08)};
+    border-color: var(--_btn-fill);
 
-    > :first-child {
+    &::after {
+      opacity: 0;
+    }
+
+    [data-ink-split] {
       background-image: none;
       -webkit-background-clip: unset;
       background-clip: unset;
       -webkit-text-fill-color: unset;
-      color: var(--ink-ember);
+      color: var(--_btn-hover-ink);
     }
   }
 }
@@ -629,21 +650,17 @@
     transition-delay: calc(var(--dur-state) + var(--i, 0) * 70ms);
   }
 
-  // The CTA sits on stone — the Button's default iron-on-page reads poorly
-  // here, so we flip its tokens locally to page-on-stone with an ember
-  // hover that matches the link underline language.
   :global([data-variant='primary']) {
-    background: var(--ink-page);
-    color: var(--ink-iron);
-    border-color: var(--ink-page);
+    --_btn-base: #{colors.$ink-page};
+    --_btn-fill: #{colors.$ink-page};
+    color: #{colors.$ink-iron};
+    border-color: #{colors.$ink-page};
     width: 100%;
     justify-content: center;
 
     &:hover,
     &:focus-visible {
-      background: var(--ink-ember);
-      border-color: var(--ink-ember);
-      color: var(--ink-page);
+      border-color: #{colors.$ink-ember};
     }
   }
 }

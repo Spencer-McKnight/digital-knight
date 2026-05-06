@@ -17,6 +17,7 @@ const LINKS: ReadonlyArray<NavLink> = [
   { label: 'Talk', href: '/#talk', section: 'talk' },
   { label: 'Services', href: '/#services', section: 'services' },
   { label: 'About', href: '/#meet', section: 'meet' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 /** Hash fragment from a nav `href` — must match the target section `id` in the DOM. */
@@ -357,12 +358,11 @@ export function Nav() {
       </ul>
 
       <Button
-        href="/#talk"
+        href="/contact"
         variant="secondary"
-        size="md"
         className={styles.contactButton}
         data-ink-split
-        onClick={() => handleNavClick('talk')}
+        inkSplit
       >
         Contact
       </Button>

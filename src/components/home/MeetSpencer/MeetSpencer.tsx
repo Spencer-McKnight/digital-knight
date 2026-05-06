@@ -66,7 +66,7 @@ export function MeetSpencer() {
           </div>
 
           <div className={styles.actions}>
-            <Button href="/#talk" variant="secondary" size="md">
+            <Button href="/contact" variant="secondary" size="md">
               Let's talk
             </Button>
           </div>

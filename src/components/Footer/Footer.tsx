@@ -39,7 +39,7 @@ export function Footer() {
             </h2>
           </div>
           <div className={styles.signButton}>
-            <Button href="/#talk" variant="secondary" size="md">Start with a conversation</Button>
+            <Button href="/contact" variant="secondary" size="md">Start with a conversation</Button>
           </div>
         </Reveal>
 
