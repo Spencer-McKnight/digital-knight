@@ -35,7 +35,7 @@
   gap: var(--space-4);
 
   padding-inline: var(--grid-margin);
-  padding-block: var(--space-4);
+  padding-block: var(--space-3);
 
   // ── Ink + surface selection ──────────────────────────────────────────────
   // The nav itself is NOT a section — it never applies `ground-invert`. We
@@ -290,13 +290,20 @@
 }
 
 .contactButton {
-  @include type(ui);
   display: none;
-  align-items: center;
   justify-self: end;
-  min-height: 44px;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid transparent;
+
+  @include respond-to(sm) {
+    display: inline-flex;
+  }
+
+  // Override the secondary variant's iron-fill hover pseudo — the nav
+  // contact button uses split-ink + ember hover instead.
+  &::before {
+    display: none;
+  }
+
+  border-color: transparent;
   border-image-source: linear-gradient(
     to bottom,
     var(--ink-upper) 0,
@@ -305,42 +312,36 @@
     var(--ink-lower) 100%
   );
   border-image-slice: 1;
-  text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  transition:
-    border-color var(--dur-state) var(--ease-house),
-    background-color var(--dur-element) var(--ease-house),
-    transform var(--dur-element) var(--ease-house);
 
-  @include respond-to(sm) {
-    display: inline-flex;
+  > :first-child {
+    background-image: linear-gradient(
+      to bottom,
+      var(--ink-upper) 0,
+      var(--ink-upper) var(--nav-split, 9999px),
+      var(--ink-lower) var(--nav-split, 9999px),
+      var(--ink-lower) 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   &:hover,
   &:focus-visible {
-    border-color: var(--ink-ember);
-    border-image-source: none;
-    background-color: #{rgba(colors.$ink-ember, 0.08)};
-  }
-
-  &:active {
-    transform: translateY(1px);
-  }
-}
-
-.contactLabel {
-  @extend %split-ink;
-  display: inline-block;
-  line-height: 1;
-
-  .contactButton:hover &,
-  .contactButton:focus-visible & {
-    background-image: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: unset;
     color: var(--ink-ember);
+    border-image-source: none;
+    border-color: var(--ink-ember);
+    background-color: #{rgba(colors.$ink-ember, 0.08)};
+
+    > :first-child {
+      background-image: none;
+      -webkit-background-clip: unset;
+      background-clip: unset;
+      -webkit-text-fill-color: unset;
+      color: var(--ink-ember);
+    }
   }
 }
 

@@ -356,17 +356,16 @@ export function Nav() {
         })}
       </ul>
 
-      <SmoothLink
+      <Button
         href="/#talk"
+        variant="secondary"
+        size="md"
         className={styles.contactButton}
         data-ink-split
-        offset={NAV_SCROLL_OFFSET}
         onClick={() => handleNavClick('talk')}
       >
-        <span className={styles.contactLabel} data-ink-split>
-          Contact
-        </span>
-      </SmoothLink>
+        Contact
+      </Button>
 
       <button
         type="button"

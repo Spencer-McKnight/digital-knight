@@ -1,116 +1,28 @@
 @use 'mixins' as *;
 
 .root {
-  overflow: hidden;
   position: relative;
-  // Height ladder, tier by tier:
-  //   mobile  — min(100svh, 850px): svh avoids URL-bar CLS; cap stops the
-  //             hero swallowing entire tall phones.
-  //   sm+     — min(100svh, 1000px): slightly generous cap for tablets.
-  //   lg+     — 100vh: on real monitors the hero fills the viewport.
-  height: min(100svh, 850px);
-  display: grid;
-  // Mobile: copy anchors bottom-left, seal lives top-right (see `.ground`).
-  align-items: end;
-  padding-top: clamp(6rem, 10vh, 9rem);
-  padding-bottom: var(--space-6);
-  // Cap the hero's frame on very wide displays so the seal doesn't drift
-  // far past the content's right edge. `.ground` is absolute to this box,
-  // so this also constrains where the seal can sit. Intentionally wider
-  // than the global `--grid-max` — the hero carries the composition and
-  // earns more air on ultra-wide monitors.
-  max-width: 128rem;
-  margin-inline: auto;
-
-  @include respond-to(sm) {
-    height: min(100svh, 1000px);
-    align-items: center;
-    padding-bottom: var(--space-5);
-  }
-
-  @include respond-to(lg) {
-    height: 100vh;
-  }
 }
 
-// The 3D seal. On mobile it's a compact top-right flourish; from sm up it
-// becomes the right-rail composition mass.
-//
-// R3F scene sizing note: the camera's FOV + distance locks the world-space
-// viewport *height* at ~3.17 units, so the seal's rendered *pixel* size is
-// driven by the canvas's CSS **height**, not its width. To make the seal
-// actually shrink, we have to shrink height in lockstep. `--seal-size`
-// drives both — changing it at a breakpoint rescales the seal cleanly.
-.ground {
-  position: absolute;
-  z-index: 0;
-  pointer-events: none;
-
-  // Mobile. ~15% smaller than the previous tier so the silhouette sits
-  // more gracefully in the top-right of the hero.
-  --seal-size: clamp(22rem, 82vw, 29rem);
-  top: clamp(3.5rem, 10vh, 7rem);
-  right: clamp(-3rem, -3vw, -1rem);
-  width: var(--seal-size);
-  height: var(--seal-size);
-
-  @include respond-to(sm) {
-    // sm+: switch to the vertical (center-right) layout. Was previously at
-    // md — moved one breakpoint earlier so small tablets and large phones
-    // pick up the balanced composition.
-    --seal-size: clamp(22rem, 48vw, 30rem);
-    top: 50%;
-    right: clamp(-2rem, -1vw, -0.25rem);
-    transform: translateY(-50%);
-  }
-
-  @include respond-to(md) {
-    --seal-size: clamp(26rem, 48vw, 34rem);
-  }
-
-  @include respond-to(lg) {
-    --seal-size: clamp(40rem, 58vw, 54rem);
-    right: clamp(-3rem, -1.5vw, -0.5rem);
-  }
-
-  @include respond-to(xl) {
-    --seal-size: clamp(50rem, 60vw, 66rem);
-    right: clamp(-4rem, -2vw, -1rem);
-  }
-
-  @include respond-to(xxl) {
-    // Very large monitors: dominant right-rail mass. Aggressive right-bleed
-    // lets the seal feel forged onto the canvas, not bolted inside a box.
-    --seal-size: clamp(60rem, 62vw, 78rem);
-    right: clamp(-6rem, -3vw, -2rem);
-  }
-}
-
-.grid {
+.inner {
   @include container;
-  position: relative;
-  z-index: 1;
-  display: grid;
-  gap: var(--space-5);
-  align-content: center;
-  justify-items: start;
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  // The grid element spans the full container width, but its content only
-  // occupies the left column on md+. Letting the empty right band pass
-  // pointer events through is the difference between the seal being
-  // draggable "sometimes" and "anywhere on the hero". Children that need
-  // clicks (the CTA) re-opt below.
-  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+  padding-top: clamp(7rem, 14vh, 11rem);
+  padding-bottom: var(--space-8);
 
   @include respond-to(sm) {
-    grid-column-gap: var(--space-6);
-    max-width: calc(var(--grid-max) - 0px);
-    // Leave canvas room for the seal on the right. Starts at sm because
-    // that's where the vertical (seal center-right) layout kicks in.
-    padding-right: clamp(0px, 24vw, 24rem);
+    padding-top: clamp(8rem, 16vh, 12rem);
+    padding-bottom: var(--space-9);
   }
+}
+
+.eyebrow {
+  @include type(meta);
+  color: var(--ink-ember);
 }
 
 .title {
@@ -119,64 +31,26 @@
   color: var(--ink-iron);
 }
 
-.line {
-  display: inline;
-
-  &:not(:last-child)::after {
-    content: '';
-  }
-}
-
-.word {
-  display: inline-block;
-  will-change: transform, opacity;
-}
-
-.wordEmber {
-  display: inline-block;
-  position: relative;
-  will-change: transform, opacity;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -0.12em;
-    height: 2px;
-    background: var(--ink-ember);
-    transform-origin: left center;
-    transform: scaleX(0);
-    animation: draw-ember 900ms var(--ease-house) 1600ms forwards;
-  }
-}
-
-.stop {
-  color: var(--ink-ember);
-}
-
-@keyframes draw-ember {
-  to {
-    transform: scaleX(1);
-  }
-}
-
 .lede {
   @include type(lede);
-  max-width: 48ch;
+  max-width: 52ch;
   color: var(--ink-iron);
   opacity: 0.82;
-  background: transparent;
 }
 
 .actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
   gap: var(--space-4);
-  background: transparent;
-  // Re-opt into pointer events so the CTA stays clickable while the rest of
-  // the grid passes through to the seal canvas beneath.
-  pointer-events: auto;
 }
 
+.portfolio {
+  @include container;
+  padding-bottom: var(--space-8);
+
+  @include respond-to(sm) {
+    padding-bottom: var(--space-9);
+  }
+}

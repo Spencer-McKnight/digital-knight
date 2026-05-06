@@ -1,6 +1,5 @@
 import { Button } from '@/components/Button';
 import { Reveal } from '@/components/Reveal';
-import { ForgeSealLazy } from './ForgeSealLazy';
 import styles from './Hero.module.scss';
 
 export function Hero() {
@@ -11,29 +10,30 @@ export function Hero() {
       className={styles.root}
       aria-labelledby="hero-title"
     >
-      <div className={styles.ground}>
-        <ForgeSealLazy />
-      </div>
+      <Reveal as="div" className={styles.inner} enabled fadeOnly>
+        <p className={styles.eyebrow}>New-generation digital</p>
 
-      <Reveal as="div" className={styles.grid} enabled fadeOnly>
         <h1 id="hero-title" className={styles.title}>
-          Digital Knight
+          Evolution for Websites
         </h1>
 
         <p className={styles.lede}>
-          Champion your business goals
-          <br />
-          Secure your digital future
-          <br />
-          Win customers with your website
+          Technology accelerates weekly. Digital Knight helps you benefit from the bleeding-edge with AI-boosted design prototypes and new gen customised toolkits.
         </p>
 
         <div className={styles.actions}>
-          <Button href="/#talk" variant="secondary" size="md">
+          <Button href="/#talk" variant="primary" size="md">
             Free Strategy Consult
           </Button>
+          <Button href="/#work" variant="secondary" size="md">
+            See Our Work
+          </Button>
+        </div>
+        <div className={styles.portfolio} aria-label="Featured projects">
+          {/* Portfolio cards — future addition */}
         </div>
       </Reveal>
+
 
     </section>
   );
