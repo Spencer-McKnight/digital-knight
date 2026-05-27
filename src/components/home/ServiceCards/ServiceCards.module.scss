@@ -15,10 +15,10 @@
 .root {
   @include container;
   position: relative;
-  padding-block: var(--space-6) var(--space-9);
+  padding-block: var(--space-6) var(--space-6);
 
   @include respond-to(md) {
-    padding-block: var(--space-7) var(--space-10);
+    padding-block: var(--space-7) var(--space-6);
   }
 }
 
