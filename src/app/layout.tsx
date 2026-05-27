@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { aeonik } from './fonts';
+import { serif, sans } from './fonts';
 import { GtagLazyClient } from '@/lib/google/GtagLazyClient';
 import './globals.scss';
 import { Nav } from '@/components/Nav';
@@ -71,7 +71,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={aeonik.variable} style={{ backgroundColor: '#FFEDD7' }}>
+    <html lang="en" className={`${serif.variable} ${sans.variable}`} style={{ backgroundColor: '#FFEDD7' }}>
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />

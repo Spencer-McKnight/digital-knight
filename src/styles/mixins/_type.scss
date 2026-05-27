@@ -14,6 +14,7 @@
 //   @include type-weight($wt)   — Weight only (light | regular | medium | bold)
 //   @include type-heading       — Shared heading rhythm (tight leading, tight tracking)
 //   @include type-prose         — Shared prose rhythm (generous leading, default tracking)
+//   @include type-trim          — Optical vertical centering (text-box-trim) for flex containers
 //
 // VARIANT ROLES:
 //
@@ -39,6 +40,8 @@
     font-weight: var(--t-weight-regular);
   } @else if $weight == medium {
     font-weight: var(--t-weight-medium);
+  } @else if $weight == semibold {
+    font-weight: var(--t-weight-semibold);
   } @else if $weight == bold {
     font-weight: var(--t-weight-bold);
   } @else {
@@ -82,6 +85,16 @@
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// UTILITY: type-trim
+// Optical vertical centering — trims ascender/descender overshoot so text
+// sits at true visual centre inside flex containers (buttons, tags, chips).
+// ─────────────────────────────────────────────────────────────────────────────
+@mixin type-trim {
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // UTILITY: type-prose
 // Shared prose rhythm — generous leading, default tracking. Use with type-size()
 // when building custom prose treatments.
@@ -109,42 +122,48 @@
 //   ui           — meta-scale, sentence-case, for nav/buttons/chips
 // ─────────────────────────────────────────────────────────────────────────────
 @mixin type($role) {
-  // ── CANONICAL ROLES ────────────────────────────────────────────────────────
+  // ── CANONICAL ROLES ─────────────────────────────────────────────────
   @if $role == monument {
+    font-family: var(--t-family-serif);
     font-size: var(--t-monument);
-    line-height: var(--t-leading-tight);
+    line-height: var(--t-leading-display);
     letter-spacing: var(--t-tracking-tight);
     font-weight: var(--t-weight-light);
   } @else if $role == hero {
+    font-family: var(--t-family-serif);
     font-size: var(--t-hero);
     line-height: var(--t-leading-tight);
     letter-spacing: var(--t-tracking-tight);
     font-weight: var(--t-weight-medium);
   } @else if $role == section {
+    font-family: var(--t-family-serif);
     font-size: var(--t-section);
     line-height: var(--t-leading-tight);
     letter-spacing: var(--t-tracking-tight);
     font-weight: var(--t-weight-medium);
   } @else if $role == lede {
+    font-family: var(--t-family-sans);
     font-size: var(--t-lede);
     line-height: var(--t-leading-body);
     letter-spacing: 0;
     font-weight: var(--t-weight-regular);
   } @else if $role == body {
+    font-family: var(--t-family-sans);
     font-size: var(--t-body);
     line-height: var(--t-leading-body);
     letter-spacing: 0;
     font-weight: var(--t-weight-regular);
   } @else if $role == meta {
+    font-family: var(--t-family-sans);
     font-size: var(--t-meta);
     line-height: var(--t-leading-body);
     letter-spacing: var(--t-tracking-meta);
-    font-weight: var(--t-weight-medium);
+    font-weight: var(--t-weight-semibold);
     text-transform: uppercase;
 
   // ── VARIANT ROLES ──────────────────────────────────────────────────────────
   } @else if $role == hero-display {
-    // Larger hero for primary showcase headings — medium by default; regular lg+.
+    font-family: var(--t-family-serif);
     font-size: var(--t-hero-display);
     line-height: var(--t-leading-tight);
     letter-spacing: var(--t-tracking-tight);
@@ -153,18 +172,19 @@
       font-weight: var(--t-weight-regular);
     }
   } @else if $role == subsection {
-    // Between lede and section — for service row titles, brief headings
+    font-family: var(--t-family-sans);
     font-size: var(--t-subsection);
     line-height: 1.1;
     letter-spacing: var(--t-tracking-tight);
     font-weight: var(--t-weight-medium);
   } @else if $role == ui {
-    // Meta-scale but sentence-case — for nav, buttons, chips, labels
+    font-family: var(--t-family-sans);
     font-size: var(--t-ui);
     line-height: 1;
     letter-spacing: var(--t-tracking-ui);
     font-weight: var(--t-weight-medium);
     text-transform: none;
+    @include type-trim;
 
   } @else {
     @error "type: unknown role `#{$role}`. Available: monument, hero, hero-display, section, subsection, lede, body, meta, ui.";

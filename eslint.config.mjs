@@ -14,7 +14,6 @@ const config = [
       '.next/**',
       'out/**',
       'node_modules/**',
-      'aeonik-font/**',
       'pnpm-lock.yaml',
       'next-env.d.ts',
     ],

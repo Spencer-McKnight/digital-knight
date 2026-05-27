@@ -23,7 +23,7 @@ export default function NotFound() {
           <Link href="/#services" className={styles.link}>
             Services
           </Link>
-          <Link href="/#talk" className={styles.link}>
+          <Link href="/contact" className={styles.link}>
             Start a conversation
           </Link>
         </nav>

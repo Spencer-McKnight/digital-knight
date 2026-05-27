@@ -19,7 +19,7 @@ export function ContactSection({ hostEmail }: ContactSectionProps) {
 
           <p className={styles.lede}>
             You have important work to do. Let&rsquo;s create the
-            website that helps you do it better.
+            digital experience that helps you do it better.
           </p>
         </div>
 

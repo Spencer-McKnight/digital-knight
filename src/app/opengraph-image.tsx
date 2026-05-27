@@ -16,10 +16,10 @@ const logoDataUri = `data:image/svg+xml;base64,${Buffer.from(logoSvg).toString('
 
 export default async function OgImage() {
   const fontMedium = await readFile(
-    join(process.cwd(), 'aeonik-font/Aeonik-Medium.ttf'),
+    join(process.cwd(), 'public/fonts/reforma/reforma.1969-gris.ttf'),
   );
   const fontRegular = await readFile(
-    join(process.cwd(), 'aeonik-font/Aeonik-Regular.ttf'),
+    join(process.cwd(), 'public/fonts/reforma/reforma.1969-gris.ttf'),
   );
 
   return new ImageResponse(
@@ -50,7 +50,7 @@ export default async function OgImage() {
         >
           <span
             style={{
-              fontFamily: 'Aeonik',
+              fontFamily: 'Reforma 1969',
               fontWeight: 500,
               fontSize: 48,
               letterSpacing: '0.12em',
@@ -63,7 +63,7 @@ export default async function OgImage() {
 
           <span
             style={{
-              fontFamily: 'Aeonik',
+              fontFamily: 'Reforma 1969',
               fontWeight: 400,
               fontSize: 24,
               color: INK_PAGE,
@@ -76,7 +76,7 @@ export default async function OgImage() {
 
         <span
           style={{
-            fontFamily: 'Aeonik',
+            fontFamily: 'Reforma 1969',
             fontWeight: 400,
             fontSize: 16,
             letterSpacing: '0.08em',
@@ -92,8 +92,8 @@ export default async function OgImage() {
     {
       ...size,
       fonts: [
-        { name: 'Aeonik', data: fontRegular, weight: 400 },
-        { name: 'Aeonik', data: fontMedium, weight: 500 },
+        { name: 'Reforma 1969', data: fontRegular, weight: 400 },
+        { name: 'Reforma 1969', data: fontMedium, weight: 500 },
       ],
     },
   );

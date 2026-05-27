@@ -10,9 +10,9 @@ const SITEMAP = [
   {
     heading: 'Pages', links: [
       { label: 'Home', href: '/' },
-      { label: 'Talk', href: '/#talk' },
       { label: 'Services', href: '/#services' },
       { label: 'Me', href: '/#meet' },
+      { label: 'Contact', href: '/contact' },
     ]
   },
   {

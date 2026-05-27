@@ -48,6 +48,10 @@ const INK_IRON = '#1B1B1A';
 const INK_STONE = '#403D39';
 const INK_EMBER = '#DD6637';
 
+const SERIF_STACK = "'Reforma 1969', Georgia, 'Times New Roman', serif";
+const SANS_STACK =
+  "'Plus Jakarta Sans', system-ui, 'Helvetica Neue', Arial, sans-serif";
+
 export default function BookingConfirmation(props: BookingConfirmationProps) {
   const { name, whenVisitor, whenBusiness, visitorTimezone, hostEmail } = props;
 
@@ -129,8 +133,7 @@ export default function BookingConfirmation(props: BookingConfirmationProps) {
 const body: React.CSSProperties = {
   backgroundColor: INK_STONE,
   color: INK_PAGE,
-  fontFamily:
-    "'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
+  fontFamily: SANS_STACK,
   margin: 0,
   padding: '40px 16px',
 };
@@ -159,6 +162,7 @@ const title: React.CSSProperties = {
   color: INK_IRON,
   margin: '20px 0 16px',
   fontWeight: 500,
+  fontFamily: SERIF_STACK,
 };
 
 const emberRule: React.CSSProperties = {

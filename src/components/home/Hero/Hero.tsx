@@ -11,23 +11,24 @@ export function Hero() {
       aria-labelledby="hero-title"
     >
       <Reveal as="div" className={styles.inner} enabled fadeOnly>
-        <p className={styles.eyebrow}>New-generation digital</p>
+        <p className={styles.eyebrow}>Digital Knight</p>
 
         <h1 id="hero-title" className={styles.title}>
-          Evolution for Websites
+          Create tactical digital systems
+          <br />
+          that solve and evolve.
         </h1>
 
         <p className={styles.lede}>
-          Technology accelerates weekly. Digital Knight builds  from the bleeding-edge with AI-boosted design prototypes and custom automation toolkits.
+          Optimise business cases into your greatest successes.
+          <br />
+          I guarantee to understand your vision and deliver innovation.
         </p>
 
         <div className={styles.actions}>
           <Button href="/contact" variant="secondary" size="md">
             Start a project
           </Button>
-        </div>
-        <div className={styles.portfolio} aria-label="Featured projects">
-          {/* Portfolio cards — future addition */}
         </div>
       </Reveal>
 

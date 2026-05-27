@@ -12,24 +12,24 @@ A standalone `/contact` route with a general-purpose enquiry form. Two-column la
 
 **Form fields (matching the reference):**
 
-| Field        | Type       | Required | Notes                                               |
-| ------------ | ---------- | -------- | --------------------------------------------------- |
-| Name         | text       | yes      | `autocomplete="name"`, max 120 chars                |
-| Organisation | text       | no       | `autocomplete="organization"`, max 120 chars        |
-| Email        | email      | yes      | `autocomplete="email"`, max 254 chars               |
-| Budget       | select     | no       | Predefined ranges, placeholder "Select one..."      |
-| Message      | textarea   | yes      | Max 2000 chars, resizable vertically                |
+| Field        | Type     | Required | Notes                                          |
+| ------------ | -------- | -------- | ---------------------------------------------- |
+| Name         | text     | yes      | `autocomplete="name"`, max 120 chars           |
+| Organisation | text     | no       | `autocomplete="organization"`, max 120 chars   |
+| Email        | email    | yes      | `autocomplete="email"`, max 254 chars          |
+| Budget       | select   | no       | Predefined ranges, placeholder "Select one..." |
+| Message      | textarea | yes      | Max 2000 chars, resizable vertically           |
 
 **Budget options (editable in config, not hardcoded in JSX):**
 
 ```ts
 const BUDGET_OPTIONS = [
-  { value: 'under-5k',  label: 'Under $5,000' },
-  { value: '5k-10k',    label: '$5,000 – $10,000' },
-  { value: '10k-25k',   label: '$10,000 – $25,000' },
-  { value: '25k-50k',   label: '$25,000 – $50,000' },
-  { value: '50k-plus',  label: '$50,000+' },
-  { value: 'not-sure',  label: 'Not sure yet' },
+  { value: 'under-5k', label: 'Under $5,000' },
+  { value: '5k-10k', label: '$5,000 – $10,000' },
+  { value: '10k-25k', label: '$10,000 – $25,000' },
+  { value: '25k-50k', label: '$25,000 – $50,000' },
+  { value: '50k-plus', label: '$50,000+' },
+  { value: 'not-sure', label: 'Not sure yet' },
 ] as const;
 ```
 
@@ -83,20 +83,21 @@ New file: `src/app/_actions/contact.ts`. Single action, same shape as the bookin
 ```ts
 // Input schema
 const ContactInput = z.object({
-  name:         z.string().min(1).max(120),
+  name: z.string().min(1).max(120),
   organisation: z.string().max(120).optional().default(''),
-  email:        z.string().email().max(254),
-  budget:       z.enum([...BUDGET_VALUES, '']).optional().default(''),
-  message:      z.string().min(1).max(2000),
+  email: z.string().email().max(254),
+  budget: z
+    .enum([...BUDGET_VALUES, ''])
+    .optional()
+    .default(''),
+  message: z.string().min(1).max(2000),
   // Anti-spam (not surfaced to user)
-  website:      z.string().optional().default(''),
-  formDwellMs:  z.number().nonneg(),
+  website: z.string().optional().default(''),
+  formDwellMs: z.number().nonneg(),
 });
 
 // Result
-type ContactResult =
-  | { ok: true }
-  | { ok: false; reason: 'validation' | 'spam' | 'server' };
+type ContactResult = { ok: true } | { ok: false; reason: 'validation' | 'spam' | 'server' };
 ```
 
 **Server flow:**
@@ -168,8 +169,8 @@ The outer section element. Page-ground, `section-pad(act)` spacing. Two-column g
 Left column content:
 
 - Meta eyebrow: "CONTACT" in `--t-meta`, uppercase, ember color.
-- Headline: `--t-hero` scale, Iron. e.g. "Let's Build Something That *Matters*" (ember on one word per `design.md §12`).
-- Supporting copy: `--t-lede` scale, one or two sentences. e.g. "You have important work to do. Let's create the website that helps you do it better."
+- Headline: `--t-hero` scale, Iron. e.g. "Let's Build Something That _Matters_" (ember on one word per `design.md §12`).
+- Supporting copy: `--t-lede` scale, one or two sentences. e.g. "You have important work to do. Let's create the digital experience that helps you do it better."
 
 Right column: renders `<ContactForm />`.
 
@@ -186,6 +187,7 @@ type Phase = 'idle' | 'submitting' | 'success' | 'error';
 On success, the form is replaced by `<ContactSuccess />` with a fade transition.
 
 **Field rendering:** native elements, each with:
+
 - Label above in `--t-meta` (matching `BookingForm` pattern).
 - Input/select/textarea styled via `.input` / `.select` / `.textarea` classes.
 - Hairline-only bottom border on text inputs (per `design.md §8` Input spec).
@@ -211,11 +213,13 @@ Replaces the form card on `{ ok: true }`. Simple confirmation:
 All SCSS imports `@use 'mixins' as *;` and consumes design tokens only.
 
 **Form card:** The reference shows a white card with soft corners and light grey input backgrounds. Adapted to the DK system:
+
 - Card background: `var(--ink-page)` with a `1px solid var(--ink-rule)` border or a subtle `box-shadow` using `--ink-shadow`.
 - Input backgrounds: a very light tint (e.g. `rgba($ink-iron, 0.04)`) for fill, with a hairline bottom border per the design system.
 - Rounded corners on the card: `border-radius: 12px` — the card is a container, not a button, so it follows the reference aesthetic while buttons remain square per `design.md §8`.
 
 **Responsive:**
+
 - `lg+`: two-column grid, `gap: var(--space-8)`, copy column ~5fr, form column ~7fr.
 - Below `lg`: single column stack, copy then form, `gap: var(--space-6)`.
 

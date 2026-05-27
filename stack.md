@@ -71,14 +71,6 @@ Zustand 5 handles this with no boilerplate and no context providers wrapping the
 
 ---
 
-## Typography — next/font (localFont)
-
-**Package:** built into Next.js
-
-Aeonik is self-hosted from `/aeonik-font`. `next/font/local` handles subsetting, preloading, `font-display: swap`, and injects the `@font-face` with zero layout shift. Four weights ship (Light, Regular, Medium, Bold). Font family CSS custom property is set once from the injected class, consumed via the token system.
-
----
-
 ## Booking — Custom (Supabase · Resend · ICS)
 
 **Packages:** `@supabase/supabase-js` · `resend` · `@react-email/components` · `ics` · `@internationalized/date`

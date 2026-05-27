@@ -51,11 +51,14 @@ Four anchors. Everything else is a mix of these four.
 
 ## 3. Typography
 
-**Family.** Aeonik, self-hosted from `/aeonik-font`.
+**Families.** Dual-family system, self-hosted from `/public/fonts`:
 
-**Variants that ship.** Light (display only), Regular, Medium, Bold. No italics anywhere — emphasis is carried by weight, size, or ember.
+- **Serif** — Reforma 1969 (headlines, headings, display). The craft voice.
+- **Sans** — Plus Jakarta Sans (body, lede, meta, UI). The precision voice.
 
-**Scale.** Fluid, clamp-based. Five roles, named by intent:
+**Variants that ship.** Serif: Blanca (300), Gris (400/500), Negra (700). Sans: Light, Regular, Medium, Bold. No italics anywhere — emphasis is carried by weight, size, or ember.
+
+**Scale.** Fluid, clamp-based. Six roles, named by intent:
 
 - `--t-monument` — sparingly, if at all. Cinematic.
 - `--t-hero` — primary page title.
@@ -66,7 +69,7 @@ Four anchors. Everything else is a mix of these four.
 
 **Setting rails**
 
-- Heading line-heights are tight (≈0.95). Body line-height is generous (≈1.55).
+- Monument line-height is cinematic (≈0.96). Heading line-heights are tight (≈1.1). Body line-height is generous (≈1.6).
 - Negative letter-spacing on large heads; default on body.
 - Paragraphs cap at ~62ch.
 - Tabular numerals everywhere numbers appear in rows.
@@ -77,7 +80,7 @@ Four anchors. Everything else is a mix of these four.
 
 ## 4. Logo & Wordmark
 
-- Wordmark: `DIGITAL KNIGHT`, Aeonik Medium, wide tracking, Iron on Page.
+- Wordmark: `DIGITAL KNIGHT`, Plus Jakarta Sans Medium, wide tracking, Iron on Page.
 - `DK` short form is reserved for compact UI marks (small-screen nav) and favicon only.
 - The wordmark stands alone — no box, no lockup, generous air.
 
@@ -196,7 +199,6 @@ These are the canvas areas — design them fresh per section:
 - The **Turn** — the surprise is the point.
 - The count and rhythm of sections, so long as ground-inversion alternates and the grammar of §9 holds.
 - Interior composition of **cards** and **figures**.
-- Copy voice within the constraints of `soul.md`.
 
 Sections §§1–8, §10–§13 are the frame. Sections §9 and §14 are the painting.
 
@@ -232,24 +234,30 @@ Sections §§1–8, §10–§13 are the frame. Sections §9 and §14 are the pai
 
 **Scale** (fluid, clamp-based, 375px → 1440px):
 
-| Token          | Value                                         |
-| -------------- | --------------------------------------------- |
-| `--t-monument` | `clamp(4.5rem, 7vw + 2.9rem, 9rem)`           |
-| `--t-hero`     | `clamp(2.75rem, 4vw + 1.78rem, 5.5rem)`       |
-| `--t-section`  | `clamp(1.875rem, 1.7vw + 1.475rem, 3rem)`     |
-| `--t-lede`     | `clamp(1.25rem, 0.75vw + 1.075rem, 1.75rem)`  |
-| `--t-body`     | `clamp(1rem, 0.2vw + 0.953rem, 1.125rem)`     |
-| `--t-meta`     | `clamp(0.6875rem, 0.1vw + 0.625rem, 0.75rem)` |
+| Token              | Value                                            | Family |
+| ------------------ | ------------------------------------------------ | ------ |
+| `--t-monument`     | `clamp(4.5rem, 7vw + 2.9rem, 9rem)`             | Serif  |
+| `--t-hero`         | `clamp(2.75rem, 4vw + 1.78rem, 5.5rem)`         | Serif  |
+| `--t-hero-display` | `clamp(2.125rem, 3.8vw + 0.95rem, 4.75rem)`     | Serif  |
+| `--t-section`      | `clamp(1.875rem, 1.7vw + 1.475rem, 3rem)`       | Serif  |
+| `--t-subsection`   | `clamp(1.5rem, 1.4vw + 1.1rem, 2.25rem)`        | Sans   |
+| `--t-lede`         | `clamp(1.125rem, 0.75vw + 0.95rem, 1.625rem)`   | Sans   |
+| `--t-body`         | `clamp(1.125rem, 0.4vw + 0.85rem, 1.375rem)`    | Sans   |
+| `--t-meta`         | `clamp(0.875rem, 0.2vw + 0.5rem, 1.05rem)`      | Sans   |
+| `--t-ui`           | `clamp(0.8125rem, 0.28vw + 0.68rem, 1.125rem)`  | Sans   |
 
 **Settings:**
 
-| Token                | Value                             | Used for                |
-| -------------------- | --------------------------------- | ----------------------- |
-| `--t-family`         | `'Aeonik', system-ui, sans-serif` | All type                |
-| `--t-leading-tight`  | `0.95`                            | Monument, hero, section |
-| `--t-leading-body`   | `1.55`                            | Body, lede              |
-| `--t-tracking-tight` | `-0.03em`                         | Monument, hero          |
-| `--t-tracking-meta`  | `0.12em`                          | Meta — uppercase only   |
+| Token                  | Value                                                                 | Used for                          |
+| ---------------------- | --------------------------------------------------------------------- | --------------------------------- |
+| `--t-family-serif`     | `Reforma 1969, Georgia, 'Times New Roman', serif`                     | Headlines, headings               |
+| `--t-family-sans`      | `Plus Jakarta Sans, system-ui, 'Helvetica Neue', sans-serif`         | Body, lede, meta, UI              |
+| `--t-leading-display`  | `0.96`                                                                | Monument — cinematic, single-line |
+| `--t-leading-tight`    | `1.1`                                                                 | Hero, section — multi-line serif  |
+| `--t-leading-body`     | `1.6`                                                                 | Body, lede                        |
+| `--t-tracking-tight`   | `-0.02em`                                                             | Serif headings                    |
+| `--t-tracking-meta`    | `0.10em`                                                              | Meta — uppercase only             |
+| `--t-tracking-ui`      | `0.025em`                                                             | UI — sentence-case                |
 
 ---
 

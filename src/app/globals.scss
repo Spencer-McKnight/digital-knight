@@ -1,14 +1,9 @@
-// The single global stylesheet — imported exactly once from `layout.tsx`.
-// Everything it emits (tokens, reset, base) is side-effect CSS that belongs
-// at document root. Component-level styling lives in co-located `.module.scss`
-// files and must never reach for this file.
-
 @use '@/styles';
 
 // Bridge `next/font/local` → token layer.
-// `fonts.ts` exposes `--t-family-source`; the token layer reads `--t-family`.
-// This indirection lets us swap or stack additional faces later without
-// touching every consumer.
+// `fonts.ts` exposes `--t-family-serif-source` and `--t-family-sans-source`.
+// Swap fonts by changing only the source vars — all downstream tokens follow.
 :root {
-  --t-family: var(--t-family-source), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --t-family-serif: var(--t-family-serif-source), Georgia, 'Times New Roman', serif;
+  --t-family-sans: var(--t-family-sans-source), system-ui, 'Helvetica Neue', sans-serif;
 }

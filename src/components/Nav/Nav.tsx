@@ -171,7 +171,6 @@ export function Nav() {
     >
       <SmoothLink href="/" className={styles.wordmark} aria-label="Digital Knight — home">
         <span className={styles.logo} aria-hidden="true" />
-        <span className={styles.word}>DIGITAL KNIGHT</span>
       </SmoothLink>
 
       <ul className={styles.links}>

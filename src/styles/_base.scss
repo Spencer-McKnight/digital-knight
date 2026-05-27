@@ -11,7 +11,7 @@
 html {
   background: var(--ink-page);
   color: var(--ink-iron);
-  font-family: var(--t-family);
+  font-family: var(--t-family-sans);
   -webkit-text-size-adjust: 100%;
   // Keep a stable scrollbar channel to prevent width hops when content grows.
   scrollbar-gutter: stable;
@@ -30,8 +30,15 @@ body {
 }
 
 ::selection {
-  background: var(--ink-ember);
+  background-color: var(--ink-ember);
   color: var(--ink-page);
+  text-shadow: none;
+}
+
+::-moz-selection {
+  background-color: var(--ink-ember);
+  color: var(--ink-page);
+  text-shadow: none;
 }
 
 // Visible focus — ember, offset. Every interactive element inherits this
