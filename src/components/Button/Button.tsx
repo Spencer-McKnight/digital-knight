@@ -15,6 +15,7 @@ type Size = 'md' | 'lg';
 type SharedProps = {
   variant?: Variant;
   size?: Size;
+  fullWidth?: boolean;
   children: ReactNode;
   /** Trailing glyph — defaults to an arrow on the ghost variant. */
   trailing?: ReactNode;
@@ -49,6 +50,7 @@ export function Button(props: Props) {
   const {
     variant = 'primary',
     size = 'md',
+    fullWidth,
     children,
     trailing,
     inkSplit,
@@ -84,6 +86,7 @@ export function Button(props: Props) {
         className={rootClass}
         data-variant={variant}
         data-size={size}
+        data-full-width={fullWidth || undefined}
         {...externalProps}
         {...(isInternalHashLink ? { offset: DEFAULT_SCROLL_OFFSET } : {})}
         {...anchorRest}
@@ -99,6 +102,7 @@ export function Button(props: Props) {
       className={rootClass}
       data-variant={variant}
       data-size={size}
+      data-full-width={fullWidth || undefined}
       {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
     >
       {content}

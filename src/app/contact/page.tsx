@@ -1,3 +1,4 @@
+import { env } from '@/lib/env';
 import { ContactSection } from '@/components/contact/ContactSection/ContactSection';
 
 export const metadata = {
@@ -8,7 +9,7 @@ export const metadata = {
 export default function ContactPage() {
   return (
     <main>
-      <ContactSection />
+      <ContactSection hostEmail={env.BOOKING_HOST_EMAIL} />
     </main>
   );
 }

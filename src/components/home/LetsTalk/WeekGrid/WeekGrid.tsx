@@ -57,6 +57,11 @@ export type WeekGridProps = {
    * replace the entire section layout on success.
    */
   onConfirmed?: (payload: ConfirmationPayload) => void;
+  /**
+   * Pre-filled name and email from an earlier step (e.g. contact form).
+   * When provided, the booking popup skips the name/email fields.
+   */
+  prefilled?: { name: string; email: string };
 };
 
 // ── STATE ────────────────────────────────────────────────────────────────────
@@ -94,55 +99,64 @@ type Action =
   | { type: 'confirm'; confirmation: ConfirmationPayload }
   | { type: 'reset' };
 
-function initialState(initial: WeekAvailability): State {
+function initialState(
+  initial: WeekAvailability,
+  prefilled?: { name: string; email: string },
+): State {
   return {
     phase: { kind: 'browsing' },
     weekISO: initial.weekISO,
     weekCache: { [initial.weekISO]: initial },
     selectedSlotUTC: null,
-    form: { name: '', email: '' },
+    form: prefilled ? { name: prefilled.name, email: prefilled.email } : { name: '', email: '' },
   };
 }
 
-function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case 'setWeek':
-      return {
-        ...state,
-        weekISO: action.weekISO,
-        weekCache: { ...state.weekCache, [action.weekISO]: action.availability },
-        selectedSlotUTC: null,
-        formError: undefined,
-      };
-    case 'selectSlot':
-      return { ...state, selectedSlotUTC: action.startAtUTC, formError: undefined };
-    case 'patchForm':
-      return {
-        ...state,
-        form: { ...state.form, ...action.patch },
-        formError: undefined,
-      };
-    case 'formError':
-      return { ...state, formError: action.message };
-    case 'submitStart':
-      return { ...state, phase: { kind: 'submitting' }, formError: undefined };
-    case 'submitFailure':
-      return {
-        ...state,
-        phase: action.phase,
-        selectedSlotUTC: action.clearSelection ? null : state.selectedSlotUTC,
-      };
-    case 'confirm':
-      return { ...state, phase: { kind: 'confirmed', confirmation: action.confirmation } };
-    case 'reset':
-      return {
-        ...state,
-        phase: { kind: 'browsing' },
-        selectedSlotUTC: null,
-        form: { name: '', email: '' },
-        formError: undefined,
-      };
-  }
+function createReducer(prefilled?: { name: string; email: string }) {
+  const defaultForm = prefilled
+    ? { name: prefilled.name, email: prefilled.email }
+    : { name: '', email: '' };
+
+  return function reducer(state: State, action: Action): State {
+    switch (action.type) {
+      case 'setWeek':
+        return {
+          ...state,
+          weekISO: action.weekISO,
+          weekCache: { ...state.weekCache, [action.weekISO]: action.availability },
+          selectedSlotUTC: null,
+          formError: undefined,
+        };
+      case 'selectSlot':
+        return { ...state, selectedSlotUTC: action.startAtUTC, formError: undefined };
+      case 'patchForm':
+        return {
+          ...state,
+          form: { ...state.form, ...action.patch },
+          formError: undefined,
+        };
+      case 'formError':
+        return { ...state, formError: action.message };
+      case 'submitStart':
+        return { ...state, phase: { kind: 'submitting' }, formError: undefined };
+      case 'submitFailure':
+        return {
+          ...state,
+          phase: action.phase,
+          selectedSlotUTC: action.clearSelection ? null : state.selectedSlotUTC,
+        };
+      case 'confirm':
+        return { ...state, phase: { kind: 'confirmed', confirmation: action.confirmation } };
+      case 'reset':
+        return {
+          ...state,
+          phase: { kind: 'browsing' },
+          selectedSlotUTC: null,
+          form: defaultForm,
+          formError: undefined,
+        };
+    }
+  };
 }
 
 // ── EXTERNAL-STORE HELPERS ───────────────────────────────────────────────────
@@ -157,8 +171,12 @@ const getVisitorTZSnapshot = () => visitorTimezone();
 
 // ── COMPONENT ────────────────────────────────────────────────────────────────
 
-export function WeekGrid({ initial, hostEmail, onConfirmed }: WeekGridProps) {
-  const [state, dispatch] = useReducer(reducer, initial, initialState);
+export function WeekGrid({ initial, hostEmail, onConfirmed, prefilled }: WeekGridProps) {
+  const [state, dispatch] = useReducer(
+    createReducer(prefilled),
+    initial,
+    (init) => initialState(init, prefilled),
+  );
   const [isNavPending, startNavTransition] = useTransition();
 
   // The visitor's timezone and "now this moment" are purely-client facts.
@@ -478,6 +496,7 @@ export function WeekGrid({ initial, hostEmail, onConfirmed }: WeekGridProps) {
                 name={state.form.name}
                 email={state.form.email}
                 submitting={isSubmitting}
+                compact={!!prefilled}
                 error={
                   state.formError ??
                   (state.phase.kind === 'error' ? state.phase.message : undefined)

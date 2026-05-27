@@ -83,6 +83,19 @@
   }
 }
 
+.compactIdentity {
+  @include type(body);
+  margin: 0;
+  color: var(--ink-iron);
+  opacity: 0.75;
+  text-align: center;
+
+  strong {
+    font-weight: var(--t-weight-medium);
+    opacity: 1;
+  }
+}
+
 // Honeypot — visually hidden off-screen rather than `display: none` so
 // bots that skip hidden/collapsed fields still fill it in. Do not restyle
 // back to `display: none` without understanding this trade-off.

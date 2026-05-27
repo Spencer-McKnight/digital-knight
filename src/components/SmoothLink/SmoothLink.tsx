@@ -39,7 +39,7 @@ export function SmoothLink({
       // Normalize paths for comparison
       const targetPath = hrefPath === '' || hrefPath === '/' ? '/' : hrefPath;
       const currentPath = pathname === '' ? '/' : pathname;
-      const isCurrentPage = targetPath === currentPath || targetPath === '/';
+      const isCurrentPage = targetPath === currentPath;
 
       // Only intercept if we're on the same page and it's a hash or home link
       if (isCurrentPage && (isHashLink || isHomeLink)) {

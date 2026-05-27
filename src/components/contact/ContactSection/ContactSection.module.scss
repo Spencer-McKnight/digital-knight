@@ -11,8 +11,8 @@
   align-items: start;
 
   @include respond-to(lg) {
-    grid-template-columns: 5fr 7fr;
-    gap: var(--space-8);
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-7);
   }
 }
 
@@ -60,4 +60,10 @@
 
 .form {
   width: 100%;
+
+  @include respond-to(lg) {
+    &:has([class*='bookingView']) {
+      grid-column: 1 / -1;
+    }
+  }
 }

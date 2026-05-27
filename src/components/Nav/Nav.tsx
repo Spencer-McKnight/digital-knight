@@ -14,10 +14,8 @@ const SCROLL_SETTLE_DELAY = 150;
 type NavLink = { label: string; href: string; section?: string };
 
 const LINKS: ReadonlyArray<NavLink> = [
-  { label: 'Talk', href: '/#talk', section: 'talk' },
   { label: 'Services', href: '/#services', section: 'services' },
   { label: 'About', href: '/#meet', section: 'meet' },
-  { label: 'Contact', href: '/contact' },
 ];
 
 function sectionIdFromHref(href: string): string | null {
@@ -35,6 +33,7 @@ export function Nav() {
   const loaded = useLoadGate();
   const navRef = useRef<HTMLElement>(null);
   const [active, setActive] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const scrollingToRef = useRef<string | null>(null);
@@ -79,6 +78,11 @@ export function Nav() {
     const detect = () => {
       frame = 0;
       const y = window.scrollY;
+
+      setScrolled((prev) => {
+        const next = y > 0;
+        return prev === next ? prev : next;
+      });
 
       if (scrollingToRef.current) {
         if (scrollSettleTimer.current) clearTimeout(scrollSettleTimer.current);
@@ -161,6 +165,7 @@ export function Nav() {
       ref={navRef}
       className={styles.root}
       data-loaded={loaded}
+      data-scrolled={scrolled || undefined}
       data-menu-open={menuOpen || undefined}
       aria-label="Primary"
     >
@@ -287,8 +292,8 @@ function MobileMenu({ open, onClose, active, onNavClick }: MobileMenuProps) {
           className={styles.drawerCta}
           style={{ '--i': LINKS.length + 1 } as React.CSSProperties}
         >
-          <Button href="/#talk" variant="primary" size="md" onClick={onClose}>
-            Free Strategy Consult
+          <Button href="/contact" variant="primary" size="md" onClick={onClose}>
+            Start a Project
           </Button>
         </div>
       </div>

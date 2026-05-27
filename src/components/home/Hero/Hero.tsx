@@ -18,7 +18,7 @@ export function Hero() {
         </h1>
 
         <p className={styles.lede}>
-          Technology accelerates weekly. Digital Knight helps you benefit from the bleeding-edge with AI-boosted design prototypes and new gen customised toolkits.
+          Technology accelerates weekly. Digital Knight builds  from the bleeding-edge with AI-boosted design prototypes and custom automation toolkits.
         </p>
 
         <div className={styles.actions}>

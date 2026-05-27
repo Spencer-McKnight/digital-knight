@@ -32,6 +32,7 @@ export type BookingFormProps = {
   name: string;
   email: string;
   submitting: boolean;
+  compact?: boolean;
   error?: string;
   onChange: (patch: { name?: string; email?: string }) => void;
   onSubmit: (extras: BookingFormExtras) => void;
@@ -43,6 +44,7 @@ export function BookingForm({
   name,
   email,
   submitting,
+  compact,
   error,
   onChange,
   onSubmit,
@@ -80,42 +82,48 @@ export function BookingForm({
         <p className={styles.slotTime}>{timeLabel}</p>
       </div>
 
-      <div className={styles.fields}>
-        <label className={styles.field} htmlFor={nameId}>
-          <span className={styles.label}>Name / Business</span>
-          <input
-            id={nameId}
-            type="text"
-            name="name"
-            autoComplete="name"
-            required
-            maxLength={120}
-            value={name}
-            disabled={submitting}
-            onChange={(e) => onChange({ name: e.target.value })}
-            className={styles.input}
-            placeholder="Your name and business"
-          />
-        </label>
+      {compact ? (
+        <p className={styles.compactIdentity}>
+          Booking for <strong>{name}</strong> ({email})
+        </p>
+      ) : (
+        <div className={styles.fields}>
+          <label className={styles.field} htmlFor={nameId}>
+            <span className={styles.label}>Name / Business</span>
+            <input
+              id={nameId}
+              type="text"
+              name="name"
+              autoComplete="name"
+              required
+              maxLength={120}
+              value={name}
+              disabled={submitting}
+              onChange={(e) => onChange({ name: e.target.value })}
+              className={styles.input}
+              placeholder="Your name and business"
+            />
+          </label>
 
-        <label className={styles.field} htmlFor={emailId}>
-          <span className={styles.label}>Email</span>
-          <input
-            id={emailId}
-            type="email"
-            name="email"
-            autoComplete="email"
-            inputMode="email"
-            required
-            maxLength={254}
-            value={email}
-            disabled={submitting}
-            onChange={(e) => onChange({ email: e.target.value })}
-            className={styles.input}
-            placeholder="you@domain.com"
-          />
-        </label>
-      </div>
+          <label className={styles.field} htmlFor={emailId}>
+            <span className={styles.label}>Email</span>
+            <input
+              id={emailId}
+              type="email"
+              name="email"
+              autoComplete="email"
+              inputMode="email"
+              required
+              maxLength={254}
+              value={email}
+              disabled={submitting}
+              onChange={(e) => onChange({ email: e.target.value })}
+              className={styles.input}
+              placeholder="you@domain.com"
+            />
+          </label>
+        </div>
+      )}
 
       {/*
         Honeypot — not `display: none` (some bots skip those). Visually

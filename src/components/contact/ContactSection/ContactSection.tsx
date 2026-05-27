@@ -1,7 +1,11 @@
 import { ContactForm } from '../ContactForm/ContactForm';
 import styles from './ContactSection.module.scss';
 
-export function ContactSection() {
+type ContactSectionProps = {
+  hostEmail: string;
+};
+
+export function ContactSection({ hostEmail }: ContactSectionProps) {
   return (
     <section className={styles.root} data-ground="page" aria-label="Contact">
       <div className={styles.inner}>
@@ -20,7 +24,7 @@ export function ContactSection() {
         </div>
 
         <div className={styles.form}>
-          <ContactForm />
+          <ContactForm hostEmail={hostEmail} />
         </div>
       </div>
     </section>

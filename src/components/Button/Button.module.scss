@@ -37,6 +37,11 @@
     transform: scale(0.985);
   }
 
+  &[data-full-width] {
+    width: 100%;
+    justify-content: center;
+  }
+
   &[data-size='lg'] {
     --_pad-inline: calc(var(--space-5) + var(--space-1));
     --_pad-block: var(--space-4);

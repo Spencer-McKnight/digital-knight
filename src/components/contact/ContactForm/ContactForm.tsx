@@ -4,11 +4,16 @@ import { useEffect, useId, useRef, useState, useTransition, type FormEvent } fro
 import { submitContact, type ContactResult } from '@/app/_actions/contact';
 import { BUDGET_OPTIONS, FIELD_LIMITS } from './contactConfig';
 import { ContactSuccess } from '../ContactSuccess/ContactSuccess';
+import { Button } from '@/components/Button';
 import styles from './ContactForm.module.scss';
 
 type Phase = 'idle' | 'submitting' | 'success' | 'error';
 
-export function ContactForm() {
+type ContactFormProps = {
+  hostEmail: string;
+};
+
+export function ContactForm({ hostEmail }: ContactFormProps) {
   const nameId = useId();
   const orgId = useId();
   const emailId = useId();
@@ -83,16 +88,22 @@ export function ContactForm() {
   }
 
   if (phase === 'success') {
-    return <ContactSuccess onReset={handleReset} />;
+    return (
+      <ContactSuccess
+        name={name}
+        email={email}
+        hostEmail={hostEmail}
+        onReset={handleReset}
+      />
+    );
   }
 
   const submitting = phase === 'submitting' || isPending;
-  const canSubmit = name.trim() && email.trim() && message.trim() && !submitting;
 
   return (
-    <form className={styles.card} onSubmit={handleSubmit} noValidate>
+    <form className={styles.card} onSubmit={handleSubmit}>
       <label className={styles.field} htmlFor={nameId}>
-        <span className={styles.label}>Name *</span>
+        <span className={styles.label}>Name</span>
         <input
           id={nameId}
           type="text"
@@ -123,7 +134,7 @@ export function ContactForm() {
       </label>
 
       <label className={styles.field} htmlFor={emailId}>
-        <span className={styles.label}>Email *</span>
+        <span className={styles.label}>Email</span>
         <input
           id={emailId}
           type="email"
@@ -177,13 +188,13 @@ export function ContactForm() {
       </label>
 
       <label className={styles.field} htmlFor={messageId}>
-        <span className={styles.label}>Message *</span>
+        <span className={styles.label}>Message</span>
         <textarea
           id={messageId}
           name="message"
           required
           maxLength={FIELD_LIMITS.message}
-          rows={5}
+          rows={4}
           value={message}
           disabled={submitting}
           onChange={(e) => setMessage(e.target.value)}
@@ -211,16 +222,9 @@ export function ContactForm() {
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={!canSubmit}
-        className={styles.submit}
-        data-pending={submitting || undefined}
-      >
-        <span className={styles.submitLabel}>
-          {submitting ? 'Sending…' : 'Send Message'}
-        </span>
-      </button>
+      <Button type="submit" variant="secondary" fullWidth disabled={submitting}>
+        {submitting ? 'Sending…' : 'Send Message'}
+      </Button>
     </form>
   );
 }
