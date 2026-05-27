@@ -211,6 +211,7 @@
 
 .metaLabel {
   opacity: 0.6;
+  @include type(ui);
 }
 
 .metaValue {
