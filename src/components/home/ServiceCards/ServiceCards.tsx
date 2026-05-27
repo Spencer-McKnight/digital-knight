@@ -55,7 +55,7 @@ const SERVICES: ReadonlyArray<Service> = [
     ],
   },
   {
-    icon: 'bezier-curve',
+    icon: 'infinity',
     title: 'Evolution',
     items: [
       'Platform Evolution',
