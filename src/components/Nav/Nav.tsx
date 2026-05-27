@@ -292,7 +292,7 @@ function MobileMenu({ open, onClose, active, onNavClick }: MobileMenuProps) {
           style={{ '--i': LINKS.length + 1 } as React.CSSProperties}
         >
           <Button href="/contact" variant="primary" size="md" onClick={onClose}>
-            Start a Project
+            Contact
           </Button>
         </div>
       </div>

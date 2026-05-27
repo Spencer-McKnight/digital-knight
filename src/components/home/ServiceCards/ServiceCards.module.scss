@@ -1,0 +1,149 @@
+@use 'mixins' as *;
+
+// =============================================================================
+// ServiceCards
+// -----------------------------------------------------------------------------
+// Outline-only surface mirroring the secondary Button (1px iron stroke, 8px
+// radius, soft Stone-on-Page shadow). Interaction states are general.
+//
+// Layout
+//   mobile (<sm)  — 1 column stack
+//   sm  ≥ 640px   — 2×2 grid
+//   lg  ≥ 1024px  — 4×1 row
+// =============================================================================
+
+.root {
+  @include container;
+  position: relative;
+  padding-block: var(--space-6) var(--space-9);
+
+  @include respond-to(md) {
+    padding-block: var(--space-7) var(--space-10);
+  }
+}
+
+// ── Grid ────────────────────────────────────────────────────────────────────
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  @include respond-to(sm) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.cell {
+  display: flex;
+  min-width: 0;
+}
+
+// ── Card (outline variant — matches secondary Button) ───────────────────────
+.card {
+  --card-r: 8px;
+  --lift: 0px;
+  --hairline: var(--ink-iron);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-5);
+  background: transparent;
+  color: var(--ink-iron);
+  border: 1px solid var(--hairline);
+  border-radius: var(--card-r);
+  box-shadow: 0 3px 3px -2px var(--ink-shadow);
+  cursor: default;
+  isolation: isolate;
+  transform: translateY(var(--lift));
+  transition:
+    transform var(--dur-element) var(--ease-house),
+    border-color var(--dur-element) var(--ease-house),
+    box-shadow var(--dur-element) var(--ease-house);
+
+  @include respond-to(md) {
+    padding: var(--space-6) var(--space-5);
+  }
+
+  &:hover,
+  &:focus-visible {
+    --lift: -5px;
+    --hairline: var(--ink-ember);
+    box-shadow:
+      0 3px 3px -2px var(--ink-shadow),
+      0 16px 32px rgba(64, 61, 57, 0.16);
+    outline: none;
+  }
+
+  &:focus-visible {
+    box-shadow:
+      0 3px 3px -2px var(--ink-shadow),
+      0 16px 32px rgba(64, 61, 57, 0.16),
+      0 0 0 2px var(--ink-page),
+      0 0 0 4px var(--ink-ember);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: var(--dur-state);
+    &:hover,
+    &:focus-visible {
+      --lift: 0px;
+    }
+  }
+}
+
+// ── Icon ────────────────────────────────────────────────────────────────────
+.icon {
+  display: block;
+  color: var(--ink-iron);
+  transition: color var(--dur-element) var(--ease-house);
+
+  .card:hover &,
+  .card:focus-visible & {
+    color: var(--ink-ember);
+  }
+}
+
+// ── Title ───────────────────────────────────────────────────────────────────
+.title {
+  @include type(card-title);
+  margin-bottom: var(--space-1);
+  color: var(--ink-iron);
+  text-wrap: balance;
+}
+
+// ── Items list ──────────────────────────────────────────────────────────────
+//   No markers, generous vertical rhythm. Each row is its own hairline-spaced
+//   row of meta-scale type — reads as a list without ever asking for a bullet.
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  color: var(--ink-iron);
+  opacity: 0.74;
+  transition: opacity var(--dur-element) var(--ease-house);
+
+  .card:hover &,
+  .card:focus-visible & {
+    opacity: 1;
+  }
+}
+
+.item {
+  @include type(body);
+  color: inherit;
+}
+

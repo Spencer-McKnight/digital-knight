@@ -31,8 +31,6 @@ export function Hero() {
           </Button>
         </div>
       </Reveal>
-
-
     </section>
   );
 }

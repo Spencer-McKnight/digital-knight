@@ -20,6 +20,7 @@
 //
 //   @include type(hero-display) — Larger hero for primary page titles
 //   @include type(subsection)   — Between lede and section for sub-heads
+//   @include type(card-title)   — Compact serif titles for cards and tiles
 //   @include type(ui)           — Meta-scale without uppercase — for nav, buttons, chips
 //
 // Uppercase lives only on the canonical `meta` role (`design.md` §3).
@@ -63,6 +64,8 @@
     font-size: var(--t-section);
   } @else if $role == subsection {
     font-size: var(--t-subsection);
+  } @else if $role == card-title {
+    font-size: var(--t-card-title);
   } @else if $role == lede {
     font-size: var(--t-lede);
   } @else if $role == body {
@@ -70,7 +73,7 @@
   } @else if $role == meta or $role == ui {
     font-size: var(--t-meta);
   } @else {
-    @error "type-size: unknown role `#{$role}`. Available: monument, hero-display, hero, section, subsection, lede, body, meta, ui.";
+    @error "type-size: unknown role `#{$role}`. Available: monument, hero-display, hero, section, subsection, card-title, lede, body, meta, ui.";
   }
 }
 
@@ -119,6 +122,7 @@
 // Variant roles (3):
 //   hero-display — larger hero, used for primary showcase headings
 //   subsection   — between lede and section, for sub-headings
+//   card-title   — compact serif titles for cards and tiles
 //   ui           — meta-scale, sentence-case, for nav/buttons/chips
 // ─────────────────────────────────────────────────────────────────────────────
 @mixin type($role) {
@@ -177,6 +181,12 @@
     line-height: 1.1;
     letter-spacing: var(--t-tracking-tight);
     font-weight: var(--t-weight-medium);
+  } @else if $role == card-title {
+    font-family: var(--t-family-serif);
+    font-size: var(--t-card-title);
+    line-height: 1.15;
+    letter-spacing: var(--t-tracking-tight);
+    font-weight: var(--t-weight-medium);
   } @else if $role == ui {
     font-family: var(--t-family-sans);
     font-size: var(--t-ui);
@@ -187,6 +197,6 @@
     @include type-trim;
 
   } @else {
-    @error "type: unknown role `#{$role}`. Available: monument, hero, hero-display, section, subsection, lede, body, meta, ui.";
+    @error "type: unknown role `#{$role}`. Available: monument, hero, hero-display, section, subsection, card-title, lede, body, meta, ui.";
   }
 }
