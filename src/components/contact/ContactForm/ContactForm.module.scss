@@ -3,8 +3,6 @@
 .card {
   display: grid;
   gap: var(--space-4);
-  max-width: 640px;
-  margin-left: auto;
   padding: var(--space-4) var(--space-3);
   background: var(--ink-page);
   border: 1px solid var(--ink-ember);
