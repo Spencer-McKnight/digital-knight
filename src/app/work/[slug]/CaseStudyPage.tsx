@@ -131,6 +131,7 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
                   height={img.height}
                   sizes="(min-width: 1024px) 55vw, 90vw"
                   className={styles.imageImg}
+                  loading="lazy"
                 />
               </Reveal>
             ))}

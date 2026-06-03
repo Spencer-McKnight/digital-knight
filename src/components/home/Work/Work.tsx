@@ -58,6 +58,8 @@ function Card({ item, featured }: { item: WorkItem; featured?: boolean }) {
               height={item.backdrop!.height}
               sizes={featured ? '(min-width: 640px) 80vw, 100vw' : '(min-width: 640px) 50vw, 100vw'}
               className={styles.backdropImg}
+              priority={featured}
+              loading={featured ? 'eager' : 'lazy'}
             />
           )}
         </div>
@@ -72,6 +74,8 @@ function Card({ item, featured }: { item: WorkItem; featured?: boolean }) {
                 height={item.screen!.height}
                 sizes={featured ? '(min-width: 640px) 56vw, 85vw' : '(min-width: 640px) 33vw, 85vw'}
                 className={styles.screenImg}
+                priority={featured}
+                loading={featured ? 'eager' : 'lazy'}
               />
             )}
           </div>
