@@ -1,71 +1,65 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { type ComponentProps, useCallback } from 'react';
+import { scrollToElement } from '@/lib/scroll';
 
 type LinkProps = ComponentProps<typeof Link>;
 
 interface SmoothLinkProps extends LinkProps {
-  /** Scroll offset from top in pixels (useful for fixed headers) */
+  /** @deprecated — offset is now derived from the nav height automatically */
   offset?: number;
-  /** Scroll duration hint — actual duration controlled by CSS scroll-behavior */
   onClick?: LinkProps['onClick'];
 }
 
-/**
- * A Link component that always smooth-scrolls to hash targets, even when
- * already at the same URL. Also handles `/` by scrolling to page top.
- *
- * This solves the browser's native behavior where clicking a link to the
- * current URL does nothing — we intercept and scroll manually.
- */
+function parseHref(href: string | LinkProps['href']) {
+  const str = typeof href === 'string' ? href : href.pathname ?? '';
+  const i = str.indexOf('#');
+  if (i < 0) return { path: str || '/', hash: '', hasHash: false };
+  return { path: str.slice(0, i) || '/', hash: str.slice(i + 1), hasHash: true };
+}
+
 export function SmoothLink({
   href,
-  offset = 0,
+  offset: _offset,
   onClick,
   children,
   ...rest
 }: SmoothLinkProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { path: targetPath, hash, hasHash } = parseHref(href);
+  const currentPath = pathname || '/';
+  const isCurrentPage = targetPath === currentPath;
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
-      const hrefStr = typeof href === 'string' ? href : href.pathname ?? '';
-      const isHashLink = hrefStr.includes('#');
-      const isHomeLink = hrefStr === '/';
-      const [hrefPath, hash] = hrefStr.split('#');
+      const isHomeLink = typeof href === 'string' && href === '/';
 
-      // Normalize paths for comparison
-      const targetPath = hrefPath === '' || hrefPath === '/' ? '/' : hrefPath;
-      const currentPath = pathname === '' ? '/' : pathname;
-      const isCurrentPage = targetPath === currentPath;
-
-      // Only intercept if we're on the same page and it's a hash or home link
-      if (isCurrentPage && (isHashLink || isHomeLink)) {
+      if (hasHash) {
         e.preventDefault();
 
-        if (isHomeLink && !hash) {
-          // Home link without hash — scroll to top
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (hash) {
-          // Hash link — scroll to the target element
+        if (isCurrentPage) {
           const target = document.getElementById(hash);
-          if (target) {
-            const top = target.getBoundingClientRect().top + window.scrollY - offset;
-            window.scrollTo({ top, behavior: 'smooth' });
-          }
+          if (target) scrollToElement(target, 'smooth');
+          window.history.replaceState(null, '', `${targetPath}#${hash}`);
+        } else {
+          const hrefStr = typeof href === 'string' ? href : `${targetPath}#${hash}`;
+          router.push(hrefStr, { scroll: false });
         }
+      } else if (isCurrentPage && isHomeLink) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      // Call original onClick if provided
       onClick?.(e);
     },
-    [href, pathname, offset, onClick],
+    [href, isCurrentPage, hasHash, hash, targetPath, onClick, router],
   );
 
   return (
-    <Link href={href} onClick={handleClick} {...rest}>
+    <Link href={href} onClick={handleClick} scroll={hasHash ? false : undefined} {...rest}>
       {children}
     </Link>
   );

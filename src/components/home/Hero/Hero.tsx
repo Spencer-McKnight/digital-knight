@@ -20,9 +20,9 @@ export function Hero() {
         </h1>
 
         <p className={styles.lede}>
-          Optimise business cases into your greatest successes.
+          Modernise your greatest successes.
           <br />
-          I guarantee to understand your vision and deliver innovation.
+          I guarantee to deliver innovation.
         </p>
 
         <div className={styles.actions}>

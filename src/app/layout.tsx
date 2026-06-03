@@ -4,6 +4,7 @@ import { GtagLazyClient } from '@/lib/google/GtagLazyClient';
 import './globals.scss';
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
+import { HashScroller } from '@/components/HashScroller';
 import { StructuredData } from '@/components/StructuredData';
 import { Analytics } from '@vercel/analytics/next';
 
@@ -16,7 +17,7 @@ const brandLogoIcon = {
 export const metadata: Metadata = {
   metadataBase: siteUrl,
   title: {
-    default: 'Digital Knight — Next-gen strategic website design, AI evolutions & automation.',
+    default: 'Digital Knight — Strategic Web Design & AI Automation, Melbourne',
     template: '%s · Digital Knight',
   },
   description:
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
   },
   manifest: '/site.webmanifest',
   alternates: {
-    canonical: 'https://digital-knight.au',
+    canonical: '/',
   },
   robots: {
     index: true,
@@ -71,13 +72,14 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable}`} style={{ backgroundColor: '#FFEDD7' }}>
+    <html lang="en-AU" className={`${serif.variable} ${sans.variable}`} style={{ backgroundColor: '#FFEDD7' }}>
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
         <StructuredData />
       </head>
       <body>
+        <HashScroller />
         <div style={{ minHeight: '100vh', backgroundColor: '#FFEDD7' }}>
           <Nav />
           {children}

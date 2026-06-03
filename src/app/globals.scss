@@ -7,3 +7,17 @@
   --t-family-serif: var(--t-family-serif-source), Georgia, 'Times New Roman', serif;
   --t-family-sans: var(--t-family-sans-source), system-ui, 'Helvetica Neue', sans-serif;
 }
+
+// Visually hidden, but available to assistive tech and search crawlers.
+// Used to keep a complete heading hierarchy on visually heading-less sections.
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

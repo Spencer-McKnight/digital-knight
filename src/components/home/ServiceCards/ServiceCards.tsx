@@ -73,11 +73,14 @@ export function ServiceCards() {
       id="services"
       data-ground="page"
       className={styles.root}
-      aria-label="Services"
+      aria-labelledby="servicecards-heading"
     >
-      <Reveal as="ul" className={styles.grid} amount="md" enabled>
-        {SERVICES.map((service) => (
-          <li key={service.title} className={styles.cell}>
+      <h2 id="servicecards-heading" className="sr-only">
+        What I do
+      </h2>
+      <ul className={styles.grid}>
+        {SERVICES.map((service, i) => (
+          <Reveal as="li" key={service.title} className={styles.cell} amount="md" delay={i * 80} enabled>
             <article className={styles.card} tabIndex={0}>
               <Icon
                 name={service.icon}
@@ -94,9 +97,9 @@ export function ServiceCards() {
                 ))}
               </ul>
             </article>
-          </li>
+          </Reveal>
         ))}
-      </Reveal>
+      </ul>
     </section>
   );
 }

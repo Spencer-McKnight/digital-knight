@@ -10,8 +10,8 @@
   opacity: 0;
   transform: translate3d(0, var(--reveal-rise, 1.25rem), 0);
   transition:
-    opacity var(--dur-scene) var(--ease-house),
-    transform var(--dur-scene) var(--ease-house);
+    opacity var(--dur-epic) var(--ease-house),
+    transform var(--dur-epic) var(--ease-house);
   will-change: opacity, transform;
 }
 

@@ -1,3 +1,4 @@
+import { Reveal } from '@/components/Reveal';
 import { ContactForm } from '../ContactForm/ContactForm';
 import styles from './ContactSection.module.scss';
 
@@ -8,7 +9,7 @@ type ContactSectionProps = {
 export function ContactSection({ hostEmail }: ContactSectionProps) {
   return (
     <section className={styles.root} data-ground="page" aria-label="Contact">
-      <div className={styles.inner}>
+      <Reveal as="div" className={styles.inner} fadeOnly enabled>
         <div className={styles.copy}>
           <span className={styles.eyebrow}>Contact</span>
 
@@ -26,7 +27,7 @@ export function ContactSection({ hostEmail }: ContactSectionProps) {
         <div className={styles.form}>
           <ContactForm hostEmail={hostEmail} />
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

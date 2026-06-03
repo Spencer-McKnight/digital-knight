@@ -24,7 +24,7 @@ export function MeetSpencer() {
       className={styles.root}
       aria-labelledby="meet-heading"
     >
-      <Reveal as="div" className={styles.inner}>
+      <Reveal as="div" className={styles.inner} amount="md" enabled>
         <div className={styles.imageColumn}>
           <figure className={styles.figure}>
             <Image
@@ -41,7 +41,7 @@ export function MeetSpencer() {
 
         <div className={styles.contentColumn}>
           <header className={styles.header}>
-            <p className={styles.eyebrow}>The builder</p>
+            <p className={styles.eyebrow}>The founder</p>
             <h2 id="meet-heading" className={styles.heading}>
               Meet <span className={styles.ember}>Spencer</span>
             </h2>
@@ -49,19 +49,18 @@ export function MeetSpencer() {
 
           <div className={styles.body}>
             <p className={styles.lede}>
-              I have created hundreds of captivating user experiences that are loved by clients and developers alike.
+              I have created hundreds of captivating digital experiences that are loved by businesses and developers.
             </p>
             <p className={styles.copy}>
-              After graduating with a Bachelor of Business Information Technology (Computer Science), I upskilled for five years in Australian digital agencies as a full stack developer.
-              At Inlight, I helped create award winning work for clients like AHM, Nando's, Chadstone, UrbanRest and more.
+              Intelligently driven by a desire to innovate and think efficiently.
+              A loyal and strategic <em className={styles.italic}>Digital Knight</em>, I've lived and witnessed your efforts to evolve your digital capabilities.
             </p>
             <p className={styles.copy}>
-              My skills expanded holistically; now I'm able to manage and deliver comprehensive projects like the{' '}
-              <a href="https://sogif.au" className={styles.link} target="_blank" rel="noreferrer">
-                sogif.au
-              </a>{' '}
-              website.
-              I'm bringing my personality, experience and intelligence to the digital space, to see what mark I can make.
+              I'm not just a pretty website; I will reduce the mental load in your life with bleeding edge technology, allowing your vision the time it needs to shine.
+            </p>
+            <p className={styles.copy}>
+            Formally qualified with a Bachelor of Business Information Technology (Professional) and years in the industry.
+              My knowledge was formed writing code for websites and mobile applications, and naturally grew into a wider understanding of digital success.
             </p>
           </div>
 

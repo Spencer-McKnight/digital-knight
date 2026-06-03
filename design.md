@@ -234,30 +234,30 @@ Sections §§1–8, §10–§13 are the frame. Sections §9 and §14 are the pai
 
 **Scale** (fluid, clamp-based, 375px → 1440px):
 
-| Token              | Value                                            | Family |
-| ------------------ | ------------------------------------------------ | ------ |
-| `--t-monument`     | `clamp(4.5rem, 7vw + 2.9rem, 9rem)`             | Serif  |
-| `--t-hero`         | `clamp(2.75rem, 4vw + 1.78rem, 5.5rem)`         | Serif  |
-| `--t-hero-display` | `clamp(2.125rem, 3.8vw + 0.95rem, 4.75rem)`     | Serif  |
-| `--t-section`      | `clamp(1.875rem, 1.7vw + 1.475rem, 3rem)`       | Serif  |
-| `--t-subsection`   | `clamp(1.5rem, 1.4vw + 1.1rem, 2.25rem)`        | Sans   |
-| `--t-lede`         | `clamp(1.125rem, 0.75vw + 0.95rem, 1.625rem)`   | Sans   |
-| `--t-body`         | `clamp(1.125rem, 0.4vw + 0.85rem, 1.375rem)`    | Sans   |
-| `--t-meta`         | `clamp(0.875rem, 0.2vw + 0.5rem, 1.05rem)`      | Sans   |
-| `--t-ui`           | `clamp(0.8125rem, 0.28vw + 0.68rem, 1.125rem)`  | Sans   |
+| Token              | Value                                          | Family |
+| ------------------ | ---------------------------------------------- | ------ |
+| `--t-monument`     | `clamp(4.5rem, 7vw + 2.9rem, 9rem)`            | Serif  |
+| `--t-hero`         | `clamp(2.75rem, 4vw + 1.78rem, 5.5rem)`        | Serif  |
+| `--t-hero-display` | `clamp(2.125rem, 3.8vw + 0.95rem, 4.75rem)`    | Serif  |
+| `--t-section`      | `clamp(1.875rem, 1.7vw + 1.475rem, 3rem)`      | Serif  |
+| `--t-subsection`   | `clamp(1.5rem, 1.4vw + 1.1rem, 2.25rem)`       | Sans   |
+| `--t-lede`         | `clamp(1.125rem, 0.75vw + 0.95rem, 1.625rem)`  | Sans   |
+| `--t-body`         | `clamp(1.125rem, 0.4vw + 0.85rem, 1.375rem)`   | Sans   |
+| `--t-meta`         | `clamp(0.875rem, 0.2vw + 0.5rem, 1.05rem)`     | Sans   |
+| `--t-ui`           | `clamp(0.8125rem, 0.28vw + 0.68rem, 1.125rem)` | Sans   |
 
 **Settings:**
 
-| Token                  | Value                                                                 | Used for                          |
-| ---------------------- | --------------------------------------------------------------------- | --------------------------------- |
-| `--t-family-serif`     | `Reforma 1969, Georgia, 'Times New Roman', serif`                     | Headlines, headings               |
-| `--t-family-sans`      | `Plus Jakarta Sans, system-ui, 'Helvetica Neue', sans-serif`         | Body, lede, meta, UI              |
-| `--t-leading-display`  | `0.96`                                                                | Monument — cinematic, single-line |
-| `--t-leading-tight`    | `1.1`                                                                 | Hero, section — multi-line serif  |
-| `--t-leading-body`     | `1.6`                                                                 | Body, lede                        |
-| `--t-tracking-tight`   | `-0.02em`                                                             | Serif headings                    |
-| `--t-tracking-meta`    | `0.10em`                                                              | Meta — uppercase only             |
-| `--t-tracking-ui`      | `0.025em`                                                             | UI — sentence-case                |
+| Token                 | Value                                                        | Used for                          |
+| --------------------- | ------------------------------------------------------------ | --------------------------------- |
+| `--t-family-serif`    | `Reforma 1969, Georgia, 'Times New Roman', serif`            | Headlines, headings               |
+| `--t-family-sans`     | `Plus Jakarta Sans, system-ui, 'Helvetica Neue', sans-serif` | Body, lede, meta, UI              |
+| `--t-leading-display` | `0.96`                                                       | Monument — cinematic, single-line |
+| `--t-leading-tight`   | `1.1`                                                        | Hero, section — multi-line serif  |
+| `--t-leading-body`    | `1.6`                                                        | Body, lede                        |
+| `--t-tracking-tight`  | `-0.02em`                                                    | Serif headings                    |
+| `--t-tracking-meta`   | `0.10em`                                                     | Meta — uppercase only             |
+| `--t-tracking-ui`     | `0.025em`                                                    | UI — sentence-case                |
 
 ---
 
@@ -293,7 +293,7 @@ Sections §§1–8, §10–§13 are the frame. Sections §9 and §14 are the pai
 | `--dur-state`   | `80ms`                          | Hover, focus — immediate                      |
 | `--dur-element` | `220ms`                         | Card lift, cursor fill, button                |
 | `--dur-scene`   | `500ms`                         | Section entrance, nav shrink                  |
-| `--dur-epic`    | `1200ms`                        | Sparingly used long-form sequences            |
+| `--dur-epic`    | `1000ms`                        | Sparingly used long-form sequences            |
 | `--ease-house`  | `cubic-bezier(0.16, 1, 0.3, 1)` | Fast-out-slow-in. Everywhere except marquees. |
 | `--ease-linear` | `linear`                        | Infinite marquees only                        |
 

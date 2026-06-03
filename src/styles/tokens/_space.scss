@@ -38,5 +38,5 @@ $space-10: 12rem;    // 192px — hero vertical padding
   // Fluid from 375px → 1440px: 64px (≈ --space-7) → 160px (~17% less than
   // --space-10). Top and bottom symmetric on every act. Tune here to
   // recalibrate the rhythm of the whole page in one place.
-  --space-section: clamp(4rem, 1.9rem + 9vw, 10rem);
+  --space-section: clamp(4rem, 1.9rem + 9vw, 7rem);
 }

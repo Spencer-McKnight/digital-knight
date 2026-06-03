@@ -52,8 +52,8 @@ export function Reveal<T extends ElementType = 'div'>(props: RevealProps<T>) {
     fadeOnly = false,
     delay = 0,
     amount = 'md',
-    threshold = 0.15,
-    rootMargin = '0px 0px -8% 0px',
+    threshold = 0.03,
+    rootMargin = '0px 0px -4% 0px',
     ...rest
   } = props;
   const Tag = as ?? 'div';

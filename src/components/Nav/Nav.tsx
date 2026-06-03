@@ -8,13 +8,13 @@ import { Button } from '@/components/Button';
 import { SmoothLink } from '@/components/SmoothLink';
 import styles from './Nav.module.scss';
 
-const NAV_SCROLL_OFFSET = 0;
 const SCROLL_SETTLE_DELAY = 150;
 
 type NavLink = { label: string; href: string; section?: string };
 
 const LINKS: ReadonlyArray<NavLink> = [
   { label: 'Services', href: '/#services', section: 'services' },
+  { label: 'Work', href: '/#work', section: 'work' },
   { label: 'About', href: '/#meet', section: 'meet' },
 ];
 
@@ -185,7 +185,6 @@ export function Nav() {
                 className={styles.link}
                 data-active={isActive || undefined}
                 onClick={() => handleNavClick(link.section)}
-                {...(isHashLink ? { offset: NAV_SCROLL_OFFSET } : {})}
               >
                 {link.label}
               </LinkComponent>
@@ -276,8 +275,7 @@ function MobileMenu({ open, onClose, active, onNavClick }: MobileMenuProps) {
                   className={styles.drawerLink}
                   data-active={isActive || undefined}
                   onClick={handleClick}
-                  {...(isHashLink ? { offset: NAV_SCROLL_OFFSET } : {})}
-                >
+                  >
                   {link.label}
                 </LinkComponent>
               </li>

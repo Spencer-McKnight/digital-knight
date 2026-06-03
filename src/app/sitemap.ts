@@ -1,12 +1,22 @@
 import type { MetadataRoute } from 'next';
+import { getAllSlugs } from './work/[slug]/content';
+
+const BASE = 'https://digital-knight.au';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: 'https://digital-knight.au',
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
+  const now = new Date();
+
+  const staticPages: MetadataRoute.Sitemap = [
+    { url: BASE, lastModified: now, changeFrequency: 'weekly', priority: 1 },
+    { url: `${BASE}/contact`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
   ];
+
+  const work: MetadataRoute.Sitemap = getAllSlugs().map((slug) => ({
+    url: `${BASE}/work/${slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }));
+
+  return [...staticPages, ...work];
 }
