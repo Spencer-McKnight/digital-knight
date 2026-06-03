@@ -86,14 +86,14 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     figures: [
       {
         variant: 'lead',
-        src: '/images/sogif/sogif-showcase.png',
+        src: '/images/sogif/sogif-showcase.avif',
         alt: 'SOGIF website showing fund performance charts and property assets',
         width: 1251,
         height: 1158,
       },
       {
         variant: 'image',
-        src: '/images/sogif/sogif-old.png',
+        src: '/images/sogif/sogif-old.avif',
         alt: 'The original SOGIF website built on an outdated template',
         width: 1182,
         height: 936,
@@ -101,7 +101,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
       },
       {
         variant: 'image',
-        src: '/images/sogif/sogif-site.png',
+        src: '/images/sogif/sogif-site.avif',
         alt: 'The new SOGIF website with modern design and data visualisation',
         width: 1666,
         height: 1632,
@@ -109,21 +109,21 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
       },
       {
         variant: 'image',
-        src: '/images/sogif/sogif-application.png',
+        src: '/images/sogif/sogif-application.avif',
         alt: 'SOGIF investor application page with detailed fund information',
         width: 1642,
         height: 1458,
       },
       {
         variant: 'image',
-        src: '/images/sogif/sogif-properties.png',
+        src: '/images/sogif/sogif-properties.avif',
         alt: 'SOGIF property portfolio showcase with interactive elements',
         width: 1678,
         height: 1408,
       },
       {
         variant: 'image',
-        src: '/images/sogif/sogif-pagespeed-insights.png',
+        src: '/images/sogif/sogif-pagespeed-insights.avif',
         alt: 'Google PageSpeed Insights showing high performance scores for SOGIF',
         width: 380,
         height: 94,
@@ -171,7 +171,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     figures: [
       {
         variant: 'lead',
-        src: '/images/dyflex-hio/hio-showcase.png',
+        src: '/images/dyflex-hio/hio-showcase.avif',
         alt: 'DyFlex SAP vendor portal interface for Hancock Iron Ore',
         width: 1506,
         height: 1209,
@@ -219,14 +219,14 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     figures: [
       {
         variant: 'lead',
-        src: '/images/propertyinvesting/propertyinvesting-showcase.png',
+        src: '/images/propertyinvesting/propertyinvesting-showcase.avif',
         alt: 'PropertyInvesting.com project scope and strategy document',
         width: 1461,
         height: 1170,
       },
       {
         variant: 'image',
-        src: '/images/propertyinvesting/propertyinvest-mockup-courses.png',
+        src: '/images/propertyinvesting/propertyinvest-mockup-courses.avif',
         alt: 'Mockup design for a modern courses section',
         width: 1167,
         height: 1098,
@@ -234,7 +234,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
       },
       {
         variant: 'image',
-        src: '/images/propertyinvesting/propertyinvesting-mockup-ctas.png',
+        src: '/images/propertyinvesting/propertyinvesting-mockup-ctas.avif',
         alt: 'Mockup design for improved call-to-action sections',
         width: 1507,
         height: 1016,
@@ -242,7 +242,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
       },
       {
         variant: 'image',
-        src: '/images/propertyinvesting/propertyinvesting-mockup-gamified-community.png',
+        src: '/images/propertyinvesting/propertyinvesting-mockup-gamified-community.avif',
         alt: 'Mockup design for a gamified community experience',
         width: 1340,
         height: 1189,
@@ -291,14 +291,14 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     figures: [
       {
         variant: 'lead',
-        src: '/images/stevemcknight.com/stevemcknight-showcase.png',
+        src: '/images/stevemcknight.com/stevemcknight-showcase.avif',
         alt: 'SteveMcKnight.com hero section with portrait and statistics',
         width: 1406,
         height: 1263,
       },
       {
         variant: 'image',
-        src: '/images/stevemcknight.com/stevemcknight-old-website.png',
+        src: '/images/stevemcknight.com/stevemcknight-old-website.avif',
         alt: 'The original Steve McKnight website with dated design',
         width: 1055,
         height: 940,
@@ -306,7 +306,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
       },
       {
         variant: 'image',
-        src: '/images/stevemcknight.com/stevemcknight-books.png',
+        src: '/images/stevemcknight.com/stevemcknight-books.avif',
         alt: 'Steve McKnight books section with clean typography and layout',
         width: 1412,
         height: 1101,
@@ -314,7 +314,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
       },
       {
         variant: 'image',
-        src: '/images/stevemcknight.com/stevemcknight-insights.png',
+        src: '/images/stevemcknight.com/stevemcknight-insights.avif',
         alt: 'Insights section with featured articles and reading content',
         width: 1427,
         height: 1080,
@@ -322,7 +322,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
       },
       {
         variant: 'image',
-        src: '/images/stevemcknight.com/stevemcknight-cta.png',
+        src: '/images/stevemcknight.com/stevemcknight-cta.avif',
         alt: 'Call-to-action section with email signup and engagement prompts',
         width: 1132,
         height: 798,
@@ -330,7 +330,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
       },
       {
         variant: 'image',
-        src: '/images/stevemcknight.com/stevemcknight-pagespeed-insights.png',
+        src: '/images/stevemcknight.com/stevemcknight-pagespeed-insights.avif',
         alt: 'Google PageSpeed Insights showing high performance scores',
         width: 523,
         height: 109,
@@ -401,7 +401,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     figures: [
       {
         variant: 'image',
-        src: '/images/inlight/inlight-showcase.png',
+        src: '/images/inlight/inlight-showcase.avif',
         alt: 'Inlight agency website hero showing their composable architecture philosophy',
         width: 1412,
         height: 1140,

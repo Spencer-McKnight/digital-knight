@@ -37,6 +37,14 @@
   opacity: 0.82;
 }
 
+.desktopBreak {
+  display: none;
+
+  @include respond-to(sm) {
+    display: initial;
+  }
+}
+
 .actions {
   display: flex;
   align-items: center;

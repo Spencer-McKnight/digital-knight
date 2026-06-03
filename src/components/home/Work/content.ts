@@ -13,7 +13,7 @@ const WORK_ORDER = ['sogif', 'dyflex-hio', 'inlight', 'propertyinvesting', 'stev
 const OVERRIDES: Record<string, { label?: string; backdrop?: ImageDef }> = {
   sogif: {
     backdrop: {
-      src: '/images/sogif/sogif-background.png',
+      src: '/images/sogif/sogif-background.avif',
       alt: '',
       width: 1024,
       height: 768,
@@ -22,7 +22,7 @@ const OVERRIDES: Record<string, { label?: string; backdrop?: ImageDef }> = {
   'dyflex-hio': {
     label: 'DyFlex x Hancock Iron Ore',
     backdrop: {
-      src: '/images/dyflex-hio/hio-background.png',
+      src: '/images/dyflex-hio/hio-background.avif',
       alt: 'Hancock Iron Ore field workers collaborating on site',
       width: 1500,
       height: 1001,
