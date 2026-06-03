@@ -18,10 +18,11 @@
   padding: 0;
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-6) var(--space-5);
+  gap: var(--space-5);
 
   @include respond-to(sm) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-5);
   }
 }
 
@@ -130,8 +131,8 @@
 .screen {
   position: absolute;
   z-index: 1;
-  inset: auto var(--space-7) calc(-1 * var(--space-2));
-  top: var(--space-7);
+  inset: auto var(--space-5) calc(-1 * var(--space-2));
+  top: var(--space-5);
   border-radius: 8px 8px 0 0;
   box-shadow: 0 4px 16px rgba(27, 27, 26, 0);
   overflow: hidden;
@@ -139,6 +140,11 @@
   transition:
     transform var(--dur-scene) cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow var(--dur-scene) cubic-bezier(0.4, 0, 0.2, 1);
+
+  @include respond-to(sm) {
+    inset: auto var(--space-7) calc(-1 * var(--space-2));
+    top: var(--space-7);
+  }
 
   .card:hover &,
   .card:focus-visible & {

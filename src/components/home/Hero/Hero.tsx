@@ -15,12 +15,14 @@ export function Hero() {
 
         <h1 id="hero-title" className={styles.title}>
           Create tactical digital systems
+          <span className={styles.mobileSpace}> </span>
           <br className={styles.desktopBreak} />
           that solve and evolve.
         </h1>
 
         <p className={styles.lede}>
           Modernise your greatest successes.
+          <span className={styles.mobileSpace}> </span>
           <br className={styles.desktopBreak} />
           I guarantee to deliver innovation.
         </p>

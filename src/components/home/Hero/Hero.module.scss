@@ -45,6 +45,12 @@
   }
 }
 
+.mobileSpace {
+  @include respond-to(sm) {
+    display: none;
+  }
+}
+
 .actions {
   display: flex;
   align-items: center;
