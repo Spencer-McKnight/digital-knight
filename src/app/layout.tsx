@@ -80,7 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <HashScroller />
-        <div style={{ minHeight: '100vh', backgroundColor: '#FFEDD7' }}>
+        <div style={{ minHeight: '100svh', backgroundColor: '#FFEDD7' }}>
           <Nav />
           {children}
         </div>

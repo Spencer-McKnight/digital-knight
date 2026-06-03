@@ -84,7 +84,7 @@
 // --- Body (colophon + sitemap) --------------------------------------------
 .body {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-5);
   align-items: start;
 
   @include respond-to(lg) {
@@ -184,12 +184,12 @@
 .meta {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: var(--space-2) var(--space-3);
+  gap: var(--space-3) var(--space-4);
   align-items: baseline;
 
   @include respond-to(lg) {
     grid-template-columns: auto 1fr auto;
-    gap: var(--space-4);
+    gap: var(--space-2) var(--space-4);
   }
 }
 
@@ -212,6 +212,10 @@
 .metaLabel {
   opacity: 0.6;
   @include type(ui);
+
+  @include respond-below(lg) {
+    min-width: 6ch;
+  }
 }
 
 .metaValue {
@@ -221,5 +225,6 @@
 
   @include respond-below(md) {
     font-size: var(--t-body);
+    line-height: 1.5;
   }
 }

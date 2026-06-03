@@ -43,6 +43,7 @@ function Card({ item, featured }: { item: WorkItem; featured?: boolean }) {
     <Link
       className={styles.card}
       href={`/work/${item.id}`}
+      prefetch
     >
       <p className={styles.label}>{item.label}</p>
       <h3 className={styles.title}>{item.title}</h3>

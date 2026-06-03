@@ -18,6 +18,10 @@ import styles from './Reveal.module.scss';
  *   Uses IntersectionObserver (one-shot, then disconnects) rather than
  *   ScrollTrigger. Lighter, and entry motion only ever needs to fire once.
  *   Honors `prefers-reduced-motion` by collapsing to an opacity fade.
+ *
+ *   `immediate` bypasses IO entirely and plays a CSS @keyframes animation
+ *   on first paint — use for above-fold content that should never flash
+ *   invisible.
  */
 
 type Amount = 'sm' | 'md' | 'lg';
@@ -27,6 +31,8 @@ type RevealOwnProps = {
   className?: string;
   /** Kill-switch: when false (default) the wrapper renders with no animation. */
   enabled?: boolean;
+  /** Play on first paint via CSS keyframes instead of waiting for IO. */
+  immediate?: boolean;
   /** Opacity-only — no vertical translate. */
   fadeOnly?: boolean;
   /** Stagger after intersection, in ms. */
@@ -49,6 +55,7 @@ export function Reveal<T extends ElementType = 'div'>(props: RevealProps<T>) {
     as,
     className,
     enabled = false,
+    immediate = false,
     fadeOnly = false,
     delay = 0,
     amount = 'md',
@@ -59,7 +66,9 @@ export function Reveal<T extends ElementType = 'div'>(props: RevealProps<T>) {
   const Tag = as ?? 'div';
   const generatedId = useId();
   const elementId = (rest as { id?: string }).id ?? generatedId;
-  const [revealed, setRevealed] = useState(!enabled);
+
+  const useIO = enabled && !immediate;
+  const [revealed, setRevealed] = useState(!useIO);
 
   useEffect(() => {
     if (revealed) return;
@@ -92,21 +101,25 @@ export function Reveal<T extends ElementType = 'div'>(props: RevealProps<T>) {
   }, [elementId, revealed, threshold, rootMargin]);
 
   const cls = [
-    enabled && styles.reveal,
-    enabled && !fadeOnly && styles[amount],
-    enabled && fadeOnly && styles.fadeOnly,
+    enabled && !immediate && styles.reveal,
+    enabled && !immediate && !fadeOnly && styles[amount],
+    enabled && !immediate && fadeOnly && styles.fadeOnly,
+    enabled && immediate && !fadeOnly && styles.immediate,
+    enabled && immediate && !fadeOnly && styles[`immediate_${amount}`],
+    enabled && immediate && fadeOnly && styles.immediateFade,
     className,
   ].filter(Boolean).join(' ');
-  const style: CSSProperties | undefined = delay
-    ? { transitionDelay: `${delay}ms` }
-    : undefined;
+
+  const style: CSSProperties = {};
+  if (delay && !immediate) style.transitionDelay = `${delay}ms`;
+  if (delay && immediate) style.animationDelay = `${delay}ms`;
 
   return createElement(
     Tag,
     {
       id: elementId,
       className: cls,
-      style,
+      style: Object.keys(style).length ? style : undefined,
       'data-revealed': revealed ? 'true' : undefined,
       ...rest,
     } as ComponentPropsWithoutRef<T>,

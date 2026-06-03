@@ -23,7 +23,7 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
           {/* Left rail */}
           <aside className={styles.rail} aria-label="Project overview">
             <div className={styles.railSticky}>
-              <Reveal enabled fadeOnly>
+              <Reveal enabled immediate fadeOnly>
                 <h1 className={styles.title}>{study.label}, {study.title}</h1>
                 <p className={styles.lede}>{study.tagline}</p>
               </Reveal>
@@ -42,7 +42,7 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
               {study.stats && study.stats.length > 0 && (
                 <>
                   <span className={styles.railRule} aria-hidden />
-                  <Reveal enabled amount="sm" delay={100}>
+                  <Reveal enabled immediate amount="sm" delay={180}>
                     <p className={styles.railHeading}>At a glance</p>
                     <dl className={styles.statsList}>
                       {study.stats.map((stat) => (
@@ -63,7 +63,7 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
 
             {/* Lead figure inside the canvas */}
             {lead && (
-              <Reveal enabled amount="md" className={styles.leadFigure}>
+              <Reveal enabled immediate amount="md" delay={100} className={styles.leadFigure}>
                 <div className={styles.leadFrame}>
                   <Image
                     src={lead.src}

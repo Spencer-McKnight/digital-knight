@@ -29,6 +29,17 @@ body {
   overflow-x: clip;
 }
 
+// ── Page entrance ──────────────────────────────────────────────────────────
+// Every <main> fades in on render via CSS @keyframes — no JS cycle needed.
+// Pages that run their own per-element stagger override with animation: none.
+@keyframes pageEntrance {
+  from { opacity: 0; }
+}
+
+main {
+  animation: pageEntrance var(--dur-scene) var(--ease-house) both;
+}
+
 ::selection {
   background-color: var(--ink-ember);
   color: var(--ink-page);

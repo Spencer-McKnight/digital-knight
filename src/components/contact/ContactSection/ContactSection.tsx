@@ -9,7 +9,7 @@ type ContactSectionProps = {
 export function ContactSection({ hostEmail }: ContactSectionProps) {
   return (
     <section className={styles.root} data-ground="page" aria-label="Contact">
-      <Reveal as="div" className={styles.inner} fadeOnly enabled>
+      <Reveal as="div" className={styles.inner} enabled immediate fadeOnly>
         <div className={styles.copy}>
           <span className={styles.eyebrow}>Contact</span>
 

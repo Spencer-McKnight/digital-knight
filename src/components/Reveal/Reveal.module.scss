@@ -1,11 +1,15 @@
 // =============================================================================
 // Reveal — entry motion primitive.
 // -----------------------------------------------------------------------------
-// Honors `--ease-house` and `--dur-scene`. The base state lifts the block
-// downward by a token-sized rise so the reveal pulls *upward*. Reduced motion
+// Two modes:
+//   1. IO-based (default): element starts hidden, transitions on scroll-into-view.
+//   2. Immediate: CSS @keyframes plays on first paint — no JS round-trip.
+//
+// Honors `--ease-house` and `--dur-epic`/`--dur-scene`. Reduced motion
 // keeps the opacity fade and drops translate.
 // =============================================================================
 
+// ── IO-based (scroll-triggered) ─────────────────────────────────────────────
 .reveal {
   opacity: 0;
   transform: translate3d(0, var(--reveal-rise, 1.25rem), 0);
@@ -37,6 +41,31 @@
   transition: opacity var(--dur-scene) var(--ease-house);
 }
 
+// ── Immediate (first-paint keyframes) ───────────────────────────────────────
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-rise, 1.25rem));
+  }
+}
+
+@keyframes revealFade {
+  from { opacity: 0; }
+}
+
+.immediate {
+  animation: revealUp var(--dur-epic) var(--ease-house) both;
+}
+
+.immediate_sm { --reveal-rise: 0.5rem; }
+.immediate_md { --reveal-rise: 1.25rem; }
+.immediate_lg { --reveal-rise: 2rem; }
+
+.immediateFade {
+  animation: revealFade var(--dur-scene) var(--ease-house) both;
+}
+
+// ── Reduced motion ──────────────────────────────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     transform: none;

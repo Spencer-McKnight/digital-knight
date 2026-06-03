@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { SmoothLink } from '@/components/SmoothLink';
 import { Reveal } from '@/components/Reveal';
-import { CASE_STUDIES } from '@/app/work/[slug]/content';
 import styles from './Footer.module.scss';
 import { Button } from '../Button';
 
@@ -15,12 +14,6 @@ const SITEMAP = [
       { label: 'Work', href: '/#work' },
       { label: 'Contact', href: '/contact' },
     ]
-  },
-  {
-    heading: 'Work', links: CASE_STUDIES.map((cs) => ({
-      label: cs.label,
-      href: `/work/${cs.slug}`,
-    })),
   },
   {
     heading: 'Contact', links: [

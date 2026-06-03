@@ -34,13 +34,13 @@ const SERVICES: ReadonlyArray<Service> = [
   },
   {
     icon: 'monitor',
-    title: 'Website Ecosystem',
+    title: 'Website',
     items: [
-      'Website Design',
-      'Brand Guidance',
+      'Development',
+      'Design & Branding',
+      'Quality Assurance',
       'Search Curation (SEO)',
       'Conversion & Marketing',
-      'Quality Assurance',
     ],
   },
   {

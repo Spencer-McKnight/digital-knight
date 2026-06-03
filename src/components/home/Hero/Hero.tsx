@@ -10,7 +10,7 @@ export function Hero() {
       className={styles.root}
       aria-labelledby="hero-title"
     >
-      <Reveal as="div" className={styles.inner} enabled fadeOnly>
+      <Reveal as="div" className={styles.inner} enabled immediate fadeOnly>
         <p className={styles.eyebrow}>Digital Knight</p>
 
         <h1 id="hero-title" className={styles.title}>

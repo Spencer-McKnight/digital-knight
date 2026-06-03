@@ -48,11 +48,11 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     slug: 'sogif',
     label: 'SOGIF.au',
     title: 'Modernising a world-class fund',
-    tagline: 'Modernising website technology, making it easier to inform investors and stay focused on what matters.',
+    tagline: 'Creating a beautiful branded website, making it easier to inform investors and stay focused on what matters.',
     lede: 'A strategic digital rebuild for the Strategic Opportunities (Growth & Income) Fund, transforming an outdated online presence into a platform that matches the calibre of the fund itself.',
     siteUrl: 'https://sogif.au',
     stats: [
-      { value: '90%', label: 'Increase in engagement duration in first month' },
+      { value: '90%', label: 'Increase in engagement duration in one month' },
       { value: '3.2x', label: 'Higher ratio of users reaching the application page' },
     ],
     technologies: ['Next.js', 'React 19', 'TypeScript', 'Tailwind CSS', 'GraphQL', 'Framer Motion', 'Vercel'],
@@ -136,7 +136,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
   {
     slug: 'dyflex-hio',
     label: 'DyFlex',
-    title: 'Seamless SAP vendor portal',
+    title: 'Seamless SAP React dashboard frontend',
     tagline: 'Building a seamless React, SAP-integrated system for HIO vendors.',
     lede: 'Brought on as Next.js principal developer and project lead for a vendor portal integration connecting multiple SAP systems to a responsive, enterprise-grade front-end.',
     siteUrl: 'https://dyflex.com.au',
@@ -255,7 +255,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
   {
     slug: 'stevemcknight',
     label: 'SteveMcKnight.com',
-    title: 'Showcase website in a day',
+    title: 'Live website in one day',
     tagline: 'From idea to finished showcase website in a single day.',
     lede: 'A rapid, identity-driven build that proved a premium web experience does not need a premium timeline or budget.',
     siteUrl: 'https://stevemcknight.com',
@@ -343,7 +343,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
   {
     slug: 'inlight',
     label: 'Inlight',
-    title: 'Two years of agency delivery',
+    title: 'Developing in a modern digital agency',
     tagline: 'Building expertise in modern development and agency agile.',
     lede: 'A tenure, not a build. Two years as a Full Stack Developer at one of Melbourne\'s leading digital product agencies, absorbing the rhythms of real delivery and watching products ship to real users at scale.',
     siteUrl: 'https://inlight.com.au',
