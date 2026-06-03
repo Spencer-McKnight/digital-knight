@@ -3,7 +3,7 @@
   "short_name": "Digital Knight",
   "icons": [
     {
-      "src": "/images/svg-logo.svg",
+      "src": "/images/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"

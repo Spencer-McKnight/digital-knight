@@ -14,7 +14,7 @@ function readHash(): string {
   const raw = window.location.hash.slice(1);
   if (!raw) return '';
   const segments = raw.split('#').filter(Boolean);
-  return segments.length ? segments[segments.length - 1] : '';
+  return segments.length ? (segments[segments.length - 1] ?? '') : '';
 }
 
 /**

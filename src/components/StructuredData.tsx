@@ -1,6 +1,19 @@
-const ORG_ID = 'https://digital-knight.au/#organization';
-const PERSON_ID = 'https://digital-knight.au/#spencer';
-const WEBSITE_ID = 'https://digital-knight.au/#website';
+const BASE = 'https://digital-knight.au';
+const ORG_ID = `${BASE}/#organization`;
+const PERSON_ID = `${BASE}/#spencer`;
+const WEBSITE_ID = `${BASE}/#website`;
+
+const siteNavLinks: Array<{ name: string; url: string }> = [
+  { name: 'Services', url: `${BASE}/#services` },
+  { name: 'Work', url: `${BASE}/#work` },
+  { name: 'About', url: `${BASE}/#meet` },
+  { name: 'Contact', url: `${BASE}/contact` },
+  { name: 'SOGIF Case Study', url: `${BASE}/work/sogif` },
+  { name: 'DyFlex Case Study', url: `${BASE}/work/dyflex-hio` },
+  { name: 'PropertyInvesting Case Study', url: `${BASE}/work/propertyinvesting` },
+  { name: 'SteveMcKnight Case Study', url: `${BASE}/work/stevemcknight` },
+  { name: 'Inlight Case Study', url: `${BASE}/work/inlight` },
+];
 
 const graph = {
   '@context': 'https://schema.org',
@@ -99,10 +112,20 @@ const graph = {
     {
       '@type': 'WebSite',
       '@id': WEBSITE_ID,
-      url: 'https://digital-knight.au',
+      url: BASE,
       name: 'Digital Knight',
       publisher: { '@id': ORG_ID },
       inLanguage: 'en-AU',
+    },
+    {
+      '@type': 'SiteNavigationElement',
+      '@id': `${BASE}/#navigation`,
+      name: 'Main Navigation',
+      hasPart: siteNavLinks.map((link) => ({
+        '@type': 'WebPage',
+        name: link.name,
+        url: link.url,
+      })),
     },
   ],
 };

@@ -5,14 +5,13 @@ import { MeetSpencer } from '@/components/home/MeetSpencer';
 import { Work } from '@/components/home/Work';
 
 export const metadata: Metadata = {
-  title: 'Digital Knight — Strategic Web Design & AI Automation, Melbourne',
   description:
-    'Tactical digital systems that solve and evolve. A Melbourne digital agency building next-gen websites, AI automation and strategic digital infrastructure.',
+    'Create tactical digital systems that solve and evolve. Guaranteed expert innovation for websites, AI, business processes, complex integrations.',
   alternates: { canonical: '/' },
   openGraph: {
-    title: 'Digital Knight — Tactical digital systems that solve and evolve',
+    title: 'Digital Knight: Tactical digital systems that solve and evolve',
     description:
-      'Next-gen websites, AI automation and strategic vision for digital businesses. Design, infrastructure and modern development.',
+      'Create tactical digital systems that solve and evolve. Guaranteed expert innovation for websites, AI, business processes, complex integrations.',
   },
 };
 

@@ -9,29 +9,29 @@ import { StructuredData } from '@/components/StructuredData';
 import { Analytics } from '@vercel/analytics/next';
 
 const siteUrl = new URL('https://digital-knight.au');
-const brandLogoIcon = {
-  url: '/images/svg-logo.svg',
+const faviconIcon = {
+  url: '/images/favicon.svg',
   type: 'image/svg+xml',
 };
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
   title: {
-    default: 'Digital Knight — Strategic Web Design & AI Automation, Melbourne',
-    template: '%s · Digital Knight',
+    default: 'Digital Knight: Evolve Online Strategy - AI & Websites',
+    template: 'Digital Knight | %s',
   },
   description:
-    'Next-gen websites, AI automation and strategic vision for digital businesses. Design, infrastructure and modern development — forged by Digital Knight.',
+    'Create tactical digital systems that solve and evolve. Guaranteed expert innovation for websites, AI, business processes, complex integrations.',
   applicationName: 'Digital Knight',
   authors: [{ name: 'Digital Knight' }],
   icons: {
-    icon: [brandLogoIcon],
-    shortcut: [brandLogoIcon],
-    apple: [brandLogoIcon],
+    icon: [faviconIcon],
+    shortcut: [faviconIcon],
+    apple: [faviconIcon],
     other: [
       {
         rel: 'mask-icon',
-        url: brandLogoIcon.url,
+        url: '/images/svg-logo.svg',
         color: '#DD6637',
       },
     ],
@@ -42,13 +42,13 @@ export const metadata: Metadata = {
     siteName: 'Digital Knight',
     title: 'Digital Knight',
     description:
-      'Next-gen websites, AI automation and strategic vision for digital businesses. Design, infrastructure and modern development.',
+      'Create tactical digital systems that solve and evolve. Guaranteed expert innovation for websites, AI, business processes, complex integrations.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Digital Knight',
     description:
-      'Next-gen websites, AI automation and strategic vision for digital businesses. Design, infrastructure and modern development.',
+      'Create tactical digital systems that solve and evolve. Guaranteed expert innovation for websites, AI, business processes, complex integrations.',
   },
   manifest: '/site.webmanifest',
   alternates: {
