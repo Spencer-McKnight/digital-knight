@@ -35,21 +35,53 @@ export function SmoothLink({
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
+      // Respect new-tab / modified clicks and anything already handled.
+      if (
+        e.defaultPrevented ||
+        e.button !== 0 ||
+        e.metaKey ||
+        e.ctrlKey ||
+        e.shiftKey ||
+        e.altKey
+      ) {
+        onClick?.(e);
+        return;
+      }
+
       const isHomeLink = typeof href === 'string' && href === '/';
 
-      if (hasHash) {
+      if (hasHash && hash) {
         e.preventDefault();
+
+        // Always build a clean, single-hash destination from the static href.
+        const cleanHref = `${targetPath}#${hash}`;
 
         if (isCurrentPage) {
           const target = document.getElementById(hash);
           if (target) scrollToElement(target, 'smooth');
-          window.history.replaceState(null, '', `${targetPath}#${hash}`);
+          window.history.replaceState(null, '', cleanHref);
         } else {
-          const hrefStr = typeof href === 'string' ? href : `${targetPath}#${hash}`;
-          router.push(hrefStr, { scroll: false });
+          // Strip any existing fragment first so the router can't stack hashes
+          // (e.g. "/#services" + push("/#work") -> "/#services#work").
+          if (window.location.hash) {
+            window.history.replaceState(
+              null,
+              '',
+              window.location.pathname + window.location.search,
+            );
+          }
+          router.push(cleanHref, { scroll: false });
         }
       } else if (isCurrentPage && isHomeLink) {
         e.preventDefault();
+        // Drop any stale fragment so the bar URL stays clean at the top.
+        if (window.location.hash) {
+          window.history.replaceState(
+            null,
+            '',
+            window.location.pathname + window.location.search,
+          );
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
