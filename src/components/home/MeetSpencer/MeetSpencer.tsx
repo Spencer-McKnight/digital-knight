@@ -53,7 +53,7 @@ export function MeetSpencer() {
             </p>
             <p className={styles.copy}>
               Intelligently driven by a desire to innovate and think efficiently.
-              A loyal and strategic <em className={styles.italic}>Digital Knight</em>, I've lived and witnessed your efforts to evolve your digital capabilities.
+              A loyal and strategic <em className={styles.italic}>Digital Knight</em>, I've lived and witnessed your efforts to improve your digital capabilities.
             </p>
             <p className={styles.copy}>
               I'm not just a pretty website; I will reduce the mental load in your life with bleeding edge technology, allowing your vision the time it needs to shine.

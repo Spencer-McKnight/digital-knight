@@ -1,7 +1,7 @@
 @use 'mixins' as *;
 
 .root {
-  @include section-pad(act);
+  @include section-pad(lg);
 }
 
 .inner {
