@@ -1,0 +1,37 @@
+# Digital Knight
+
+> Digital Knight is a Melbourne-based digital strategy agency that builds at the frontier of AI development. Founded by Spencer McKnight, the agency pairs deep technical craft with strategic thinking to create digital systems that don't just work -- they evolve. Every project is shaped by hands-on AI expertise, modern architecture, and a conviction that considered design is a competitive advantage. The site itself is the proof: a purpose-built Next.js application with bespoke booking systems, cinematic motion design, and the kind of attention that only comes from someone who writes the code, shapes the strategy, and answers the phone.
+
+## Services
+
+- Strategic Advisory: Market research, digital product analysis, AI and innovation strategy, success definitions, modern architecture.
+- Website: Development, design and branding, quality assurance, search curation (SEO), conversion and marketing.
+- Automation Tools: Business process maps, AI workflows, third-party integrations, admin dashboards, reducing manual load.
+- Evolution: Platform evolution, data analytics, technical support, feature enhancement, change management.
+
+## Contact
+
+- Free 30-minute digital strategy consultation available.
+- Email: hello@digital-knight.au
+- Location: Melbourne, Australia
+
+## Pages
+
+- [Home](https://digital-knight.au/)
+- [Contact](https://digital-knight.au/contact)
+
+## Case Studies
+
+- [SOGIF.au](https://digital-knight.au/work/sogif): Full website rebuild for an investment fund. 90% engagement increase, 3.2x higher conversion. Next.js, React 19, GraphQL, Vercel.
+- [DyFlex](https://digital-knight.au/work/dyflex-hio): SAP-integrated vendor portal for Hancock Iron Ore. Pixel-perfect prototype delivered in 4 days against an 8-week timeline using AI-driven workflows.
+- [PropertyInvesting.com](https://digital-knight.au/work/propertyinvesting): Strategic consultation uncovering 97% bot traffic and projecting 90% cost reduction. Led directly to the SOGIF engagement.
+- [SteveMcKnight.com](https://digital-knight.au/work/stevemcknight): Complete website from concept to live in a single day, $0 ongoing cost. AI-assisted build preserving the client's voice.
+- [Inlight](https://digital-knight.au/work/inlight): Two years at a leading Melbourne agency. Shipped for Chadstone, Nando's, Urban Rest, AHM. Awarded Rising Star for accelerated growth.
+
+## About the Founder
+
+Spencer McKnight holds a Bachelor of Business Information Technology (Professional). He has created hundreds of digital experiences across websites and mobile applications, developing a wide understanding of digital success beyond code. He operates Digital Knight as a personal agency focused on long-term digital partnerships.
+
+## Technical Stack
+
+Built with Next.js (App Router), React, TypeScript, SCSS, GSAP, Supabase, and deployed on Vercel.

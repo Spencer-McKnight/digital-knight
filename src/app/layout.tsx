@@ -76,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://www.google-analytics.com" />
+        <link rel="llms-txt" href="/llms.txt" />
         <StructuredData />
       </head>
       <body>

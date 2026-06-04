@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: now, changeFrequency: 'weekly', priority: 1 },
     { url: `${BASE}/contact`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE}/llms.txt`, lastModified: now, changeFrequency: 'monthly', priority: 0.3 },
   ];
 
   const work: MetadataRoute.Sitemap = getAllSlugs().map((slug) => ({

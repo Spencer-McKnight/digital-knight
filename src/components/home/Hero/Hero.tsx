@@ -24,7 +24,7 @@ export function Hero() {
           Modernise your greatest successes.
           <span className={styles.mobileSpace}> </span>
           <br className={styles.desktopBreak} />
-          I guarantee to deliver innovation.
+          Guaranteed to deliver innovation.
         </p>
 
         <div className={styles.actions}>
