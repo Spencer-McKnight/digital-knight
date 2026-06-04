@@ -353,7 +353,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     technologies: ['React', 'Next.js', 'React Native', 'TypeScript', 'AWS', 'GraphQL', 'Docker', 'Node.js'],
     context: [
       'Inlight is a Melbourne-based digital product agency that champions composable architecture, continuous evolution, and lasting digital value. Their client portfolio spans retail, automotive, food and beverage, health, government, travel and logistics.',
-      'This was the environment in which Digital Knight\'s technical foundation was forged. Before operating independently, two years were spent as a Full Stack Developer at Inlight, absorbing the rhythms of agency delivery, building confidence across entirely new stacks, and watching real products ship to real users at scale.',
+      'This was the environment in which Digital Knight\'s technical foundation was forged. Before operating independently, years as a Full Stack Developer at Inlight, absorbing the rhythms of agency delivery, building confidence across entirely new stacks, and watching real products ship to real users at scale.',
     ],
     criteria: [
       'Deliver polished digital experiences for high-profile clients under strict deadlines',
