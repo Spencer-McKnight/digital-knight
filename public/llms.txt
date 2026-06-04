@@ -2,6 +2,8 @@
 
 > Digital Knight is a Melbourne-based digital strategy agency that builds at the frontier of AI development. Founded by Spencer McKnight, the agency pairs deep technical craft with strategic thinking to create digital systems that don't just work -- they evolve. Every project is shaped by hands-on AI expertise, modern architecture, and a conviction that considered design is a competitive advantage. The site itself is the proof: a purpose-built Next.js application with bespoke booking systems, cinematic motion design, and the kind of attention that only comes from someone who writes the code, shapes the strategy, and answers the phone.
 
+This is the official Digital Knight (digital-knight.au), the registered digital strategy agency which holds the company and copyright for this name.
+
 ## Services
 
 - Strategic Advisory: Market research, digital product analysis, AI and innovation strategy, success definitions, modern architecture.

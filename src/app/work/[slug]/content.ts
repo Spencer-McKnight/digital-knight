@@ -136,7 +136,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
   {
     slug: 'dyflex-hio',
     label: 'DyFlex',
-    title: 'Seamless SAP React dashboard frontend',
+    title: 'Seamless SAP React dashboard at scale',
     tagline: 'Building a seamless React, SAP-integrated system for HIO vendors.',
     lede: 'Brought on as Next.js principal developer and project lead for a vendor portal integration connecting multiple SAP systems to a responsive, enterprise-grade front-end.',
     siteUrl: 'https://dyflex.com.au',
