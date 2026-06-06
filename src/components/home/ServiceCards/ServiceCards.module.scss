@@ -172,8 +172,13 @@
     height: 28px;
   }
 
-  .card:hover &,
-  .card:focus-visible &,
+  @media (pointer: fine) {
+    .card:hover &,
+    .card:focus-visible & {
+      color: var(--ink-ember);
+    }
+  }
+
   .card.active & {
     color: var(--ink-ember);
   }
@@ -224,8 +229,13 @@
     gap: var(--space-3);
   }
 
-  .card:hover &,
-  .card:focus-visible &,
+  @media (pointer: fine) {
+    .card:hover &,
+    .card:focus-visible & {
+      opacity: 1;
+    }
+  }
+
   .card.active & {
     opacity: 1;
   }

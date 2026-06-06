@@ -31,7 +31,7 @@ export const FAQS: FAQItem[] = [
         <p>
           For design and prototyping, AI generates rapid visual concepts that can be validated
           before a single line of code is written. The creative direction, layout choices, and brand
-          alignment are hands-on decisions informed by research, not delegated to a model.
+          alignment are hands-on decisions informed by research.
         </p>
         <p>
           For development,{' '}
@@ -40,11 +40,12 @@ export const FAQS: FAQItem[] = [
           </a>{' '}
           is the primary AI coding environment, providing intelligent code generation, refactoring,
           and architectural guidance within a terminal workflow. The architecture, code quality
-          standards, and technical trade-offs remain deliberate engineering choices.
+          standards are set by Digital Knight, and propogated with amazing success by modern agents.
         </p>
         <p>
-          Each model and tool is chosen for its optimal output in research and curation. The craft
-          that turns that raw material into something considered and specific is always human.
+          Each model and tool is chosen for its optimal output in research and curation. While you
+          may have experienced the power of ChatGPT, the expensive, advanced models designed for
+          each use case have a power that goes far beyond what you may expect.
         </p>
       </>
     ),

@@ -16,11 +16,11 @@ const SERVICES: ReadonlyArray<Service> = [
     icon: 'lightbulb',
     title: 'Strategic Advisory',
     items: [
-      'Market Research',
-      'Digital Product Analysis',
       'AI & Innovation Strategy',
-      'Success Definitions',
       'Modern Architecture',
+      'Digital Product Analysis',
+      'Success Definitions',
+      'Market Research',
     ],
   },
   {
@@ -65,9 +65,11 @@ export function ServiceCards() {
   const [activeIndex, setActiveIndex] = useState(-1);
   const armed = useRef(false);
 
-  const setCardRef = (i: number): RefCallback<HTMLElement> => (el) => {
-    cardRefs.current[i] = el;
-  };
+  const setCardRef =
+    (i: number): RefCallback<HTMLElement> =>
+    (el) => {
+      cardRefs.current[i] = el;
+    };
 
   useEffect(() => {
     if (!window.matchMedia(COARSE_QUERY).matches) return;
@@ -134,18 +136,20 @@ export function ServiceCards() {
       </h2>
       <ul className={styles.grid}>
         {SERVICES.map((service, i) => (
-          <Reveal as="li" key={service.title} className={styles.cell} amount="md" delay={i * 80} enabled>
+          <Reveal
+            as="li"
+            key={service.title}
+            className={styles.cell}
+            amount="md"
+            delay={i * 80}
+            enabled
+          >
             <article
               className={`${styles.card}${activeIndex === i ? ` ${styles.active}` : ''}`}
               tabIndex={0}
               ref={setCardRef(i)}
             >
-              <Icon
-                name={service.icon}
-                size={28}
-                className={styles.icon}
-                aria-hidden="true"
-              />
+              <Icon name={service.icon} size={28} className={styles.icon} aria-hidden="true" />
               <h3 className={styles.title}>{service.title}</h3>
               <ul className={styles.items} role="list">
                 {service.items.map((item) => (

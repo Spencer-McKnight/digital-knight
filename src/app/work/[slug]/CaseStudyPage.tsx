@@ -15,16 +15,16 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
 
   return (
     <main className={styles.root}>
-
       {/* Split layout: left rail + right canvas */}
       <div className={styles.split}>
         <div className={styles.splitInner}>
-
           {/* Left rail */}
           <aside className={styles.rail} aria-label="Project overview">
             <div className={styles.railSticky}>
               <Reveal enabled immediate fadeOnly>
-                <h1 className={styles.title}>{study.label}, {study.title}</h1>
+                <h1 className={styles.title}>
+                  {study.label}, {study.title}
+                </h1>
                 <p className={styles.lede}>{study.tagline}</p>
               </Reveal>
 
@@ -60,7 +60,6 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
 
           {/* Right canvas */}
           <div className={styles.canvas}>
-
             {/* Lead figure inside the canvas */}
             {lead && (
               <Reveal enabled immediate amount="md" delay={100} className={styles.leadFigure}>
@@ -82,23 +81,39 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
             <Reveal as="section" enabled amount="md" className={styles.beat} aria-label="Context">
               <h2 className={styles.beatHeading}>Context</h2>
               {study.context.map((para, i) => (
-                <p key={i} className={styles.prose}>{para}</p>
+                <p key={i} className={styles.prose}>
+                  {para}
+                </p>
               ))}
             </Reveal>
 
             {/* Success criteria */}
-            <Reveal as="section" enabled amount="md" className={styles.beat} aria-label="Success criteria">
+            <Reveal
+              as="section"
+              enabled
+              amount="md"
+              className={styles.beat}
+              aria-label="Success criteria"
+            >
               <h2 className={styles.beatHeading}>Success criteria</h2>
               <ul className={styles.criteriaList}>
                 {study.criteria.map((item, i) => (
-                  <li key={i} className={styles.criteriaItem}>{item}</li>
+                  <li key={i} className={styles.criteriaItem}>
+                    {item}
+                  </li>
                 ))}
               </ul>
             </Reveal>
 
             {/* Engagements (Inlight) */}
             {study.engagements && study.engagements.length > 0 && (
-              <Reveal as="section" enabled amount="md" className={styles.beat} aria-label="Engagements">
+              <Reveal
+                as="section"
+                enabled
+                amount="md"
+                className={styles.beat}
+                aria-label="Engagements"
+              >
                 <h2 className={styles.beatHeading}>Engagements</h2>
                 <dl className={styles.engagementList}>
                   {study.engagements.map((eng) => (
@@ -115,7 +130,9 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
             <Reveal as="section" enabled amount="md" className={styles.beat} aria-label="Outcomes">
               <h2 className={styles.beatHeading}>Outcomes</h2>
               {study.outcomes.map((para, i) => (
-                <p key={i} className={styles.prose}>{para}</p>
+                <p key={i} className={styles.prose}>
+                  {para}
+                </p>
               ))}
             </Reveal>
 
@@ -137,17 +154,31 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
             ))}
 
             {/* Stack table */}
-            <Reveal as="section" enabled amount="md" className={styles.beat} aria-label="Technology stack">
+            <Reveal
+              as="section"
+              enabled
+              amount="md"
+              className={styles.beat}
+              aria-label="Technology stack"
+            >
               <h2 className={styles.beatHeading}>Stack</h2>
               <div className={styles.stackTable} role="table" aria-label="Technology stack">
                 <div className={styles.stackHeader} role="row">
-                  <span className={styles.stackHeaderCell} role="columnheader">Technology</span>
-                  <span className={styles.stackHeaderCell} role="columnheader">Use Case</span>
+                  <span className={styles.stackHeaderCell} role="columnheader">
+                    Technology
+                  </span>
+                  <span className={styles.stackHeaderCell} role="columnheader">
+                    Use Case
+                  </span>
                 </div>
                 {study.stack.map((row) => (
                   <div key={row.technology} className={styles.stackRow} role="row">
-                    <span className={styles.stackTech} role="cell">{row.technology}</span>
-                    <span className={styles.stackUse} role="cell">{row.useCase}</span>
+                    <span className={styles.stackTech} role="cell">
+                      {row.technology}
+                    </span>
+                    <span className={styles.stackUse} role="cell">
+                      {row.useCase}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -160,17 +191,18 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
                   <p className={styles.nextLabel}>Next case</p>
                   <Link href={`/work/${nextStudy.slug}`} className={styles.nextLink}>
                     <span className={styles.nextTitle}>{nextStudy.title}</span>
-                    <span className={styles.nextArrow} aria-hidden>&#8594;</span>
+                    <span className={styles.nextArrow} aria-hidden>
+                      &#8594;
+                    </span>
                   </Link>
                 </Reveal>
               )}
               <Reveal enabled amount="sm" delay={80} className={styles.cta}>
                 <Button href="/contact" variant="secondary" size="md">
-                  Start a conversation
+                  Start a project
                 </Button>
               </Reveal>
             </div>
-
           </div>
         </div>
       </div>

@@ -136,10 +136,16 @@ $rule: rgba(27, 27, 26, 0.25);
 .question {
   @include type(body);
   font-weight: var(--t-weight-medium);
+  color: var(--ink-iron);
   transition: color var(--dur-scene) cubic-bezier(0.4, 0, 0.2, 1);
 
   @include respond-below(md) {
     font-size: clamp(0.95rem, 0.3vw + 0.8rem, 1.1rem);
+  }
+
+  .trigger:hover &,
+  .trigger:focus-visible & {
+    color: var(--ink-ember);
   }
 }
 

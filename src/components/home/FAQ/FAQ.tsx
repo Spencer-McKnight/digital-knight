@@ -116,6 +116,7 @@ function AccordionItem({
         >
           <path
             className={styles.chevronPath}
+            d={isOpen ? 'M 6 15 L 12 9 L 18 15' : 'M 6 9 L 12 15 L 18 9'}
             stroke="currentColor"
             strokeWidth={2}
             strokeLinecap="round"

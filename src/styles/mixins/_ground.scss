@@ -25,7 +25,7 @@
   --ink-stone:  #{$ink-iron};
 
   --ink-rule:   #{rgba($ink-page,  $ink-rule-inv-opacity)};
-  --ink-shadow: #{rgba($ink-iron,  0.30)};
+  --ink-shadow: #{rgba($ink-iron,  0.35)};
 
   background: var(--ink-page);
   color: var(--ink-iron);
