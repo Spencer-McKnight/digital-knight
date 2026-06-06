@@ -1,7 +1,12 @@
 @use 'mixins' as *;
 
 .root {
-  @include section-pad(lg);
+  padding-top: clamp(6rem, 10vw, 9rem);
+  padding-bottom: var(--space-7);
+
+  @include respond-to(md) {
+    @include section-pad(lg);
+  }
 }
 
 .inner {

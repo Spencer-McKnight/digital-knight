@@ -18,7 +18,7 @@
   padding: 0;
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-5);
+  gap: var(--space-4);
 
   @include respond-to(sm) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -88,9 +88,13 @@
   margin-top: var(--space-2);
   border-radius: 12px;
   overflow: hidden;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
   isolation: isolate;
   box-shadow: 0 3px 3px -2px var(--ink-shadow);
+
+  @include respond-to(sm) {
+    aspect-ratio: 4 / 3;
+  }
 
   .cell[data-feature='true'] & {
     @include respond-to(sm) {

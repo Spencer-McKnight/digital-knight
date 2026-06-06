@@ -40,3 +40,9 @@ $space-10: 12rem;    // 192px — hero vertical padding
   // recalibrate the rhythm of the whole page in one place.
   --space-section: clamp(4rem, 1.9rem + 9vw, 7rem);
 }
+
+@media (max-width: 47.9375rem) {
+  :root {
+    --space-section: clamp(3rem, 1.2rem + 9vw, 7rem);
+  }
+}

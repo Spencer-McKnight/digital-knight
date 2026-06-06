@@ -18,12 +18,7 @@ import styles from './MeetSpencer.module.scss';
  */
 export function MeetSpencer() {
   return (
-    <section
-      id="meet"
-      data-ground="stone"
-      className={styles.root}
-      aria-labelledby="meet-heading"
-    >
+    <section id="meet" data-ground="stone" className={styles.root} aria-labelledby="meet-heading">
       <Reveal as="div" className={styles.inner} amount="md" enabled>
         <div className={styles.imageColumn}>
           <figure className={styles.figure}>
@@ -50,25 +45,23 @@ export function MeetSpencer() {
 
           <div className={styles.body}>
             <p className={styles.lede}>
-              I have created hundreds of captivating digital experiences that are loved by businesses and developers.
+              I have created hundreds of captivating digital experiences that are loved by
+              businesses and developers.
             </p>
             <p className={styles.copy}>
-              Intelligently driven by a desire to innovate and think efficiently.
-              A loyal and strategic <em className={styles.italic}>Digital Knight</em>, here to turn the tides for your online arena.
+              Intelligently driven by a desire to innovate and think efficiently. A loyal and
+              strategic <em className={styles.italic}>Digital Knight</em>, here to turn the tides
+              for your online arena.
             </p>
             <p className={styles.copy}>
-              Formally qualified with a Bachelor of Business Information Technology and years in the industry.
-              My knowledge was formed writing code for websites and mobile applications, as I earnestly fostered my wider interest in digital success.
+              Formally qualified with a Bachelor of Business Information Technology and years in the
+              industry. My knowledge was formed writing code for websites and mobile applications,
+              as I earnestly fostered my wider interest in digital success.
             </p>
             <p className={styles.copy}>
-              I'm not just a pretty website; I will reduce the mental load in your life with bleeding edge technology, allowing your vision the time it needs to shine.
+              I'm not just a pretty website; I will reduce the mental load in your life with
+              bleeding edge technology, allowing your vision the time it needs to shine.
             </p>
-          </div>
-
-          <div className={styles.actions}>
-            <Button href="/contact" variant="secondary" size="md">
-              Let's talk
-            </Button>
           </div>
         </div>
       </Reveal>

@@ -14,7 +14,11 @@ $rule: rgba(27, 27, 26, 0.25);
 .inner {
   @include container;
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-5);
+
+  @include respond-to(md) {
+    gap: var(--space-6);
+  }
 }
 
 // ── Header ────────────────────────────────────────────────────────────────

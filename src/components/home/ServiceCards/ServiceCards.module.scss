@@ -22,7 +22,7 @@
 .grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-4);
+  gap: var(--space-3);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -54,11 +54,11 @@
   --hairline: var(--ink-iron);
 
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
   width: 100%;
-  padding: var(--space-5);
+  padding: var(--space-4);
   background: transparent;
   color: var(--ink-iron);
   border: 1px solid var(--hairline);
@@ -71,6 +71,13 @@
     transform var(--dur-element) var(--ease-house),
     border-color var(--dur-element) var(--ease-house),
     box-shadow var(--dur-element) var(--ease-house);
+
+  @include respond-to(sm) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-5);
+  }
 
   @include respond-to(md) {
     padding: var(--space-6) var(--space-5);
@@ -116,8 +123,15 @@
 // ── Icon ────────────────────────────────────────────────────────────────────
 .icon {
   display: block;
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
   color: var(--ink-iron);
   transition: color var(--dur-element) var(--ease-house);
+
+  @include respond-to(sm) {
+    align-self: auto;
+  }
 
   @include respond-to(lg) {
     width: 22px;
@@ -138,9 +152,15 @@
 // ── Title ───────────────────────────────────────────────────────────────────
 .title {
   @include type(card-title);
-  margin-bottom: var(--space-1);
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center;
   color: var(--ink-iron);
   text-wrap: balance;
+
+  @include respond-to(sm) {
+    align-self: auto;
+  }
 }
 
 // ── Items list ──────────────────────────────────────────────────────────────
@@ -152,10 +172,15 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  grid-column: 1 / -1;
+  gap: var(--space-2);
   color: var(--ink-iron);
   opacity: 0.74;
   transition: opacity var(--dur-element) var(--ease-house);
+
+  @include respond-to(sm) {
+    gap: var(--space-3);
+  }
 
   @include respond-to(lg) {
     gap: var(--space-2);

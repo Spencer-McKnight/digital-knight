@@ -9,7 +9,7 @@
 .inner {
   @include container;
   display: grid;
-  gap: var(--space-7);
+  gap: var(--space-6);
   align-items: center;
 
   @include respond-to(md) {
@@ -32,7 +32,7 @@
 .image {
   display: block;
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 9 / 8;
   object-fit: cover;
   object-position: center top;
   border-radius: var(--space-3);
@@ -48,7 +48,7 @@
 
 .contentColumn {
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-4);
   order: 1;
 
   @include respond-to(md) {
@@ -110,12 +110,4 @@
   &:hover {
     text-decoration-thickness: 0.12em;
   }
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-4);
-  padding-top: var(--space-2);
 }

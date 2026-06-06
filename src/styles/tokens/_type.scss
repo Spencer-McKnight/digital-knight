@@ -95,3 +95,19 @@ $t-weight-bold:    700;
   --t-weight-semibold: #{$t-weight-semibold};
   --t-weight-bold:    #{$t-weight-bold};
 }
+
+// Mobile type scale — conserve vertical space on small screens.
+// Display tier scaled more aggressively; reading tier is gentler.
+// --t-ui and --t-meta are unchanged (input labels, small UI text).
+@media (max-width: 47.9375rem) {
+  :root {
+    --t-monument:    calc(#{$t-monument} * 0.86);
+    --t-hero:        calc(#{$t-hero} * 0.89);
+    --t-hero-display: calc(#{$t-hero-display} * 0.89);
+    --t-section:     calc(#{$t-section} * 0.91);
+    --t-subsection:  calc(#{$t-subsection} * 0.92);
+    --t-card-title:  calc(#{$t-card-title} * 0.91);
+    --t-lede:        calc(#{$t-lede} * 0.93);
+    --t-body:        calc(#{$t-body} * 0.93);
+  }
+}
