@@ -1,3 +1,29 @@
+import { isValidElement, type ReactNode } from 'react';
+import { FAQS } from '@/components/home/FAQ/content';
+
+function escapeHtml(s: string) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function toHtml(node: ReactNode): string {
+  if (typeof node === 'string') return escapeHtml(node);
+  if (typeof node === 'number') return String(node);
+  if (!node || typeof node === 'boolean') return '';
+  if (Array.isArray(node)) return node.map(toHtml).join('');
+  if (isValidElement(node)) {
+    const props = node.props as Record<string, unknown>;
+    const inner = toHtml(props.children as ReactNode);
+    if (typeof node.type === 'string') {
+      if (node.type === 'a' && props.href)
+        return `<a href="${escapeHtml(String(props.href))}">${inner}</a>`;
+      return `<${node.type}>${inner}</${node.type}>`;
+    }
+    if (props.href) return `<a href="${escapeHtml(String(props.href))}">${inner}</a>`;
+    return inner;
+  }
+  return '';
+}
+
 const BASE = 'https://digital-knight.au';
 const ORG_ID = `${BASE}/#organization`;
 const PERSON_ID = `${BASE}/#spencer`;
@@ -51,7 +77,7 @@ const graph = {
         'Headless CMS',
       ],
       sameAs: [
-        'https://www.linkedin.com/in/spencer-mcknight/',
+        'https://www.linkedin.com/in/digital-knight-au/',
         'https://github.com/Spencer-McKnight/',
       ],
       hasOfferCatalog: {
@@ -131,10 +157,29 @@ const graph = {
 };
 
 export function StructuredData() {
+  const faqPage = {
+    '@type': 'FAQPage',
+    '@id': `${BASE}/#faq`,
+    isPartOf: { '@id': WEBSITE_ID },
+    mainEntity: FAQS.map((faq) => ({
+      '@type': 'Question',
+      name: faq.title,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: toHtml(faq.body),
+      },
+    })),
+  };
+
+  const fullGraph = {
+    '@context': 'https://schema.org',
+    '@graph': [...graph['@graph'], faqPage],
+  };
+
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(graph) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(fullGraph) }}
     />
   );
 }

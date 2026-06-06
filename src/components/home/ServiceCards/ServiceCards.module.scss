@@ -14,13 +14,8 @@
 
 .root {
   @include container;
+  @include section-pad(act);
   position: relative;
-  padding-block: var(--space-4) var(--space-4);
-
-  @include respond-to(md) {
-    padding-top: var(--space-6);
-    padding-bottom: var(--space-4);
-  }
 }
 
 // ── Grid ────────────────────────────────────────────────────────────────────

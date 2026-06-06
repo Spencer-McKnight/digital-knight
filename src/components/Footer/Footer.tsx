@@ -18,7 +18,7 @@ const SITEMAP = [
   {
     heading: 'Contact', links: [
       { label: 'hello@digital-knight.au', href: 'mailto:hello@digital-knight.au' },
-      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/spencer-mcknight/', external: true },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/digital-knight-au/', external: true },
       { label: 'GitHub', href: 'https://github.com/Spencer-McKnight/', external: true },
     ]
   },

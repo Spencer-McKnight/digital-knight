@@ -99,6 +99,13 @@ main {
   }
 }
 
+// Adjacent same-ground sections: collapse the seam so the combined gap
+// reads as 1.25× --space-section instead of 2×.
+section[data-ground='page'] + section[data-ground='page'],
+section[data-ground='stone'] + section[data-ground='stone'] {
+  padding-top: calc(var(--space-section) * 0.25);
+}
+
 // Reduced-motion: kill transitions and animations site-wide. Token layer
 // `motion.scss` already collapses scene/epic durations; this is the
 // belt-and-braces for any author who forgot to gate a keyframe.
