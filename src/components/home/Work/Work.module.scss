@@ -179,15 +179,23 @@
   top: var(--space-2);
   right: var(--space-2);
   z-index: 2;
-  color: var(--ink-ember);
+  color: white;
   opacity: 1;
   transition:
+    color var(--dur-element) cubic-bezier(0.4, 0, 0.2, 1),
     opacity var(--dur-element) cubic-bezier(0.4, 0, 0.2, 1) 100ms,
     transform var(--dur-scene) cubic-bezier(0.4, 0, 0.2, 1) 100ms;
+
+  .card:hover &,
+  .card:focus-visible &,
+  .card:active & {
+    color: var(--ink-ember);
+  }
 
   @include respond-to(sm) {
     top: var(--space-3);
     right: var(--space-3);
+    color: var(--ink-ember);
     opacity: 0;
     transform: translate(-4px, 4px);
 
