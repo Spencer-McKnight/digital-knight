@@ -19,7 +19,11 @@
   gap: var(--space-4);
 
   padding-inline: var(--_nav-inset);
-  padding-block: var(--space-3);
+  padding-block: var(--space-2);
+
+  @include respond-to(sm) {
+    padding-block: var(--space-3);
+  }
 
   background: #{rgba(colors.$ink-page, 0.86)};
   -webkit-backdrop-filter: saturate(180%) blur(12px);
