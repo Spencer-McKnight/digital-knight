@@ -186,7 +186,8 @@
     transform var(--dur-scene) cubic-bezier(0.4, 0, 0.2, 1) 100ms;
 
   @include respond-to(sm) {
-    color: var(--ink-ember);
+    top: var(--space-3);
+    right: var(--space-3);
     opacity: 0;
     transform: translate(-4px, 4px);
 
