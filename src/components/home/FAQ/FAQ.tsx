@@ -30,7 +30,7 @@ export function FAQ() {
         <Reveal as="header" className={styles.header} amount="md" enabled>
           <div className={styles.titleRow}>
             <div>
-              <p className={styles.eyebrow}>FAQ</p>
+              <p className={styles.eyebrow}>FAQs</p>
               <h2 id="faq-heading" className={styles.heading}>
                 Learn more
               </h2>

@@ -1,18 +1,9 @@
+'use client';
+
+import { useEffect, useRef, useState, type RefCallback } from 'react';
 import { Icon, type IconName } from '@/components/Icons';
 import { Reveal } from '@/components/Reveal';
 import styles from './ServiceCards.module.scss';
-
-/**
- * ServiceCards — four-up service grid that sits at the foot of the Hero fold.
- *
- *   Outline-only surface in the language of the secondary Button. General
- *   interaction states on hover/focus:
- *     · Card lifts and the shadow deepens.
- *     · Border picks up ember.
- *     · Icon takes ember; list items resolve from 0.74 → full opacity.
- *
- *   Layout: 1 col (mobile) → 2×2 (`sm`) → 4×1 (`lg`).
- */
 
 type Service = {
   icon: IconName;
@@ -67,7 +58,70 @@ const SERVICES: ReadonlyArray<Service> = [
   },
 ];
 
+const COARSE_QUERY = '(pointer: coarse)';
+
 export function ServiceCards() {
+  const cardRefs = useRef<Array<HTMLElement | null>>([]);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const armed = useRef(false);
+
+  const setCardRef = (i: number): RefCallback<HTMLElement> => (el) => {
+    cardRefs.current[i] = el;
+  };
+
+  useEffect(() => {
+    if (!window.matchMedia(COARSE_QUERY).matches) return;
+
+    const root = cardRefs.current[0]?.closest('section');
+    if (!root) return;
+
+    // Don't arm until the section has been scrolled into view once,
+    // so passive page-load position doesn't highlight anything.
+    const armObserver = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          armed.current = true;
+          armObserver.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
+    armObserver.observe(root);
+
+    // Track which card is closest to the top of the viewport.
+    // The "first fully in view" heuristic: whichever card's top is
+    // closest to (but not above) 30% of viewport height wins.
+    const pickActive = () => {
+      if (!armed.current) return;
+      const zone = window.innerHeight * 0.35;
+      let best = -1;
+      let bestDist = Infinity;
+
+      for (let i = 0; i < cardRefs.current.length; i++) {
+        const card = cardRefs.current[i];
+        if (!card) continue;
+        const { top, bottom } = card.getBoundingClientRect();
+        if (bottom < 0 || top > window.innerHeight) continue;
+        const dist = Math.abs(top - zone);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = i;
+        }
+      }
+
+      setActiveIndex((prev) => (prev === best ? prev : best));
+    };
+
+    const onScroll = () => requestAnimationFrame(pickActive);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    pickActive();
+
+    return () => {
+      armObserver.disconnect();
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
+
   return (
     <section
       id="services"
@@ -81,7 +135,11 @@ export function ServiceCards() {
       <ul className={styles.grid}>
         {SERVICES.map((service, i) => (
           <Reveal as="li" key={service.title} className={styles.cell} amount="md" delay={i * 80} enabled>
-            <article className={styles.card} tabIndex={0}>
+            <article
+              className={`${styles.card}${activeIndex === i ? ` ${styles.active}` : ''}`}
+              tabIndex={0}
+              ref={setCardRef(i)}
+            >
               <Icon
                 name={service.icon}
                 size={28}

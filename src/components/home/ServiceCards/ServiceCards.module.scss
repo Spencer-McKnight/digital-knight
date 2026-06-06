@@ -93,26 +93,51 @@
     padding: var(--space-6) var(--space-5);
   }
 
-  &:hover,
-  &:focus-visible {
-    --lift: -5px;
-    --hairline: var(--ink-ember);
-    box-shadow:
-      0 3px 3px -2px var(--ink-shadow),
-      0 16px 32px rgba(64, 61, 57, 0.16);
-    outline: none;
+  // Desktop: hover / focus-visible interaction
+  @media (pointer: fine) {
+    &:hover,
+    &:focus-visible {
+      --lift: -5px;
+      --hairline: var(--ink-ember);
+      box-shadow:
+        0 3px 3px -2px var(--ink-shadow),
+        0 16px 32px rgba(64, 61, 57, 0.16);
+      outline: none;
+    }
+
+    &:focus-visible {
+      box-shadow:
+        0 3px 3px -2px var(--ink-shadow),
+        0 16px 32px rgba(64, 61, 57, 0.16),
+        0 0 0 2px var(--ink-page),
+        0 0 0 4px var(--ink-ember);
+    }
   }
 
-  &:focus-visible {
-    box-shadow:
-      0 3px 3px -2px var(--ink-shadow),
-      0 16px 32px rgba(64, 61, 57, 0.16),
-      0 0 0 2px var(--ink-page),
-      0 0 0 4px var(--ink-ember);
+  // Mobile: scroll-driven highlight via JS .active class.
+  // Scene-speed transitions so the handoff between cards reads as deliberate.
+  @media (pointer: coarse) {
+    -webkit-tap-highlight-color: transparent;
+    cursor: default;
+    user-select: none;
+    transition-duration: var(--dur-scene);
+
+    &:active {
+      --lift: 0px;
+      --hairline: var(--ink-iron);
+    }
+
+    &.active {
+      --hairline: var(--ink-ember);
+      box-shadow:
+        0 3px 3px -2px var(--ink-shadow),
+        0 8px 20px rgba(64, 61, 57, 0.12);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     transition-duration: var(--dur-state);
+
     &:hover,
     &:focus-visible {
       --lift: 0px;
@@ -129,6 +154,10 @@
   color: var(--ink-iron);
   transition: color var(--dur-element) var(--ease-house);
 
+  @media (pointer: coarse) {
+    transition-duration: var(--dur-scene);
+  }
+
   @include respond-to(sm) {
     align-self: auto;
   }
@@ -144,7 +173,8 @@
   }
 
   .card:hover &,
-  .card:focus-visible & {
+  .card:focus-visible &,
+  .card.active & {
     color: var(--ink-ember);
   }
 }
@@ -178,6 +208,10 @@
   opacity: 0.74;
   transition: opacity var(--dur-element) var(--ease-house);
 
+  @media (pointer: coarse) {
+    transition-duration: var(--dur-scene);
+  }
+
   @include respond-to(sm) {
     gap: var(--space-3);
   }
@@ -191,7 +225,8 @@
   }
 
   .card:hover &,
-  .card:focus-visible & {
+  .card:focus-visible &,
+  .card.active & {
     opacity: 1;
   }
 }
