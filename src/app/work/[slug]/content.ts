@@ -138,7 +138,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     label: 'DyFlex',
     title: 'Seamless SAP React dashboard at scale',
     tagline: 'Building a seamless React, SAP-integrated system for HIO vendors.',
-    lede: 'Brought on as Next.js principal developer and project lead for a vendor portal integration connecting multiple SAP systems to a responsive, enterprise-grade front-end.',
+    lede: 'Brought on as Next.js principal developer for a vendor portal integration connecting multiple SAP systems to a responsive, enterprise-grade front-end.',
     siteUrl: 'https://dyflex.com.au',
     technologies: ['Next.js', 'React', 'TypeScript', 'MUI', 'Redux Toolkit', 'SAP BTP', 'OData V4', 'Jest'],
     context: [
@@ -152,10 +152,8 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
       'Performant, scalable, accessible, usable web experience',
     ],
     outcomes: [
-      'With a proposed timeframe of 8 weeks, Digital Knight completed a pixel-perfect UI prototype in 4 working days using a complex FigmaMCP, context and Claude AI development workflow. This was presented to establish client confidence in DyFlex\'s digital development process.',
+      'Digital Knight completed an exceptional UI prototype in 4 working days using a complex FigmaMCP, context and Claude AI development workflow. This was presented to establish client confidence in DyFlex\'s digital development process.',
       'This workflow was then composed into a pathway future Next.js developers can take to build modern Next.js SAP integrations.',
-      'SAP API data flows were clearly visualised by Digital Knight to boost the success of the SAP developers and future integrations. The following integrations proceeded smoothly.',
-      'The overall success combined with speed allowed every party throughout the internal, user and client testing to calibrate the application and resulted in a successful outcome for all.',
     ],
     stack: [
       { technology: 'Next.js', useCase: 'Full-stack framework with App Router, hybrid SSR/client rendering, standalone deployment' },
