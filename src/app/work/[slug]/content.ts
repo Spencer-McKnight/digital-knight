@@ -143,7 +143,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     technologies: ['Next.js', 'React', 'TypeScript', 'MUI', 'Redux Toolkit', 'SAP BTP', 'OData V4', 'Jest'],
     context: [
       'DyFlex is an SAP implementation solutions company that operates all throughout Australia on high profile clients.',
-      'Digital Knight was brought on as a Next.js principal developer and project lead for a vendor portal integration. A variety of SAP systems (Cloud Foundry, S4, BTP) were required to integrate with a responsive front-end system for use by their vendors Australia-wide.',
+      'Digital Knight was brought on as a Next.js principal developer for a vendor portal integration. A variety of SAP systems (Cloud Foundry, S4, BTP) were required to integrate with a responsive front-end system for use by their vendors Australia-wide.',
     ],
     criteria: [
       'UI matches proposed design with pixel-perfect accuracy',
