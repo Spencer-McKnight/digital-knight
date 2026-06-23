@@ -2,7 +2,11 @@ import { isValidElement, type ReactNode } from 'react';
 import { FAQS } from '@/components/home/FAQ/content';
 
 function escapeHtml(s: string) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function toHtml(node: ReactNode): string {
@@ -35,7 +39,7 @@ const siteNavLinks: Array<{ name: string; url: string }> = [
   { name: 'About', url: `${BASE}/#meet` },
   { name: 'Contact', url: `${BASE}/contact` },
   { name: 'SOGIF Case Study', url: `${BASE}/work/sogif` },
-  { name: 'DyFlex Case Study', url: `${BASE}/work/dyflex-hio` },
+  { name: 'DyFlex Case Study', url: `${BASE}/work/dyflex` },
   { name: 'PropertyInvesting Case Study', url: `${BASE}/work/propertyinvesting` },
   { name: 'SteveMcKnight Case Study', url: `${BASE}/work/stevemcknight` },
   { name: 'Inlight Case Study', url: `${BASE}/work/inlight` },

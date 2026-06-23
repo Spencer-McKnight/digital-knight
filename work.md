@@ -51,7 +51,7 @@ Stack
 
 Building a seamless React, SAP-integrated system for HIO vendors
 
-public/images/dyflex-hio
+public/images/dyflex
 
 Case Study:
 Context

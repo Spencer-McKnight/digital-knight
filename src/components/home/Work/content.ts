@@ -8,7 +8,7 @@ export type WorkItem = {
   backdrop?: ImageDef;
 };
 
-const WORK_ORDER = ['sogif', 'dyflex-hio', 'inlight', 'propertyinvesting', 'stevemcknight'] as const;
+const WORK_ORDER = ['sogif', 'dyflex', 'inlight', 'propertyinvesting', 'stevemcknight'] as const;
 
 const OVERRIDES: Record<string, { label?: string; backdrop?: ImageDef }> = {
   sogif: {
@@ -19,10 +19,10 @@ const OVERRIDES: Record<string, { label?: string; backdrop?: ImageDef }> = {
       height: 768,
     },
   },
-  'dyflex-hio': {
+  'dyflex': {
     label: 'DyFlex',
     backdrop: {
-      src: '/images/dyflex-hio/hio-background.avif',
+      src: '/images/dyflex/hio-background.avif',
       alt: 'vendor system',
       width: 1500,
       height: 1001,

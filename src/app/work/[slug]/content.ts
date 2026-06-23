@@ -128,13 +128,13 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
         width: 380,
         height: 94,
         caption: 'PageSpeed Insights',
-      },D
+      },
     ],
-    nextSlug: 'dyflex-hio',
+    nextSlug: 'dyflex',
   },
 
   {
-    slug: 'dyflex-hio',
+    slug: 'dyflex',
     label: 'DyFlex',
     title: 'Seamless SAP React dashboard at scale',
     tagline: 'Building a seamless React, SAP-integrated system for HIO vendors.',
@@ -169,7 +169,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     figures: [
       {
         variant: 'lead',
-        src: '/images/dyflex-hio/hio-showcase.avif',
+        src: '/images/dyflex/hio-showcase.avif',
         alt: 'DyFlex SAP vendor portal interface',
         width: 1506,
         height: 1209,
