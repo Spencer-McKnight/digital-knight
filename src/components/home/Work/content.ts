@@ -20,10 +20,10 @@ const OVERRIDES: Record<string, { label?: string; backdrop?: ImageDef }> = {
     },
   },
   'dyflex-hio': {
-    label: 'DyFlex x Hancock Iron Ore',
+    label: 'DyFlex',
     backdrop: {
       src: '/images/dyflex-hio/hio-background.avif',
-      alt: 'Hancock Iron Ore field workers collaborating on site',
+      alt: 'vendor system',
       width: 1500,
       height: 1001,
     },
