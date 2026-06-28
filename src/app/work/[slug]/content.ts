@@ -186,8 +186,8 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     lede: 'A consulting engagement to diagnose hidden problems, chart a path forward, and provide design direction for one of Australia\'s longest-running property investing communities.',
     siteUrl: 'https://propertyinvesting.com',
     stats: [
-      { value: '97%', label: 'Of web traffic identified as bots' },
-      { value: '90%', label: 'Projected reduction in ongoing yearly costs' },
+      { value: '97%', label: 'Of malicious site traffic identified' },
+      { value: '90%', label: 'Proposed reduction in ongoing yearly costs' },
       { value: '3', label: 'Mockup designs curated' },
     ],
     technologies: ['Google Analytics', 'WordPress', 'Claude AI', 'Notion'],
