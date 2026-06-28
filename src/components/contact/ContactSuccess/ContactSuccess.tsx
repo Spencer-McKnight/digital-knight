@@ -16,12 +16,7 @@ type ContactSuccessProps = {
 
 type Phase = 'confirmed' | 'loading' | 'booking' | 'error';
 
-export function ContactSuccess({
-  name,
-  email,
-  hostEmail,
-  onReset,
-}: ContactSuccessProps) {
+export function ContactSuccess({ name, email, hostEmail, onReset }: ContactSuccessProps) {
   const [phase, setPhase] = useState<Phase>('confirmed');
   const [availability, setAvailability] = useState<WeekAvailability | null>(null);
   const [, startTransition] = useTransition();
@@ -46,20 +41,12 @@ export function ContactSuccess({
           <p className={styles.bookingAs}>
             Booking as <strong>{name}</strong>
           </p>
-          <button
-            type="button"
-            onClick={() => setPhase('confirmed')}
-            className={styles.backLink}
-          >
+          <button type="button" onClick={() => setPhase('confirmed')} className={styles.backLink}>
             Back
           </button>
         </div>
 
-        <WeekGrid
-          initial={availability}
-          hostEmail={hostEmail}
-          prefilled={{ name, email }}
-        />
+        <WeekGrid initial={availability} hostEmail={hostEmail} prefilled={{ name, email }} />
       </div>
     );
   }
@@ -70,25 +57,14 @@ export function ContactSuccess({
 
       <h3 className={styles.heading}>Message sent.</h3>
 
-      <p className={styles.body}>
-        We&rsquo;ll be in touch shortly.
-      </p>
+      <p className={styles.body}>We&rsquo;ll be in touch shortly.</p>
 
       <span className={styles.divider} aria-hidden />
 
-      <p className={styles.upsell}>
-        Want to discuss your project sooner?
-      </p>
+      <p className={styles.upsell}>Want to discuss your project sooner?</p>
 
-      <Button
-        variant="secondary"
-        fullWidth
-        onClick={handleBookNow}
-        disabled={phase === 'loading'}
-      >
-        {phase === 'loading'
-          ? 'Loading calendar…'
-          : 'Book a free 30-minute consultation'}
+      <Button variant="secondary" fullWidth onClick={handleBookNow} disabled={phase === 'loading'}>
+        {phase === 'loading' ? 'Loading calendar…' : 'Schedule an online meeting now'}
       </Button>
 
       {phase === 'error' ? (

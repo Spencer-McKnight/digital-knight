@@ -70,12 +70,18 @@ export const viewport: Viewport = {
   ],
 };
 
+const isProd = process.env.NODE_ENV === 'production';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-AU" className={`${serif.variable} ${sans.variable}`} style={{ backgroundColor: '#FFEDD7' }}>
       <head>
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://www.google-analytics.com" />
+        {isProd && (
+          <>
+            <link rel="preconnect" href="https://www.googletagmanager.com" />
+            <link rel="preconnect" href="https://www.google-analytics.com" />
+          </>
+        )}
         <link rel="llms-txt" href="/llms.txt" />
         <StructuredData />
       </head>
@@ -88,7 +94,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <Analytics />
       </body>
-      <GtagLazyClient gaId="G-FDR2H865P2" />
+      {isProd && <GtagLazyClient gaId="G-FDR2H865P2" />}
     </html>
   );
 }

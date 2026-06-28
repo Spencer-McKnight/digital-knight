@@ -32,13 +32,13 @@
   cursor: pointer;
   isolation: isolate;
 
-  // Tile surface — warm cream fill marks a free slot; border lifts the edge.
+  // Tile surface — light, open fill marks a free slot.
   &::before {
     content: '';
     position: absolute;
     inset: 0;
-    border: 1px solid color-mix(in srgb, var(--ink-iron) 30%, transparent);
-    background: color-mix(in srgb, var(--ink-iron) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ink-iron) 10%, transparent);
+    background: color-mix(in srgb, var(--ink-page) 50%, transparent);
     transition:
       border-color var(--dur-state) var(--ease-house),
       background-color var(--dur-element) var(--ease-house);
@@ -111,8 +111,8 @@
   cursor: not-allowed;
 
   &::before {
-    background: color-mix(in srgb, var(--ink-page) 40%, transparent);
-    border-color: color-mix(in srgb, var(--ink-iron) 8%, transparent);
+    background: color-mix(in srgb, var(--ink-iron) 6%, transparent);
+    border-color: color-mix(in srgb, var(--ink-iron) 6%, transparent);
   }
 
   &::after {
@@ -132,7 +132,7 @@
 }
 
 .root[data-state='past']::before {
-  background: color-mix(in srgb, var(--ink-page) 22%, transparent);
+  background: color-mix(in srgb, var(--ink-iron) 4%, transparent);
 }
 
 .root[data-state='past']::after {

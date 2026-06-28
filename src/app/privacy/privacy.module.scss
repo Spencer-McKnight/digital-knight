@@ -1,0 +1,83 @@
+@use 'mixins' as *;
+
+.root {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.inner {
+  @include container;
+  @include section-pad(md);
+  display: grid;
+  gap: var(--space-7);
+  max-width: 62ch;
+  padding-top: calc(var(--space-9) + var(--space-5));
+}
+
+.header {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.eyebrow {
+  @include type(meta);
+  color: var(--ink-ember);
+}
+
+.heading {
+  @include type(section);
+  color: var(--ink-iron);
+}
+
+.updated {
+  @include type(ui);
+  color: var(--ink-iron);
+  opacity: 0.5;
+}
+
+.content {
+  display: grid;
+  gap: var(--space-6);
+
+  section {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  h2 {
+    @include type(lede);
+    color: var(--ink-iron);
+    font-family: var(--t-family-serif);
+  }
+
+  p {
+    @include type(body);
+    color: var(--ink-iron);
+    opacity: 0.85;
+    max-width: 62ch;
+  }
+
+  ul {
+    @include type(body);
+    color: var(--ink-iron);
+    opacity: 0.85;
+    padding-left: var(--space-4);
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  a {
+    color: var(--ink-ember);
+    text-decoration: none;
+    transition: opacity var(--dur-state) var(--ease-house);
+
+    &:hover,
+    &:focus-visible {
+      opacity: 0.7;
+    }
+  }
+
+  strong {
+    font-weight: var(--t-weight-medium);
+  }
+}
