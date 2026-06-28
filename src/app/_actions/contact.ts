@@ -5,14 +5,12 @@ import { z } from 'zod';
 import { Resend } from 'resend';
 import { env, requireEnv } from '@/lib/env';
 import { isDisposableEmail } from '@/lib/booking/disposableEmailDomains';
-import { BUDGET_VALUES, MIN_DWELL_MS } from '@/components/contact/ContactForm/contactConfig';
+import { MIN_DWELL_MS } from '@/components/contact/ContactForm/contactConfig';
 import ContactNotification from '@/emails/ContactNotification';
 
 const ContactInput = z.object({
   name:         z.string().trim().min(1, 'Name is required').max(120),
-  organisation: z.string().trim().max(120).optional().default(''),
   email:        z.string().trim().toLowerCase().email('Valid email required').max(254),
-  budget:       z.string().optional().default(''),
   message:      z.string().trim().min(1, 'Message is required').max(2000),
   website:      z.string().optional().default(''),
   formDwellMs:  z.number().finite().min(0).max(7 * 24 * 60 * 60 * 1000),
@@ -51,11 +49,6 @@ export async function submitContact(input: unknown): Promise<ContactResult> {
     return { ok: false, reason: 'spam' };
   }
 
-  // Validate budget value if provided
-  if (data.budget && !BUDGET_VALUES.includes(data.budget as any)) {
-    return { ok: false, reason: 'validation', message: 'Invalid budget selection' };
-  }
-
   // Send email via Resend
   const emailSent = await sendContactEmail(data).catch((e) => {
     console.error('[contact] Resend failed', e);
@@ -87,9 +80,7 @@ async function sendContactEmail(data: ContactData): Promise<boolean> {
     replyTo: data.email,
     react: ContactNotification({
       name: data.name,
-      organisation: data.organisation || undefined,
       email: data.email,
-      budget: data.budget || undefined,
       message: data.message,
     }),
   });

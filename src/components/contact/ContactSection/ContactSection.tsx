@@ -14,13 +14,14 @@ export function ContactSection({ hostEmail }: ContactSectionProps) {
           <span className={styles.eyebrow}>Contact</span>
 
           <h1 className={styles.headline}>
-            Let&rsquo;s Build Something That{' '}
-            <em className={styles.ember}>Matters</em>
+            Introduce yourself for a{` `}
+            <em className={styles.ember}>free digital consult.</em>
+            {` `}
           </h1>
 
           <p className={styles.lede}>
-            You have important work to do. Let&rsquo;s create the
-            digital experience that helps you do it better.
+            The first step to digital evolution is to talk to an expert. You provide context, we
+            explore fresh ideas.
           </p>
         </div>
 

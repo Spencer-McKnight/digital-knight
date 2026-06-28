@@ -9,13 +9,9 @@ import {
   Section,
   Text,
 } from '@react-email/components';
-import { BUDGET_OPTIONS } from '@/components/contact/ContactForm/contactConfig';
-
 export type ContactNotificationProps = {
   name: string;
-  organisation?: string;
   email: string;
-  budget?: string;
   message: string;
 };
 
@@ -29,10 +25,7 @@ const SANS_STACK =
   "'Plus Jakarta Sans', system-ui, 'Helvetica Neue', Arial, sans-serif";
 
 export default function ContactNotification(props: ContactNotificationProps) {
-  const { name, organisation, email, budget, message } = props;
-  const budgetLabel = budget
-    ? BUDGET_OPTIONS.find((o) => o.value === budget)?.label ?? budget
-    : null;
+  const { name, email, message } = props;
 
   return (
     <Html>
@@ -49,13 +42,6 @@ export default function ContactNotification(props: ContactNotificationProps) {
             <Text style={detailsLabel}>FROM</Text>
             <Text style={detailsValue}>{name}</Text>
 
-            {organisation ? (
-              <>
-                <Text style={detailsLabel}>ORGANISATION</Text>
-                <Text style={detailsValue}>{organisation}</Text>
-              </>
-            ) : null}
-
             <Text style={detailsLabel}>EMAIL</Text>
             <Text style={detailsValue}>
               <Link href={`mailto:${email}`} style={link}>
@@ -63,12 +49,6 @@ export default function ContactNotification(props: ContactNotificationProps) {
               </Link>
             </Text>
 
-            {budgetLabel ? (
-              <>
-                <Text style={detailsLabel}>BUDGET</Text>
-                <Text style={detailsValue}>{budgetLabel}</Text>
-              </>
-            ) : null}
           </Section>
 
           <Hr style={rule} />

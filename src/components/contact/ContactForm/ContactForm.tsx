@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, useTransition, type FormEvent } from 'react';
 import { submitContact, type ContactResult } from '@/app/_actions/contact';
-import { BUDGET_OPTIONS, FIELD_LIMITS } from './contactConfig';
+import { FIELD_LIMITS } from './contactConfig';
 import { ContactSuccess } from '../ContactSuccess/ContactSuccess';
 import { Button } from '@/components/Button';
 import styles from './ContactForm.module.scss';
@@ -15,16 +15,12 @@ type ContactFormProps = {
 
 export function ContactForm({ hostEmail }: ContactFormProps) {
   const nameId = useId();
-  const orgId = useId();
   const emailId = useId();
-  const budgetId = useId();
   const messageId = useId();
   const honeypotId = useId();
 
   const [name, setName] = useState('');
-  const [organisation, setOrganisation] = useState('');
   const [email, setEmail] = useState('');
-  const [budget, setBudget] = useState('');
   const [message, setMessage] = useState('');
   const [website, setWebsite] = useState('');
 
@@ -52,9 +48,7 @@ export function ContactForm({ hostEmail }: ContactFormProps) {
     startTransition(async () => {
       const result: ContactResult = await submitContact({
         name,
-        organisation,
         email,
-        budget,
         message,
         website,
         formDwellMs,
@@ -77,9 +71,7 @@ export function ContactForm({ hostEmail }: ContactFormProps) {
 
   function handleReset() {
     setName('');
-    setOrganisation('');
     setEmail('');
-    setBudget('');
     setMessage('');
     setWebsite('');
     setErrorMsg('');
@@ -118,21 +110,6 @@ export function ContactForm({ hostEmail }: ContactFormProps) {
         />
       </label>
 
-      <label className={styles.field} htmlFor={orgId}>
-        <span className={styles.label}>Organisation</span>
-        <input
-          id={orgId}
-          type="text"
-          name="organisation"
-          autoComplete="organization"
-          maxLength={FIELD_LIMITS.organisation}
-          value={organisation}
-          disabled={submitting}
-          onChange={(e) => setOrganisation(e.target.value)}
-          className={styles.input}
-        />
-      </label>
-
       <label className={styles.field} htmlFor={emailId}>
         <span className={styles.label}>Email</span>
         <input
@@ -148,43 +125,6 @@ export function ContactForm({ hostEmail }: ContactFormProps) {
           onChange={(e) => setEmail(e.target.value)}
           className={styles.input}
         />
-      </label>
-
-      <label className={styles.field} htmlFor={budgetId}>
-        <span className={styles.label}>Budget</span>
-        <div className={styles.selectWrap}>
-          <select
-            id={budgetId}
-            name="budget"
-            value={budget}
-            disabled={submitting}
-            onChange={(e) => setBudget(e.target.value)}
-            className={styles.select}
-            data-empty={!budget || undefined}
-          >
-            <option value="">Select one...</option>
-            {BUDGET_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <svg
-            className={styles.chevron}
-            width="12"
-            height="8"
-            viewBox="0 0 12 8"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M1 1.5L6 6.5L11 1.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="square"
-            />
-          </svg>
-        </div>
       </label>
 
       <label className={styles.field} htmlFor={messageId}>
