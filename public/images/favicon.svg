@@ -1,9 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Digital Knight">
-  <style>
-    .bg { fill: transparent; }
-    @media (prefers-color-scheme: light) { .bg { fill: #1B1B1A; } }
-  </style>
-  <rect class="bg" width="512" height="512"/>
+  <rect width="512" height="512" fill="#1B1B1A"/>
   <g transform="translate(-75.1,-75.8) scale(0.65)">
     <path fill="#DD6637" d="M613.467163,740.476990
 	C582.859131,767.845459 550.858521,792.848694 517.119080,815.634949

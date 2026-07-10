@@ -9,10 +9,6 @@ import { StructuredData } from '@/components/StructuredData';
 import { Analytics } from '@vercel/analytics/next';
 
 const siteUrl = new URL('https://digital-knight.au');
-const faviconIcon = {
-  url: '/images/favicon.svg',
-  type: 'image/svg+xml',
-};
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
@@ -25,9 +21,13 @@ export const metadata: Metadata = {
   applicationName: 'Digital Knight',
   authors: [{ name: 'Digital Knight' }],
   icons: {
-    icon: [faviconIcon],
-    shortcut: [faviconIcon],
-    apple: [faviconIcon],
+    icon: [
+      { url: '/favicon-32.png', type: 'image/png', sizes: '32x32' },
+      { url: '/icon-48.png', type: 'image/png', sizes: '48x48' },
+      { url: '/images/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: [{ url: '/icon-48.png', type: 'image/png' }],
+    apple: [{ url: '/apple-icon.png', type: 'image/png', sizes: '180x180' }],
     other: [
       {
         rel: 'mask-icon',
