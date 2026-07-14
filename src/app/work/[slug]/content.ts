@@ -49,7 +49,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     label: 'SOGIF.au',
     title: 'Modernising a world-class fund',
     tagline: 'Creating a beautiful branded website, making it easier to inform investors and stay focused on what matters.',
-    lede: 'A strategic digital rebuild for the Strategic Opportunities (Growth & Income) Fund, transforming an outdated online presence into a platform that matches the calibre of the fund itself.',
+    lede: 'A strategic digital rebuild for the Strategic Opportunities (Growth & Income) Fund, refreshing an established online presence into a platform that matches the calibre of the fund itself.',
     siteUrl: 'https://sogif.au',
     stats: [
       { value: '90%', label: 'Increase in engagement duration in one month' },
@@ -58,8 +58,8 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     technologies: ['Next.js', 'React 19', 'TypeScript', 'Tailwind CSS', 'GraphQL', 'Framer Motion', 'Vercel'],
     context: [
       'The Strategic Opportunities (Growth & Income) Fund, SOGIF, approached Digital Knight with a goal to modernise the design appeal and architecture of its website.',
-      'SOGIF had reused an outdated website template when they first established, hoping for a convenient and cost-effective solution for their digital presence.',
-      'Over time, it came to diminish their brand identity. A world-class fund should not have a website that spoke to the trends of 20 years prior.',
+      'SOGIF first launched on a practical website template, allowing a convenient and cost-effective start to their digital presence.',
+      'As the fund matured, the team wanted the website to better reflect the strength of the brand and its forward-looking investment approach.',
     ],
     criteria: [
       'Create a website experience that evokes the feeling of modern strategy embodied by SOGIF\'s investing practices',
@@ -94,7 +94,7 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
       {
         variant: 'image',
         src: '/images/sogif/sogif-old.avif',
-        alt: 'The original SOGIF website built on an outdated template',
+        alt: 'The original SOGIF website before the redesign',
         width: 1182,
         height: 936,
         caption: 'Before',

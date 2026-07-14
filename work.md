@@ -17,8 +17,8 @@ Case Study:
 
 Context
 The Strategic Opportunities (Growth & Income) Fund, SOGIF, approached Digital Knight with a goal to modernise the design appeal and architecture of its website.
-SOGIF had reused a outdated website template when they first established, hoping to have a convenient and cost-effective solution for their digital presence.
-Over time, it came to diminish their brand identity. A world-class fund should not have a website that spoke to the trends of 20 years prior.
+SOGIF first launched on a practical website template, allowing a convenient and cost-effective start to their digital presence.
+As the fund matured, the team wanted the website to better reflect the strength of the brand and its forward-looking investment approach.
 
 Success Criteria
 Create a website experience that evokes the feeling of modern strategy embodied by SOGIF's investing practices.

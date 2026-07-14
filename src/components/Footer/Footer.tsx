@@ -11,8 +11,17 @@ const SITEMAP = [
     heading: 'Pages', links: [
       { label: 'Home', href: '/' },
       { label: 'Services', href: '/#services' },
-      { label: 'Work', href: '/#work' },
+      { label: 'Work', href: '/work' },
       { label: 'Contact', href: '/contact' },
+    ]
+  },
+  {
+    heading: 'Case studies', links: [
+      { label: 'SOGIF', href: '/work/sogif' },
+      { label: 'DyFlex', href: '/work/dyflex' },
+      { label: 'PropertyInvesting', href: '/work/propertyinvesting' },
+      { label: 'SteveMcKnight', href: '/work/stevemcknight' },
+      { label: 'Inlight', href: '/work/inlight' },
     ]
   },
   {

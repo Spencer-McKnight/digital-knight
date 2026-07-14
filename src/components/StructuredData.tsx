@@ -35,7 +35,7 @@ const WEBSITE_ID = `${BASE}/#website`;
 
 const siteNavLinks: Array<{ name: string; url: string }> = [
   { name: 'Services', url: `${BASE}/#services` },
-  { name: 'Work', url: `${BASE}/#work` },
+  { name: 'Work', url: `${BASE}/work` },
   { name: 'About', url: `${BASE}/#meet` },
   { name: 'Contact', url: `${BASE}/contact` },
   { name: 'SOGIF Case Study', url: `${BASE}/work/sogif` },

@@ -83,6 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </>
         )}
         <link rel="llms-txt" href="/llms.txt" />
+        <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
         <StructuredData />
       </head>
       <body>
