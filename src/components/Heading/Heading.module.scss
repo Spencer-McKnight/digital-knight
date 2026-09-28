@@ -1,0 +1,29 @@
+// The overlay inherits every type setting from the heading; only the width
+// moves. Each measured line is held on one line so narrower glyphs shorten
+// it rather than rewrap it.
+
+.root {
+  position: relative;
+}
+
+.move {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: open var(--dur-scene) var(--ease-house) both;
+}
+
+.line {
+  display: block;
+  white-space: nowrap;
+}
+
+[data-moving] > .text {
+  color: transparent;
+}
+
+@keyframes open {
+  from {
+    font-stretch: var(--t-width-closed);
+  }
+}

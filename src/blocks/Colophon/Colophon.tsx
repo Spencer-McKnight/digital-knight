@@ -23,10 +23,9 @@ export function Colophon({ locale }: { locale: Locale }) {
           <div className={styles.column}>
             <h2 className={styles.heading}>{c.start}</h2>
             <ol className={styles.list}>
-              {t.trail.map((stop, i) => (
+              {t.trail.map((stop) => (
                 <li key={stop.id}>
                   <Link href={href(stop.id, locale)} className={styles.link}>
-                    <span className={styles.number}>{i + 1}</span>
                     {stop.label}
                   </Link>
                 </li>

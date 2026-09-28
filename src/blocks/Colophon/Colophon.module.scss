@@ -64,12 +64,6 @@
   color: var(--ink-muted);
 }
 
-.number {
-  @include type(meta);
-  @include tabular;
-  color: var(--ink-muted);
-}
-
 .base {
   @include hairline(top);
   display: flex;

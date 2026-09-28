@@ -55,15 +55,16 @@
 
 .runningHead {
   @include type(meta);
-  @include tabular;
   @include hairline(left);
   display: none;
+  align-items: center;
+  gap: var(--space-2);
   padding-left: var(--space-5);
   color: var(--ink-muted);
   white-space: nowrap;
 
   @include respond-to(lg) {
-    display: block;
+    display: inline-flex;
   }
 }
 
@@ -272,8 +273,6 @@
 
 .stopLink {
   display: grid;
-  grid-template-columns: 2ch 1fr;
-  column-gap: var(--space-3);
   row-gap: var(--space-1);
   min-height: 2.75rem;
   color: var(--ink-muted);
@@ -285,19 +284,12 @@
   }
 }
 
-.stopNumber {
-  @include type(meta);
-  @include tabular;
-  grid-row: span 2;
-  padding-top: 0.35em;
-}
-
 .stopLabel {
   @include type(section);
   --next-mark-stroke: 2.4;
   display: inline-flex;
   align-items: baseline;
-  gap: 0.3em;
+  gap: 0.35em;
 
   .trailPanel & {
     @include type(lede);
@@ -306,9 +298,12 @@
 }
 
 .stopMark {
-  width: 0.8em;
-  height: 0.8em;
   align-self: center;
+
+  &:where(svg) {
+    width: 0.8em;
+    height: 0.8em;
+  }
 }
 
 .stopPromise {

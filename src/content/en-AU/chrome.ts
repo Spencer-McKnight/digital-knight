@@ -12,7 +12,6 @@ export const chrome: Chrome = {
     close: 'Close',
     primary: 'Primary',
   },
-  step: ['Step', 'of'],
   trail: [
     { id: 'services', label: 'What I do', promise: 'Four practices, one partner.' },
     { id: 'work', label: 'Work', promise: 'What was built, and why.' },

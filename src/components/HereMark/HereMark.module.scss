@@ -1,0 +1,12 @@
+// A filled square with a rim, tilted like a pin pressed on at an angle.
+.root {
+  display: inline-block;
+  flex: none;
+  width: 0.62em;
+  height: 0.62em;
+  border: 2px solid currentColor;
+  background: currentColor;
+  outline: 1.5px solid var(--ink-ground);
+  outline-offset: -3.5px;
+  transform: rotate(-6deg);
+}

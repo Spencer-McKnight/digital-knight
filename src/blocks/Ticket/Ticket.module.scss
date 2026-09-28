@@ -1,0 +1,105 @@
+@use 'mixins' as *;
+
+// ── The object ───────────────────────────────────────────────────────────────
+
+.stub {
+  --tilt: 0deg;
+  display: block;
+  width: 100%;
+  color: var(--ink-carbon);
+  filter: drop-shadow(0 0.3rem 0.4rem var(--shadow-object));
+  transition:
+    transform var(--dur-element) var(--ease-house),
+    filter var(--dur-element) var(--ease-house);
+
+  @include respond-to(md) {
+    width: min(27rem, 100%);
+    transform: rotate(var(--tilt));
+
+    &:hover {
+      transform: rotate(var(--tilt)) translateY(-0.25rem);
+      filter: drop-shadow(0 0.9rem 0.9rem var(--shadow-object-lift));
+    }
+
+    &:active {
+      transform: rotate(var(--tilt)) translateY(0.05rem) scale(0.985);
+      filter: drop-shadow(0 0.1rem 0.15rem var(--shadow-object));
+    }
+  }
+
+  &:focus-visible {
+    outline-offset: 6px;
+  }
+}
+
+.stub[data-tilt='-3'] { --tilt: -3deg; }
+.stub[data-tilt='-2'] { --tilt: -2deg; }
+.stub[data-tilt='-1'] { --tilt: -1deg; }
+.stub[data-tilt='1'] { --tilt: 1deg; }
+.stub[data-tilt='2'] { --tilt: 2deg; }
+.stub[data-tilt='3'] { --tilt: 3deg; }
+
+// Uncoated card with a signal tear-off. Two notches punch the perforation.
+.face {
+  --tear: 42%;
+  --notch: 0.5rem;
+  display: grid;
+  grid-template-columns: 1fr var(--tear);
+  min-height: 4.75rem;
+  background: var(--ink-paper);
+  mask:
+    radial-gradient(circle at calc(100% - var(--tear)) 0, transparent var(--notch), black calc(var(--notch) + 0.5px)) top / 100% 51% no-repeat,
+    radial-gradient(circle at calc(100% - var(--tear)) 100%, transparent var(--notch), black calc(var(--notch) + 0.5px)) bottom / 100% 51% no-repeat;
+
+  @include respond-to(md) {
+    --tear: 38%;
+    min-height: 7.5rem;
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+}
+
+.admit {
+  @include wordmark;
+  font-size: var(--t-lede);
+  letter-spacing: 0.01em;
+}
+
+.terms {
+  @include type(meta);
+  @include tabular;
+  color: var(--ink-carbon);
+}
+
+.tear {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3);
+
+  @include respond-to(md) {
+    padding-inline: var(--space-4);
+  }
+
+  border-left: 2px dotted var(--ink-carbon);
+  background: var(--ink-signal);
+  color: var(--ink-on-signal);
+}
+
+.action {
+  @include type(meta);
+}
+
+.mark {
+  --next-mark-stroke: 2.2;
+  align-self: flex-end;
+  width: 1.4rem;
+  height: 1.4rem;
+}

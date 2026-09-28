@@ -16,6 +16,9 @@
 
 // ── Layer 1 ──────────────────────────────────────────────────────────────────
 $t-monument: clamp(3.25rem, 1.17rem + 9.26vw, 9.5rem);
+// Monument for statements over about 44 characters, so a long line still
+// sets in three at 1440px.
+$t-monument-long: clamp(2.5rem, 0.9rem + 6.2vw, 6.5rem);
 $t-title:    clamp(2.25rem, 1.33rem + 4.07vw, 5rem);
 $t-section:  clamp(1.625rem, 1.25rem + 1.67vw, 2.75rem);
 $t-lede:     clamp(1.25rem, 1.08rem + 0.74vw, 1.75rem);
@@ -28,6 +31,11 @@ $t-meta:     clamp(0.8125rem, 0.79rem + 0.09vw, 0.875rem);
   --t-family-text:    var(--font-mona), system-ui, 'Helvetica Neue', Arial, sans-serif;
 
   --t-monument: #{$t-monument};
+  --t-monument-long: #{$t-monument-long};
+  // Over a photograph the line also answers to height, so short landscape
+  // screens keep it inside the image's dark band.
+  --t-monument-cover: min(var(--t-monument), 14.5svh);
+  --t-monument-cover-long: min(var(--t-monument-long), 10.5svh);
   --t-title:    #{$t-title};
   --t-section:  #{$t-section};
   --t-lede:     #{$t-lede};

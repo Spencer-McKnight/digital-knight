@@ -12,7 +12,6 @@ export const chrome: Chrome = {
     close: 'Schließen',
     primary: 'Hauptnavigation',
   },
-  step: ['Schritt', 'von'],
   trail: [
     { id: 'services', label: 'Leistungen', promise: 'Vier Disziplinen, ein Ansprechpartner.' },
     { id: 'work', label: 'Referenzen', promise: 'Was gebaut wurde, und warum.' },

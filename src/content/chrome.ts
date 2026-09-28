@@ -21,8 +21,6 @@ export type Chrome = {
     close: string;
     primary: string;
   };
-  /** "Step 2 of 4". */
-  step: [before: string, of: string];
   trail: ReadonlyArray<TrailStop>;
   trailLabel: string;
   trailOpen: string;

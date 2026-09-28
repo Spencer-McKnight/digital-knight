@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from 'react';
+import { HereMark } from '@/components/HereMark/HereMark';
 import { NextMark } from '@/components/NextMark/NextMark';
 import { getChrome } from '@/content/chrome';
 import { FUNNEL, href, pairedHref, resolvePath, stageOf, type Locale } from '@/content/routes';
@@ -22,6 +23,8 @@ export function Masthead({ locale }: { locale: Locale }) {
   const here = resolvePath(pathname);
   const stage = here ? stageOf(here.id) : null;
   const currentStop = stage ? FUNNEL[stage - 1] : null;
+  // From the cover the next move is stop 1; on a stage it is the stop after.
+  const nextIndex = stage ?? (here?.id === 'home' ? 0 : -1);
 
   const [open, setOpen] = useState<{ panel: Panel; at: string } | null>(null);
   const panel = open && open.at === pathname ? open.panel : null;
@@ -82,12 +85,12 @@ export function Masthead({ locale }: { locale: Locale }) {
     <ol className={styles.stops}>
       {t.trail.map((stop, i) => {
         const isCurrent = stop.id === currentStop;
-        const isNext = stage !== null && i === stage;
+        const isNext = i === nextIndex;
         return (
           <li key={stop.id} className={styles.stop} data-state={isCurrent ? 'current' : isNext ? 'next' : undefined}>
             <Link href={href(stop.id, locale)} className={styles.stopLink} aria-current={isCurrent ? 'step' : undefined}>
-              <span className={styles.stopNumber}>{i + 1}</span>
               <span className={styles.stopLabel}>
+                {isCurrent ? <HereMark className={styles.stopMark} /> : null}
                 {isNext ? <NextMark className={styles.stopMark} /> : null}
                 {stop.label}
               </span>
@@ -113,7 +116,8 @@ export function Masthead({ locale }: { locale: Locale }) {
 
         {stage ? (
           <p className={styles.runningHead}>
-            {t.step[0]} {stage} {t.step[1]} {FUNNEL.length}
+            <HereMark />
+            {t.trail[stage - 1]?.label}
           </p>
         ) : null}
 
