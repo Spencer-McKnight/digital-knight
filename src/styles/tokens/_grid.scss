@@ -22,4 +22,13 @@ $grid-max:     102rem;
   --grid-gutter:  #{$grid-gutter};
   --grid-margin:  #{$grid-margin};
   --grid-max:     #{$grid-max};
+
+  // Masthead band. Blocks that sit under it (the cover) read this.
+  --masthead-h: 3.5rem;
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --masthead-h: 4rem;
+  }
 }

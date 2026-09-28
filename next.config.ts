@@ -14,7 +14,8 @@ const config: NextConfig = {
   },
 
   experimental: {
-    optimizePackageImports: ['gsap'],
+    // Multiple root layouts leave no single layout to compose a 404 from.
+    globalNotFound: true,
   },
 
   images: {

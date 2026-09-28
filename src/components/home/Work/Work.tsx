@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Icon } from '@/components/Icons';
 import { Reveal } from '@/components/Reveal';
 import { WORK, type WorkItem } from './content';
 import styles from './Work.module.scss';
@@ -80,13 +79,6 @@ function Card({ item, featured }: { item: WorkItem; featured?: boolean }) {
             )}
           </div>
         )}
-
-        <Icon
-          name="arrow-up-right"
-          size={28}
-          className={styles.arrow}
-          aria-hidden="true"
-        />
       </div>
     </Link>
   );

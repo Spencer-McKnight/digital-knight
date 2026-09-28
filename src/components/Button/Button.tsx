@@ -4,10 +4,8 @@ import type {
   ButtonHTMLAttributes,
   ReactNode,
 } from 'react';
-import { SmoothLink } from '@/components/SmoothLink';
 import styles from './Button.module.scss';
 
-const DEFAULT_SCROLL_OFFSET = 0;
 
 type Variant = 'primary' | 'secondary' | 'ghost';
 type Size = 'md' | 'lg';
@@ -78,21 +76,18 @@ export function Button(props: Props) {
     const externalProps = external
       ? { target: '_blank', rel: 'noreferrer' }
       : {};
-    const isInternalHashLink = !external && href.includes('#');
-    const LinkComponent = isInternalHashLink ? SmoothLink : Link;
     return (
-      <LinkComponent
+      <Link
         href={href}
         className={rootClass}
         data-variant={variant}
         data-size={size}
         data-full-width={fullWidth || undefined}
         {...externalProps}
-        {...(isInternalHashLink ? { offset: DEFAULT_SCROLL_OFFSET } : {})}
         {...anchorRest}
       >
         {content}
-      </LinkComponent>
+      </Link>
     );
   }
 

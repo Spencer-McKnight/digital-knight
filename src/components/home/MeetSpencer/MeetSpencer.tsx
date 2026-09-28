@@ -59,7 +59,7 @@ export function MeetSpencer() {
               as I earnestly fostered my wider interest in digital success.
             </p>
             <p className={styles.copy}>
-              I'm not just a pretty website; I will reduce the mental load in your life with
+              I’m not just a pretty website; I will reduce the mental load in your life with
               bleeding edge technology, allowing your vision the time it needs to shine.
             </p>
           </div>

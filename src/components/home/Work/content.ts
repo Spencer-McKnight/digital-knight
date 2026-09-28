@@ -1,4 +1,4 @@
-import { CASE_STUDIES, type ImageDef } from '@/app/work/[slug]/content';
+import { CASE_STUDIES, type ImageDef } from '@/app/(en-AU)/work/[slug]/content';
 
 export type WorkItem = {
   id: string;

@@ -76,14 +76,6 @@ export function Reveal<T extends ElementType = 'div'>(props: RevealProps<T>) {
     const node = document.getElementById(elementId);
     if (!node) return;
 
-    if (
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) {
-      setRevealed(true);
-      return;
-    }
-
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {

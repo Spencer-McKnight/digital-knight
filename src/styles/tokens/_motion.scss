@@ -1,22 +1,21 @@
 // =============================================================================
 // TOKENS — MOTION
 // -----------------------------------------------------------------------------
-// One house easing curve, four speeds by role. Everything that animates must
-// pick exactly one `--dur-*` and (almost always) the `--ease-house` curve.
-// Marquees are the only exception and use `--ease-linear`.
+// Motion reports a move: fast in, settled, done. One house curve, four speeds.
 //
-// ⚑ ITERATE: motion tokens tempt to multiply ("just one more bezier…").
-//   Resist. A curve that isn't house or linear has to earn a name and a role.
+//   state    90ms    hover, press, focus
+//   element  220ms   ticket lift, sticker press, slot fill, pin flip
+//   scene    560ms   block entrance, heading width move, trail advance, week change
+//   epic     1400ms  once per page at most: cover light settling, loupe's first pass
 // =============================================================================
 
 // ── Layer 1 ──────────────────────────────────────────────────────────────────
-$dur-state:   80ms;
+$dur-state:   90ms;
 $dur-element: 220ms;
-$dur-scene:   500ms;
-$dur-epic:    1000ms;
+$dur-scene:   560ms;
+$dur-epic:    1400ms;
 
-$ease-house:  cubic-bezier(0.16, 1, 0.3, 1);
-$ease-linear: linear;
+$ease-house: cubic-bezier(0.16, 1, 0.3, 1);
 
 // ── Layer 2 ──────────────────────────────────────────────────────────────────
 :root {
@@ -25,12 +24,11 @@ $ease-linear: linear;
   --dur-scene:   #{$dur-scene};
   --dur-epic:    #{$dur-epic};
 
-  --ease-house:  #{$ease-house};
-  --ease-linear: #{$ease-linear};
+  --ease-house: #{$ease-house};
 }
 
-// Reduced-motion: collapse scene and epic durations to element-speed opacity
-// fades. Element and state remain intact so feedback stays legible.
+// Scene and epic collapse to element speed. Components drop transforms under
+// the same query, so what remains is an opacity fade. State feedback stays.
 @media (prefers-reduced-motion: reduce) {
   :root {
     --dur-scene: var(--dur-element);

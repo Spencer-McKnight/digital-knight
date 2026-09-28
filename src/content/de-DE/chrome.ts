@@ -1,0 +1,46 @@
+import type { Chrome } from '../chrome';
+
+export const chrome: Chrome = {
+  homeLabel: 'Digital Knight, Startseite',
+  skip: 'Zum Inhalt springen',
+  nav: {
+    start: 'Hier starten',
+    work: 'Referenzen',
+    contact: 'Kontakt',
+    book: 'Erstgespräch buchen',
+    menu: 'Menü',
+    close: 'Schließen',
+    primary: 'Hauptnavigation',
+  },
+  step: ['Schritt', 'von'],
+  trail: [
+    { id: 'services', label: 'Leistungen', promise: 'Vier Disziplinen, ein Ansprechpartner.' },
+    { id: 'work', label: 'Referenzen', promise: 'Was gebaut wurde, und warum.' },
+    { id: 'partnership', label: 'Zusammenarbeit', promise: 'So läuft es, Monat für Monat.' },
+    { id: 'talk', label: 'Erstgespräch', promise: '30 Minuten, kostenlos.' },
+  ],
+  trailLabel: 'Der Weg hinein',
+  trailOpen: 'Alle vier Schritte zeigen',
+  pin: { text: 'AU', label: 'This page in English', lang: 'en', hrefLang: 'en-AU' },
+  marketLine: 'Read in English',
+  colophon: {
+    sign: 'Lösen, dann weiterentwickeln.',
+    start: 'Hier starten',
+    work: 'Referenzen',
+    studio: 'Studio',
+    legal: 'Rechtliches',
+    home: 'Startseite',
+    contact: 'Kontakt',
+    privacy: 'Datenschutz',
+    imprint: 'Impressum',
+    location: 'Melbourne, Australien',
+    rights: 'Digital Knight',
+  },
+  kinds: {
+    rebuild: 'Relaunch',
+    portal: 'Portal',
+    audit: 'Analyse',
+    oneDay: 'Tagesprojekt',
+    tenure: 'Anstellung',
+  },
+};

@@ -1,0 +1,46 @@
+import type { Chrome } from '../chrome';
+
+export const chrome: Chrome = {
+  homeLabel: 'Digital Knight, home',
+  skip: 'Skip to content',
+  nav: {
+    start: 'Start here',
+    work: 'Work',
+    contact: 'Contact',
+    book: 'Book a call',
+    menu: 'Menu',
+    close: 'Close',
+    primary: 'Primary',
+  },
+  step: ['Step', 'of'],
+  trail: [
+    { id: 'services', label: 'What I do', promise: 'Four practices, one partner.' },
+    { id: 'work', label: 'Work', promise: 'What was built, and why.' },
+    { id: 'partnership', label: 'Partnership', promise: 'How it runs, month to month.' },
+    { id: 'talk', label: 'Book a call', promise: '30 minutes, free.' },
+  ],
+  trailLabel: 'The way in',
+  trailOpen: 'Show all four stops',
+  pin: { text: 'DE', label: 'Diese Seite auf Deutsch', lang: 'de', hrefLang: 'de-DE' },
+  marketLine: 'Auf Deutsch lesen',
+  hint: { text: 'Diese Seite gibt es auch auf Deutsch.', dismiss: 'Hinweis schließen' },
+  colophon: {
+    sign: 'Solve and evolve.',
+    start: 'Start here',
+    work: 'Work',
+    studio: 'Studio',
+    legal: 'Legal',
+    home: 'Home',
+    contact: 'Contact',
+    privacy: 'Privacy',
+    location: 'Melbourne, Australia',
+    rights: 'Digital Knight',
+  },
+  kinds: {
+    rebuild: 'Rebuild',
+    portal: 'Portal',
+    audit: 'Audit',
+    oneDay: 'One-day build',
+    tenure: 'Tenure',
+  },
+};

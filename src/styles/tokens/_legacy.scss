@@ -1,0 +1,35 @@
+// =============================================================================
+// LEGACY ALIASES — temporary
+// -----------------------------------------------------------------------------
+// Maps the old token names onto the new ones so pre-redesign components keep
+// compiling while blocks replace them. Delete this file, and the legacy roles
+// in `mixins/_type.scss`, once nothing under `src/components` reads them.
+// =============================================================================
+
+:root {
+  --ink-page:  var(--ink-ground);
+  --ink-iron:  var(--ink-text);
+  --ink-stone: var(--ink-carbon);
+  --ink-ember: var(--ink-signal);
+  --ink-shadow: var(--shadow-object-lift);
+  --ink-rule-inv: var(--ink-rule);
+
+  --t-family-serif: var(--t-family-display);
+  --t-family-sans:  var(--t-family-text);
+  --t-hero:         var(--t-title);
+  --t-hero-display: var(--t-title);
+  --t-subsection:   var(--t-section);
+  --t-card-title:   var(--t-section);
+  --t-ui:           var(--t-meta);
+
+  --t-leading-display: var(--t-leading-monument);
+  --t-leading-tight:   var(--t-leading-section);
+  --t-tracking-tight:  var(--t-tracking-section);
+  --t-tracking-ui:     var(--t-tracking-meta);
+
+  --t-weight-light:    400;
+  --t-weight-regular:  400;
+  --t-weight-medium:   500;
+  --t-weight-semibold: 600;
+  --t-weight-bold:     700;
+}

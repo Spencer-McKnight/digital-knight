@@ -1,202 +1,110 @@
-@use 'respond' as *;
-
 // =============================================================================
-// TYPOGRAPHY MIXIN SYSTEM
+// MIXIN — type($role)
 // -----------------------------------------------------------------------------
-// Six canonical type roles (monument → meta) with full-treatment mixins and
-// granular utilities for controlled variation. Components should reach for
-// these rather than wiring individual tokens.
-//
-// MIXINS (in order of specificity):
-//
-//   @include type($role)        — Full treatment: size + leading + tracking + weight + case
-//   @include type-size($role)   — Font-size only — for when the role sets the scale
-//   @include type-weight($wt)   — Weight only (light | regular | medium | bold)
-//   @include type-heading       — Shared heading rhythm (tight leading, tight tracking)
-//   @include type-prose         — Shared prose rhythm (generous leading, default tracking)
-//   @include type-trim          — Optical vertical centering (text-box-trim) for flex containers
-//
-// VARIANT ROLES:
-//
-//   @include type(hero-display) — Larger hero for primary page titles
-//   @include type(subsection)   — Between lede and section for sub-heads
-//   @include type(card-title)   — Compact serif titles for cards and tiles
-//   @include type(ui)           — Meta-scale without uppercase — for nav, buttons, chips
-//
-// Uppercase lives only on the canonical `meta` role (`design.md` §3).
-// The `ui` variant is meta-scaled but sentence-case for interactive elements.
-//
-// ⚑ ITERATE: variants extend the six canonical roles. Adding a new canonical
-//   role requires matching `--t-*` tokens in `tokens/_type.scss`.
+// Six roles: monument, title, section, lede, body, meta. Uppercase lives only
+// at meta size. No italics anywhere; emphasis is weight, size or the signal.
 // =============================================================================
 
-// ─────────────────────────────────────────────────────────────────────────────
-// UTILITY: type-weight($weight)
-// Outputs only font-weight. Accepts: light, regular, medium, bold.
-// ─────────────────────────────────────────────────────────────────────────────
-@mixin type-weight($weight) {
-  @if $weight == light {
-    font-weight: var(--t-weight-light);
-  } @else if $weight == regular {
-    font-weight: var(--t-weight-regular);
-  } @else if $weight == medium {
-    font-weight: var(--t-weight-medium);
-  } @else if $weight == semibold {
-    font-weight: var(--t-weight-semibold);
-  } @else if $weight == bold {
-    font-weight: var(--t-weight-bold);
-  } @else {
-    @error "type-weight: unknown weight `#{$weight}`. Available: light, regular, medium, bold.";
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// UTILITY: type-size($role)
-// Outputs only font-size for the given role. Useful when you need the scale
-// but want to control other properties (e.g. headings with body leading).
-// ─────────────────────────────────────────────────────────────────────────────
-@mixin type-size($role) {
-  @if $role == monument or $role == hero-display {
+@mixin type($role) {
+  @if $role == monument {
+    font-family: var(--t-family-display);
     font-size: var(--t-monument);
-  } @else if $role == hero {
-    font-size: var(--t-hero);
-  } @else if $role == section {
+    font-weight: 800;
+    font-stretch: var(--t-width-monument);
+    line-height: var(--t-leading-monument);
+    letter-spacing: var(--t-tracking-monument);
+    text-wrap: balance;
+  } @else if $role == title or $role == hero or $role == hero-display {
+    font-family: var(--t-family-display);
+    font-size: var(--t-title);
+    font-weight: 700;
+    font-stretch: var(--t-width-title);
+    line-height: var(--t-leading-title);
+    letter-spacing: var(--t-tracking-title);
+    text-wrap: balance;
+  } @else if $role == section or $role == subsection or $role == card-title {
+    font-family: var(--t-family-display);
     font-size: var(--t-section);
-  } @else if $role == subsection {
-    font-size: var(--t-subsection);
-  } @else if $role == card-title {
-    font-size: var(--t-card-title);
+    font-weight: 700;
+    font-stretch: var(--t-width-section);
+    line-height: var(--t-leading-section);
+    letter-spacing: var(--t-tracking-section);
+    text-wrap: balance;
   } @else if $role == lede {
+    font-family: var(--t-family-text);
     font-size: var(--t-lede);
+    font-weight: 450;
+    font-stretch: 100%;
+    line-height: var(--t-leading-lede);
+    letter-spacing: var(--t-tracking-lede);
+    text-wrap: pretty;
   } @else if $role == body {
+    font-family: var(--t-family-text);
     font-size: var(--t-body);
+    font-weight: 400;
+    font-stretch: 100%;
+    line-height: var(--t-leading-body);
+    letter-spacing: 0;
+    text-wrap: pretty;
   } @else if $role == meta or $role == ui {
+    font-family: var(--t-family-text);
     font-size: var(--t-meta);
+    font-weight: 600;
+    font-stretch: var(--t-width-meta);
+    line-height: var(--t-leading-meta);
+    letter-spacing: var(--t-tracking-meta);
+    text-transform: uppercase;
   } @else {
-    @error "type-size: unknown role `#{$role}`. Available: monument, hero-display, hero, section, subsection, card-title, lede, body, meta, ui.";
+    @error "type: unknown role `#{$role}`. Use monument | title | section | lede | body | meta.";
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// UTILITY: type-heading
-// Shared heading rhythm — tight leading, tight tracking. Use with type-size()
-// when building custom heading treatments.
-// ─────────────────────────────────────────────────────────────────────────────
+// The wordmark: Hubot 800 at 125% width, meta size.
+@mixin wordmark {
+  font-family: var(--t-family-display);
+  font-size: var(--t-meta);
+  font-weight: 800;
+  font-stretch: var(--t-width-wordmark);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+// Figures that line up in columns: times, counts, folios.
+@mixin tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+// ── Legacy helpers ───────────────────────────────────────────────────────────
+// Kept only so pre-redesign components compile. Remove with `tokens/_legacy`.
+
+@mixin type-size($role) {
+  @if $role == monument { font-size: var(--t-monument); }
+  @else if $role == lede { font-size: var(--t-lede); }
+  @else if $role == body { font-size: var(--t-body); }
+  @else if $role == meta or $role == ui { font-size: var(--t-meta); }
+  @else if $role == section or $role == subsection or $role == card-title { font-size: var(--t-section); }
+  @else { font-size: var(--t-title); }
+}
+
+@mixin type-weight($weight) {
+  @if $weight == bold { font-weight: 700; }
+  @else if $weight == semibold { font-weight: 600; }
+  @else if $weight == medium { font-weight: 500; }
+  @else { font-weight: 400; }
+}
+
 @mixin type-heading {
-  line-height: var(--t-leading-tight);
-  letter-spacing: var(--t-tracking-tight);
+  line-height: var(--t-leading-section);
+  letter-spacing: var(--t-tracking-section);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// UTILITY: type-trim
-// Optical vertical centering — trims ascender/descender overshoot so text
-// sits at true visual centre inside flex containers (buttons, tags, chips).
-// ─────────────────────────────────────────────────────────────────────────────
-@mixin type-trim {
-  text-box-trim: trim-both;
-  text-box-edge: cap alphabetic;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// UTILITY: type-prose
-// Shared prose rhythm — generous leading, default tracking. Use with type-size()
-// when building custom prose treatments.
-// ─────────────────────────────────────────────────────────────────────────────
 @mixin type-prose {
   line-height: var(--t-leading-body);
   letter-spacing: 0;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CORE MIXIN: type($role)
-// Full treatment for each role. This is the primary entry point.
-//
-// Canonical roles (6):
-//   monument — sparingly, cinematic
-//   hero     — primary page title
-//   section  — act headers
-//   lede     — opening sentence, pull copy
-//   body     — reading
-//   meta     — eyebrows, captions, labels (uppercase)
-//
-// Variant roles (3):
-//   hero-display — larger hero, used for primary showcase headings
-//   subsection   — between lede and section, for sub-headings
-//   card-title   — compact serif titles for cards and tiles
-//   ui           — meta-scale, sentence-case, for nav/buttons/chips
-// ─────────────────────────────────────────────────────────────────────────────
-@mixin type($role) {
-  // ── CANONICAL ROLES ─────────────────────────────────────────────────
-  @if $role == monument {
-    font-family: var(--t-family-serif);
-    font-size: var(--t-monument);
-    line-height: var(--t-leading-display);
-    letter-spacing: var(--t-tracking-tight);
-    font-weight: var(--t-weight-light);
-  } @else if $role == hero {
-    font-family: var(--t-family-serif);
-    font-size: var(--t-hero);
-    line-height: var(--t-leading-tight);
-    letter-spacing: var(--t-tracking-tight);
-    font-weight: var(--t-weight-medium);
-  } @else if $role == section {
-    font-family: var(--t-family-serif);
-    font-size: var(--t-section);
-    line-height: var(--t-leading-tight);
-    letter-spacing: var(--t-tracking-tight);
-    font-weight: var(--t-weight-medium);
-  } @else if $role == lede {
-    font-family: var(--t-family-sans);
-    font-size: var(--t-lede);
-    line-height: var(--t-leading-body);
-    letter-spacing: 0;
-    font-weight: var(--t-weight-regular);
-  } @else if $role == body {
-    font-family: var(--t-family-sans);
-    font-size: var(--t-body);
-    line-height: var(--t-leading-body);
-    letter-spacing: 0;
-    font-weight: var(--t-weight-regular);
-  } @else if $role == meta {
-    font-family: var(--t-family-sans);
-    font-size: var(--t-meta);
-    line-height: var(--t-leading-body);
-    letter-spacing: var(--t-tracking-meta);
-    font-weight: var(--t-weight-semibold);
-    text-transform: uppercase;
-
-  // ── VARIANT ROLES ──────────────────────────────────────────────────────────
-  } @else if $role == hero-display {
-    font-family: var(--t-family-serif);
-    font-size: var(--t-hero-display);
-    line-height: var(--t-leading-tight);
-    letter-spacing: var(--t-tracking-tight);
-    font-weight: var(--t-weight-medium);
-    @include respond-to(lg) {
-      font-weight: var(--t-weight-regular);
-    }
-  } @else if $role == subsection {
-    font-family: var(--t-family-sans);
-    font-size: var(--t-subsection);
-    line-height: 1.1;
-    letter-spacing: var(--t-tracking-tight);
-    font-weight: var(--t-weight-medium);
-  } @else if $role == card-title {
-    font-family: var(--t-family-serif);
-    font-size: var(--t-card-title);
-    line-height: 1.15;
-    letter-spacing: var(--t-tracking-tight);
-    font-weight: var(--t-weight-medium);
-  } @else if $role == ui {
-    font-family: var(--t-family-sans);
-    font-size: var(--t-ui);
-    line-height: 1;
-    letter-spacing: var(--t-tracking-ui);
-    font-weight: var(--t-weight-medium);
-    text-transform: none;
-    @include type-trim;
-
-  } @else {
-    @error "type: unknown role `#{$role}`. Available: monument, hero, hero-display, section, subsection, card-title, lede, body, meta, ui.";
-  }
+@mixin type-trim {
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
 }

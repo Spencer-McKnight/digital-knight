@@ -1,0 +1,18 @@
+// Sits on the text baseline at the size of the surrounding type. Stroke
+// weight follows `--next-mark-stroke`; display headings set it heavier.
+.root {
+  display: inline-block;
+  flex: none;
+  width: 0.95em;
+  height: 0.95em;
+  vertical-align: -0.12em;
+  overflow: visible;
+
+  path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: var(--next-mark-stroke, 1.9);
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+  }
+}

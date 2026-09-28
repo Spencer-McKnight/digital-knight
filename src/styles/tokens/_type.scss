@@ -1,113 +1,61 @@
 // =============================================================================
-// TOKENS — TYPOGRAPHY
+// TOKENS — TYPE
 // -----------------------------------------------------------------------------
-// Dual-family system: serif (content voice) + sans (structural/UI voice).
+// Hubot Sans for display, Mona Sans for text and UI. Six roles, fluid from
+// 360px to 1440px. `mixins/_type.scss` applies them; components never set
+// sizes by hand.
 //
-// FAMILIES:
-//   --t-family-serif  (Reforma 1969)     — headlines, headings. The craft voice.
-//   --t-family-sans   (Plus Jakarta Sans) — body, lede, meta, UI. The precision voice.
-//
-// Swap fonts by changing the source vars in globals.scss — all roles follow.
-//
-// CANONICAL ROLES (6):
-//   monument  — serif, sparingly, cinematic
-//   hero      — serif, primary page title
-//   section   — serif, act headers
-//   lede      — sans, opening sentence, pull copy
-//   body      — sans, reading
-//   meta      — sans, eyebrows, captions, labels (uppercase only)
-//
-// VARIANT ROLES (4):
-//   hero-display — serif, larger hero for showcase headings
-//   subsection   — sans, between lede and section for sub-headings
-//   card-title   — serif, compact titles for cards and tiles
-//   ui           — sans, meta-scale, sentence-case, for nav/buttons/chips
+//   role      family  weight · width   leading  tracking
+//   monument  Hubot   800 · 112%       0.92     -0.035em
+//   title     Hubot   700 · 108%       0.98     -0.025em
+//   section   Hubot   700 · 100%       1.05     -0.015em
+//   lede      Mona    450              1.35     -0.005em
+//   body      Mona    400              1.55      0
+//   meta      Mona    600 · 110%       1.3       0.08em, uppercase
 // =============================================================================
 
-// ── Layer 1: SCSS Primitives ─────────────────────────────────────────────────
-// Compile-time values. Used inside mixins for computed values.
-// Components never reference these directly — they read CSS custom properties.
+// ── Layer 1 ──────────────────────────────────────────────────────────────────
+$t-monument: clamp(3.25rem, 1.17rem + 9.26vw, 9.5rem);
+$t-title:    clamp(2.25rem, 1.33rem + 4.07vw, 5rem);
+$t-section:  clamp(1.625rem, 1.25rem + 1.67vw, 2.75rem);
+$t-lede:     clamp(1.25rem, 1.08rem + 0.74vw, 1.75rem);
+$t-body:     clamp(1.0625rem, 1rem + 0.28vw, 1.25rem);
+$t-meta:     clamp(0.8125rem, 0.79rem + 0.09vw, 0.875rem);
 
-// Scale (canonical)
-$t-monument: clamp(4.5rem, 7vw + 2.9rem, 9rem);
-$t-hero:     clamp(2.75rem, 4vw + 1.78rem, 5.5rem);
-$t-section:  clamp(1.875rem, 1.7vw + 1.475rem, 3rem);
-$t-lede:     clamp(1.125rem, 0.75vw + 0.95rem, 1.625rem);
-$t-body:     clamp(1.125rem, 0.4vw + 0.85rem, 1.3rem);
-$t-meta:     clamp(1.0625rem, 0.4vw + 0.7rem, 1.375rem);
-
-// Scale (variants)
-$t-hero-display: clamp(2.125rem, 3.8vw + 0.95rem, 4.75rem);
-$t-subsection:   clamp(1.5rem, 1.4vw + 1.1rem, 2.25rem);
-$t-card-title:   clamp(1.4rem, 0.4vw + 1.15rem, 1.8rem);
-$t-ui:           clamp(0.8125rem, 0.28vw + 0.68rem, 1.125rem);
-
-// Leading (line-height)
-// Reforma 1969's serifs need more inter-line clearance than Aeonik did.
-$t-leading-display: 1;
-$t-leading-tight:   1.1;
-$t-leading-body:    1.6;
-
-// Tracking (letter-spacing)
-// Reforma's serifs provide natural rhythm — less negative tracking than a geo sans.
-$t-tracking-tight: -0.02em;
-$t-tracking-meta:   0.10em;
-$t-tracking-ui:     0.025em;
-
-// Weight
-$t-weight-light:   300;
-$t-weight-regular: 400;
-$t-weight-medium:  500;
-$t-weight-semibold: 600;
-$t-weight-bold:    700;
-
-// ── Layer 2: CSS Custom Properties ───────────────────────────────────────────
-// Runtime semantic tokens. The only layer components touch.
+// ── Layer 2 ──────────────────────────────────────────────────────────────────
 :root {
-  // Scale (canonical)
+  --t-family-display: var(--font-hubot), 'Arial Black', Arial, sans-serif;
+  --t-family-text:    var(--font-mona), system-ui, 'Helvetica Neue', Arial, sans-serif;
+
   --t-monument: #{$t-monument};
-  --t-hero:     #{$t-hero};
+  --t-title:    #{$t-title};
   --t-section:  #{$t-section};
   --t-lede:     #{$t-lede};
   --t-body:     #{$t-body};
   --t-meta:     #{$t-meta};
 
-  // Scale (variants)
-  --t-hero-display: #{$t-hero-display};
-  --t-subsection:   #{$t-subsection};
-  --t-card-title:   #{$t-card-title};
-  --t-ui:           #{$t-ui};
+  --t-leading-monument: 0.92;
+  --t-leading-title:    0.98;
+  --t-leading-section:  1.05;
+  --t-leading-lede:     1.35;
+  --t-leading-body:     1.55;
+  --t-leading-meta:     1.3;
 
-  // Leading
-  --t-leading-display: #{$t-leading-display};
-  --t-leading-tight:   #{$t-leading-tight};
-  --t-leading-body:    #{$t-leading-body};
+  --t-tracking-monument: -0.035em;
+  --t-tracking-title:    -0.025em;
+  --t-tracking-section:  -0.015em;
+  --t-tracking-lede:     -0.005em;
+  --t-tracking-meta:      0.08em;
 
-  // Tracking
-  --t-tracking-tight: #{$t-tracking-tight};
-  --t-tracking-meta:  #{$t-tracking-meta};
-  --t-tracking-ui:    #{$t-tracking-ui};
+  --t-width-monument: 112%;
+  --t-width-title:    108%;
+  --t-width-section:  100%;
+  --t-width-meta:     110%;
+  --t-width-wordmark: 125%;
+  // The heading move opens from here to the role's set width.
+  --t-width-closed:   75%;
 
-  // Weight
-  --t-weight-light:   #{$t-weight-light};
-  --t-weight-regular: #{$t-weight-regular};
-  --t-weight-medium:  #{$t-weight-medium};
-  --t-weight-semibold: #{$t-weight-semibold};
-  --t-weight-bold:    #{$t-weight-bold};
-}
-
-// Mobile type scale — conserve vertical space on small screens.
-// Display tier scaled more aggressively; reading tier is gentler.
-// --t-ui and --t-meta are unchanged (input labels, small UI text).
-@media (max-width: 47.9375rem) {
-  :root {
-    --t-monument:    calc(#{$t-monument} * 0.86);
-    --t-hero:        calc(#{$t-hero} * 0.89);
-    --t-hero-display: calc(#{$t-hero-display} * 0.89);
-    --t-section:     calc(#{$t-section} * 0.91);
-    --t-subsection:  calc(#{$t-subsection} * 0.92);
-    --t-card-title:  calc(#{$t-card-title} * 0.91);
-    --t-lede:        calc(#{$t-lede} * 0.93);
-    --t-body:        calc(#{$t-body} * 0.93);
-  }
+  // Reading measure. Body stays under 80 characters.
+  --t-measure-body: 64ch;
+  --t-measure-lede: 38ch;
 }

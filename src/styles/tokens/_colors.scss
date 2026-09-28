@@ -1,37 +1,32 @@
 // =============================================================================
-// TOKENS — COLOR
+// TOKENS — COLOUR
 // -----------------------------------------------------------------------------
-// Layer 1: SCSS primitives. Compile-time values only. Never referenced directly
-//          from component files — used inside mixins for computed values (rgba,
-//          mix, darken) and forwarded into :root as runtime CSS custom props.
-// Layer 2: CSS custom properties. The only colour layer components ever read.
-// Layer 3: Ground inversion redeclares these tokens locally — see
-//          `mixins/_ground.scss`.
+// Layer 1: primitives. Compile-time only, never read by components.
+// Layer 2: semantic `--ink-*` tokens. The only colour layer components read.
+// Layer 3: ground overrides, see `mixins/_ground.scss`.
 //
-// ⚑ ITERATE: extend this palette only when a new role is defensible. Four
-//   anchors + three derivatives is the contract in `design.md`. Every new ink
-//   token must prove its worth against an existing one before being added.
+// One chromatic accent. Signal marks the next move, once per view, and is never
+// text on a light ground (1.13:1 on paper).
 // =============================================================================
 
-// ── Layer 1 ──────────────────────────────────────────────────────────────────
-$ink-page:  #ffedd7; // Antique page — primary canvas
-$ink-stone: #403D39; // Charcoal — inversion ground
-$ink-iron:  #1B1B1A; // Near-black — text & UI definition
-$ink-ember: #DD6637; // Scarcity accent — one per viewport
-
-// Derivatives (derived here so ground inversion can reuse the same formulas).
-$ink-rule-opacity:     0.12;
-$ink-rule-inv-opacity: 0.20;
-$ink-shadow-opacity:   0.18;
+@use 'palette' as *;
 
 // ── Layer 2 ──────────────────────────────────────────────────────────────────
+// Paper is the document default. Blocks set their own ground.
 :root {
-  --ink-page:     #{$ink-page};
-  --ink-stone:    #{$ink-stone};
-  --ink-iron:     #{$ink-iron};
-  --ink-ember:    #{$ink-ember};
+  --ink-ground:    #{$paper};
+  --ink-text:      #{$carbon};
+  --ink-muted:     #{$graphite};
+  --ink-rule:      #{rgba($carbon, $rule-on-paper)};
+  --ink-signal:    #{$signal};
+  --ink-on-signal: #{$carbon};
+  --ink-focus:     #{$carbon};
 
-  --ink-rule:     #{rgba($ink-iron,  $ink-rule-opacity)};
-  --ink-rule-inv: #{rgba($ink-page,  $ink-rule-inv-opacity)};
-  --ink-shadow:   #{rgba($ink-stone, $ink-shadow-opacity)};
+  // Fixed values for surfaces that do not follow the ground: the Nightlight
+  // canvas backdrop, object shadows, theme colour.
+  --ink-carbon: #{$carbon};
+  --ink-paper:  #{$paper};
+
+  --shadow-object:      #{$object-shadow};
+  --shadow-object-lift: #{$object-shadow-lift};
 }

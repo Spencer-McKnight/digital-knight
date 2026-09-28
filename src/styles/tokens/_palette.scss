@@ -1,0 +1,19 @@
+// =============================================================================
+// TOKENS — PALETTE (primitives)
+// -----------------------------------------------------------------------------
+// Compile-time values only. This file emits no CSS, so mixins can `@use` it
+// without duplicating :root into every module.
+// =============================================================================
+
+$carbon:   #0B0B0A; // Cover and booking ground. Text on paper.
+$paper:    #F2F1EC; // Reading ground. Text on carbon.
+$signal:   #FFE500; // The next move.
+$graphite: #5A5A55; // Secondary text on paper, 6.1:1.
+$fog:      #A09F98; // Secondary text on carbon, 7.4:1.
+
+$rule-on-paper:  0.14;
+$rule-on-carbon: 0.18;
+
+// Physical objects only (ticket, sticker, pin), as `drop-shadow`.
+$object-shadow: rgba($carbon, 0.45);
+$object-shadow-lift: rgba($carbon, 0.3);

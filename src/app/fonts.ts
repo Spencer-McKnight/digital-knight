@@ -1,64 +1,31 @@
 import localFont from 'next/font/local';
 
-export const serif = localFont({
-  src: [
-    {
-      path: '../../public/fonts/reforma/reforma.1969-blanca.ttf',
-      weight: '300',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/reforma/reforma.1969-gris.ttf',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/reforma/reforma.1969-gris.ttf',
-      weight: '500',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/reforma/reforma.1969-negra.ttf',
-      weight: '700',
-      style: 'normal',
-    },
-  ],
-  variable: '--t-family-serif-source',
-  display: 'swap',
-  preload: true,
-  adjustFontFallback: 'Times New Roman',
-  fallback: ['Georgia', 'Times New Roman', 'serif'],
-});
+// Both families are self-hosted, upright only, subset to Latin plus German,
+// variable in weight and width. Mona keeps its optical-size axis. No request
+// leaves the site for fonts.
 
-export const sans = localFont({
-  src: [
-    {
-      path: '../../public/fonts/plus-jakarta/PlusJakartaSans-Light.woff2',
-      weight: '300',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/plus-jakarta/PlusJakartaSans-Regular.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/plus-jakarta/PlusJakartaSans-Medium.woff2',
-      weight: '500',
-      style: 'normal',
-    },
-    {
-      path: '../../public/fonts/plus-jakarta/PlusJakartaSans-Bold.woff2',
-      weight: '700',
-      style: 'normal',
-    },
-  ],
-  variable: '--t-family-sans-source',
+export const hubot = localFont({
+  src: '../../public/fonts/hubot-sans/HubotSans-Upright.woff2',
+  variable: '--font-hubot',
+  weight: '600 900',
+  style: 'normal',
   display: 'swap',
   preload: true,
   adjustFontFallback: 'Arial',
-  fallback: ['system-ui', 'Helvetica Neue', 'sans-serif'],
-  declarations: [
-    { prop: 'ascent-override', value: '110%' },
-  ],
+  fallback: ['Arial Black', 'Arial', 'sans-serif'],
+  declarations: [{ prop: 'font-stretch', value: '75% 125%' }],
 });
+
+export const mona = localFont({
+  src: '../../public/fonts/mona-sans/MonaSans-Upright.woff2',
+  variable: '--font-mona',
+  weight: '400 700',
+  style: 'normal',
+  display: 'swap',
+  preload: true,
+  adjustFontFallback: 'Arial',
+  fallback: ['system-ui', 'Helvetica Neue', 'Arial', 'sans-serif'],
+  declarations: [{ prop: 'font-stretch', value: '100% 110%' }],
+});
+
+export const fontVariables = `${hubot.variable} ${mona.variable}`;

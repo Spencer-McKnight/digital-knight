@@ -1,19 +1,16 @@
 // =============================================================================
 // BASE — document defaults
 // -----------------------------------------------------------------------------
-// After the reset, this file sets the site's neutral defaults: ground colour,
-// body type, selection colour, custom scrollbar. Everything here is intentional
-// and sourced from tokens only.
+// Ground, body type, focus and selection. Everything reads tokens.
 // =============================================================================
 
 @use 'mixins' as *;
 
 html {
-  background: var(--ink-page);
-  color: var(--ink-iron);
-  font-family: var(--t-family-sans);
+  background: var(--ink-ground);
+  color: var(--ink-text);
+  font-family: var(--t-family-text);
   -webkit-text-size-adjust: 100%;
-  // Keep a stable scrollbar channel to prevent width hops when content grows.
   scrollbar-gutter: stable;
 }
 
@@ -21,101 +18,54 @@ body {
   @include type(body);
   background: inherit;
   color: inherit;
-  // `svh` (smallest viewport) stays constant while mobile browser chrome
-  // shows/hides. `dvh` recomputes mid-scroll and registers as CLS on many
-  // devices (performance.md). The body only needs to guarantee the page
-  // fills the visible area on cold load — sections own their own heights.
+  // `svh` holds still while mobile browser chrome shows and hides.
   min-height: 100svh;
   overflow-x: clip;
 }
 
-// ── Page entrance ──────────────────────────────────────────────────────────
-// Every <main> fades in on render via CSS @keyframes — no JS cycle needed.
-// Pages that run their own per-element stagger override with animation: none.
-@keyframes pageEntrance {
-  from { opacity: 0; }
+// Grounds are set by the block root, never inside a component.
+[data-ground='paper'] {
+  @include ground(paper);
 }
 
-main {
-  animation: pageEntrance var(--dur-scene) var(--ease-house) both;
+[data-ground='carbon'] {
+  @include ground(carbon);
 }
 
+[data-ground='photo'] {
+  @include ground(photo);
+}
+
+// Selection inverts the ground rather than spending the signal.
 ::selection {
-  background-color: var(--ink-ember);
-  color: var(--ink-page);
-  text-shadow: none;
+  background-color: var(--ink-text);
+  color: var(--ink-ground);
 }
 
-::-moz-selection {
-  background-color: var(--ink-ember);
-  color: var(--ink-page);
-  text-shadow: none;
-}
-
-// Visible focus — ember, offset. Every interactive element inherits this
-// unless it overrides locally. `design.md` §6, §13.
 :focus-visible {
-  outline: 2px solid var(--ink-ember);
-  outline-offset: 3px;
-  border-radius: 1px;
+  @include focus-ring;
 }
 
-// Custom cursor suppression — disabled (see `lib/features.ts`).
-// Uncomment to re-enable alongside `CUSTOM_CURSOR_ENABLED = true`.
-//
-// @media (pointer: fine) {
-//   *,
-//   *::before,
-//   *::after {
-//     cursor: none !important;
-//   }
-// }
-
-// Custom scrollbar — thin, right-edge, appears on activity. Native cursor
-// pointer devices only; touch falls back to system scrollbar.
-@media (pointer: fine) {
-  html {
-    scrollbar-width: thin;
-    scrollbar-color: var(--ink-rule) transparent;
-  }
-
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: var(--ink-rule);
-    border-radius: 999px;
-    transition: background var(--dur-element) var(--ease-house);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--ink-ember);
-  }
+// Anchor targets clear the masthead.
+:target {
+  scroll-margin-top: calc(var(--masthead-h) + var(--space-4));
 }
 
-// Adjacent same-ground sections: collapse the seam so the combined gap
-// reads as 1.25× --space-section instead of 2×.
-section[data-ground='page'] + section[data-ground='page'],
-section[data-ground='stone'] + section[data-ground='stone'] {
-  padding-top: calc(var(--space-section) * 0.25);
+.sr-only {
+  @include sr-only;
 }
 
-// Reduced-motion: kill transitions and animations site-wide. Token layer
-// `motion.scss` already collapses scene/epic durations; this is the
-// belt-and-braces for any author who forgot to gate a keyframe.
+// Belt and braces for any keyframe that forgot its own reduced-motion branch.
+// Opacity fades still run at element speed via the token layer.
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+main {
+  counter-reset: folio;
 }

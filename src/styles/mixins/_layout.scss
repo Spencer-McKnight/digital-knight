@@ -1,23 +1,13 @@
 // =============================================================================
 // MIXIN — layout
 // -----------------------------------------------------------------------------
-// Two small verbs used across every section:
-//
-//   container()   — maps the max canvas + fluid inline padding to an element.
-//                   Never declare `max-width` or `padding-inline` in a section
-//                   by hand; reach for this.
-//
-//   section-pad($size) — the block-level breathing room between acts. Five
-//                        sizes: sm / md / lg / xl, keyed to `--space-*`, plus
-//                        `act` — the canonical size for every Act block,
-//                        driven by `--space-section` (fluid, symmetric).
-//                        `hero` is reserved for the Entry beat only.
-//
-//   hairline($side: 'top')  — single-rule divider. Side-agnostic, uses
-//                             --ink-rule so it adapts across grounds.
-//
-// ⚑ ITERATE: a new variant only lands here when two sections need it. One-off
-//   geometries stay local.
+//   container()          max canvas and fluid inline margins. Never set
+//                        `max-width` or `padding-inline` on a block by hand.
+//   grid()               the 12-column grid inside a container.
+//   section-pad($size)   block breathing room: sm | md | lg | xl | act | hero.
+//   hairline($side)      the one divider: 1px `--ink-rule`.
+//   focus-ring           2px `--ink-focus`, 3px offset, square.
+//   sr-only              hidden visually, kept for assistive tech.
 // =============================================================================
 
 @mixin container {
@@ -25,6 +15,12 @@
   max-width: var(--grid-max);
   margin-inline: auto;
   padding-inline: var(--grid-margin);
+}
+
+@mixin grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
 }
 
 @mixin section-pad($size: md) {
@@ -50,15 +46,39 @@
     border-top: 1px solid var(--ink-rule);
   } @else if $side == bottom {
     border-bottom: 1px solid var(--ink-rule);
+  } @else if $side == left {
+    border-left: 1px solid var(--ink-rule);
+  } @else if $side == right {
+    border-right: 1px solid var(--ink-rule);
   } @else {
-    @error "hairline: unknown side `#{$side}`. Use top|bottom.";
+    @error "hairline: unknown side `#{$side}`.";
   }
 }
 
+// Legacy name used by pre-redesign components.
 @mixin ember-hairline($side: top) {
-  @if $side == top {
-    box-shadow: inset 0 1px 0 0 var(--ink-ember);
-  } @else if $side == bottom {
-    box-shadow: inset 0 -1px 0 0 var(--ink-ember);
-  }
+  @include hairline($side);
+}
+
+@mixin focus-ring {
+  outline: 2px solid var(--ink-focus);
+  outline-offset: 3px;
+}
+
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// 44px minimum hit area on anything a finger presses.
+@mixin target {
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }

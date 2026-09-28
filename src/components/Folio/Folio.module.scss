@@ -1,0 +1,15 @@
+@use 'mixins' as *;
+
+.root {
+  @include type(meta);
+  @include tabular;
+  display: flex;
+  gap: var(--space-3);
+  color: var(--ink-muted);
+  counter-increment: folio;
+}
+
+.number::before {
+  content: counter(folio, decimal-leading-zero);
+  color: var(--ink-text);
+}

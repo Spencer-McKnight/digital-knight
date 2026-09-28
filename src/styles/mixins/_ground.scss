@@ -1,32 +1,42 @@
 // =============================================================================
-// MIXIN — ground-invert()
+// MIXIN — ground($name)
 // -----------------------------------------------------------------------------
-// Applied at the **section root** of any Stone-ground section. Redeclares the
-// `--ink-*` custom properties so every child component adapts through the CSS
-// cascade with zero component-level branching.
+// The one place semantic ink tokens are redeclared. `styles/_base.scss` maps
+// `[data-ground]` onto it, so a block root only has to set the attribute and
+// every child reads the right `--ink-*` through the cascade.
 //
-//   <section className={styles.root}>  // @include ground-invert();
-//     …child components use --ink-iron / --ink-page as always,
-//     the values just read differently on this ground.
-//   </section>
-//
-// This is the linchpin of the ground-agnostic component rule in `design.md`
-// §15. Components never ask "which ground am I on?" — they only read tokens.
-//
-// ⚑ ITERATE: if a new anchor colour is added, this mixin must be updated to
-//   redeclare it too. Same for any new rule/shadow derivative.
+//   paper   reading ground
+//   carbon  cover and booking ground
+//   photo   reads as carbon; text sits where the image is dark by composition
 // =============================================================================
 
-@use '../tokens/colors' as *;
+@use '../tokens/palette' as *;
 
+@mixin ground($name) {
+  @if $name == paper {
+    --ink-ground: #{$paper};
+    --ink-text:   #{$carbon};
+    --ink-muted:  #{$graphite};
+    --ink-rule:   #{rgba($carbon, $rule-on-paper)};
+    --ink-focus:  #{$carbon};
+  } @else if $name == carbon or $name == photo {
+    --ink-ground: #{$carbon};
+    --ink-text:   #{$paper};
+    --ink-muted:  #{$fog};
+    --ink-rule:   #{rgba($paper, $rule-on-carbon)};
+    --ink-focus:  #{$signal};
+  } @else {
+    @error "ground: unknown ground `#{$name}`. Use paper | carbon | photo.";
+  }
+
+  --ink-signal:    #{$signal};
+  --ink-on-signal: #{$carbon};
+
+  background-color: var(--ink-ground);
+  color: var(--ink-text);
+}
+
+// Legacy name used by pre-redesign components.
 @mixin ground-invert {
-  --ink-page:   #{$ink-stone};
-  --ink-iron:   #{$ink-page};
-  --ink-stone:  #{$ink-iron};
-
-  --ink-rule:   #{rgba($ink-page,  $ink-rule-inv-opacity)};
-  --ink-shadow: #{rgba($ink-iron,  0.35)};
-
-  background: var(--ink-page);
-  color: var(--ink-iron);
+  @include ground(carbon);
 }

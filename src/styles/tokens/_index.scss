@@ -1,8 +1,9 @@
-// Forward every token partial. Loaded once by `styles/index.scss` so that
-// every :root declaration in this directory is emitted exactly one time.
-// Forwarded names are also accessible to mixins via `@use 'tokens' as *`.
+// Forward every token partial. Loaded once by `styles/index.scss` so each
+// :root declaration is emitted exactly one time. Mixins reach the SCSS
+// primitives through `@use '../tokens/colors' as *`.
 @forward 'colors';
 @forward 'type';
 @forward 'space';
 @forward 'motion';
 @forward 'grid';
+@forward 'legacy';
