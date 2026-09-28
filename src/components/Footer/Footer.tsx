@@ -8,28 +8,27 @@ const SCROLL_OFFSET = 0;
 
 const SITEMAP = [
   {
-    heading: 'Pages', links: [
+    heading: 'Pages',
+    links: [
       { label: 'Home', href: '/' },
       { label: 'Services', href: '/#services' },
       { label: 'Work', href: '/work' },
       { label: 'Contact', href: '/contact' },
-    ]
+    ],
   },
   {
-    heading: 'Case studies', links: [
+    heading: 'Case studies',
+    links: [
       { label: 'SOGIF', href: '/work/sogif' },
       { label: 'DyFlex', href: '/work/dyflex' },
       { label: 'PropertyInvesting', href: '/work/propertyinvesting' },
       { label: 'SteveMcKnight', href: '/work/stevemcknight' },
       { label: 'Inlight', href: '/work/inlight' },
-    ]
+    ],
   },
   {
-    heading: 'Contact', links: [
-      { label: 'hello@digital-knight.au', href: 'mailto:hello@digital-knight.au' },
-      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/digital-knight-au/', external: true },
-      { label: 'GitHub', href: 'https://github.com/Spencer-McKnight/', external: true },
-    ]
+    heading: 'Contact',
+    links: [{ label: 'hello@digital-knight.au', href: 'mailto:hello@digital-knight.au' }],
   },
 ] as const;
 
@@ -49,7 +48,9 @@ export function Footer() {
             </h2>
           </div>
           <div className={styles.signButton}>
-            <Button href="/contact" variant="secondary" size="md">Start with a conversation</Button>
+            <Button href="/contact" variant="secondary" size="md">
+              Start with a conversation
+            </Button>
           </div>
         </Reveal>
 
@@ -79,10 +80,16 @@ export function Footer() {
                             rel="noreferrer"
                           >
                             {link.label}
-                            <span className={styles.linkMark} aria-hidden>↗</span>
+                            <span className={styles.linkMark} aria-hidden>
+                              ↗
+                            </span>
                           </a>
                         ) : isHashOrHome ? (
-                          <SmoothLink href={link.href} className={styles.link} offset={SCROLL_OFFSET}>
+                          <SmoothLink
+                            href={link.href}
+                            className={styles.link}
+                            offset={SCROLL_OFFSET}
+                          >
                             {link.label}
                           </SmoothLink>
                         ) : (
@@ -111,13 +118,13 @@ export function Footer() {
             <span className={styles.metaValue}>Melbourne, Australia</span>
           </address>
           <p className={styles.metaItem}>
-            <Link href="/privacy" className={styles.metaLink}>Privacy Policy</Link>
+            <Link href="/privacy" className={styles.metaLink}>
+              Privacy Policy
+            </Link>
           </p>
           <p className={styles.metaItem}>
             <span className={styles.metaLabel}>Site Stack</span>
-            <span className={styles.metaValue}>
-              Next · React · GSAP · R3F · Supabase · Resend
-            </span>
+            <span className={styles.metaValue}>Next · React · GSAP · R3F · Supabase · Resend</span>
           </p>
         </div>
       </div>

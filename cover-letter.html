@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Spencer McKnight — Cover Letter</title>
+<style>
+  @font-face {
+    font-family: "Reforma 1969";
+    src: url("public/fonts/reforma/reforma.1969-blanca.ttf") format("truetype");
+    font-weight: 300;
+  }
+  @font-face {
+    font-family: "Reforma 1969";
+    src: url("public/fonts/reforma/reforma.1969-gris.ttf") format("truetype");
+    font-weight: 400 500;
+  }
+  @font-face {
+    font-family: "Reforma 1969";
+    src: url("public/fonts/reforma/reforma.1969-negra.ttf") format("truetype");
+    font-weight: 700;
+  }
+  @font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url("public/fonts/plus-jakarta/PlusJakartaSans-Light.woff2") format("woff2");
+    font-weight: 300;
+  }
+  @font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url("public/fonts/plus-jakarta/PlusJakartaSans-Regular.woff2") format("woff2");
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url("public/fonts/plus-jakarta/PlusJakartaSans-Medium.woff2") format("woff2");
+    font-weight: 500;
+  }
+  @font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url("public/fonts/plus-jakarta/PlusJakartaSans-Bold.woff2") format("woff2");
+    font-weight: 700;
+  }
+
+  :root {
+    --ink-page: #FFEDD7;
+    --ink-stone: #403D39;
+    --ink-iron: #1B1B1A;
+    --ink-ember: #DD6637;
+    --ink-rule: rgba(27, 27, 26, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    background: var(--ink-stone);
+    font-family: "Plus Jakarta Sans", system-ui, "Helvetica Neue", sans-serif;
+    color: var(--ink-iron);
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: 3rem 1rem;
+  }
+
+  .page {
+    width: 210mm;
+    height: 297mm;
+    background: var(--ink-page);
+    padding: 20mm 24mm 16mm;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 60px rgba(27, 27, 26, 0.45);
+  }
+
+  /* ---- Header ---- */
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8mm;
+  }
+  .identity .name {
+    font-family: "Reforma 1969", Georgia, serif;
+    font-weight: 400;
+    font-size: 27pt;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .identity .contact {
+    margin-top: 2.8mm;
+    display: flex;
+    gap: 5mm;
+    font-size: 8pt;
+    letter-spacing: 0.04em;
+    color: var(--ink-stone);
+  }
+  .identity .contact a { color: inherit; text-decoration: none; }
+  .mark { align-self: center; }
+  .mark svg { width: 14mm; height: 14mm; color: var(--ink-iron); display: block; }
+
+  /* ---- Letter ---- */
+  main { flex: 1; padding-top: 13mm; max-width: 62ch; }
+
+  .date { font-size: 8.5pt; color: var(--ink-stone); margin-bottom: 7mm; }
+
+  .salutation {
+    font-family: "Reforma 1969", Georgia, serif;
+    font-size: 14pt;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 5.5mm;
+  }
+
+  p.body {
+    font-size: 10pt;
+    font-weight: 300;
+    line-height: 1.62;
+    margin-bottom: 4.5mm;
+  }
+  p.body strong { font-weight: 500; }
+
+  .signoff { margin-top: 8mm; font-size: 10pt; font-weight: 300; }
+  .signature {
+    margin-top: 2.5mm;
+    font-family: "Reforma 1969", Georgia, serif;
+    font-size: 16pt;
+    font-weight: 400;
+  }
+
+  /* ---- Footer ---- */
+  footer {
+    border-top: 0.2mm solid var(--ink-rule);
+    padding-top: 2.6mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 6.5pt;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-stone);
+  }
+
+  @page { size: A4; margin: 0; }
+  @media print {
+    body { background: none; padding: 0; display: block; }
+    .page { box-shadow: none; width: 210mm; height: 297mm; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="identity">
+      <div class="name">Spencer McKnight</div>
+      <div class="contact">
+        <a href="mailto:hello@digital-knight.au">hello@digital-knight.au</a>
+        <a href="https://digital-knight.au">digital-knight.au</a>
+      </div>
+    </div>
+    <div class="mark">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Digital Knight logo">
+        <path fill="currentColor" d="M613.467163,740.476990 C582.859131,767.845459 550.858521,792.848694 517.119080,815.634949 C514.232849,817.584290 512.163513,817.827576 509.168121,815.699524 C464.290344,783.817200 420.559326,750.533630 382.287079,710.708313 C349.542816,676.635315 321.143524,639.413452 301.332764,596.160156 C283.741211,557.752014 274.071655,517.585449 275.067230,475.185364 C276.381531,419.212708 274.037537,363.247772 274.977722,307.278717 C275.102325,299.860962 275.068329,300.057556 282.555115,298.604858 C336.233368,288.189423 388.165192,272.284332 437.750427,249.031921 C462.209900,237.561935 485.990173,224.842133 508.947357,210.594635 C511.257385,209.160980 513.246094,208.011658 516.197815,209.881256 C580.684204,250.726379 650.618469,277.897675 725.369629,292.902679 C731.896790,294.212891 738.400879,295.840332 744.998352,296.532837 C750.035950,297.061615 751.232178,299.249054 751.223022,303.945374 C751.109253,362.600037 751.284302,421.255432 751.109375,479.909790 C751.048218,500.411285 749.232971,520.759155 744.605957,540.858276 C737.818176,570.343628 726.372681,597.907898 711.400696,624.055542 C685.861328,668.658447 651.526184,705.916504 613.467163,740.476990 M497.374451,664.942261 C511.980255,637.059448 526.612061,609.190247 541.152832,581.273560 C542.658508,578.382812 544.262695,576.567139 547.928711,576.582581 C553.238586,576.604980 558.551147,575.944519 563.862976,575.582153 C597.070740,573.316772 630.279358,571.064148 663.484680,568.762390 C665.505615,568.622253 668.340454,569.563721 669.071106,566.792847 C669.666443,564.535400 667.218750,563.489685 665.740662,562.249695 C637.662781,538.695801 609.601379,515.121948 581.463928,491.639343 C529.278870,448.087494 477.051636,404.586212 424.810577,361.101501 C423.356567,359.891205 422.212280,358.015045 418.676880,357.969696 C440.912903,467.214874 463.076721,576.105164 485.240509,684.995483 C485.783081,684.994934 486.325653,684.994385 486.868225,684.993774 C490.251587,678.528564 493.634949,672.063293 497.374451,664.942261 z"/>
+      </svg>
+    </div>
+  </header>
+
+  <main>
+    <div class="date">16 July 2026</div>
+    <div class="salutation">Dear Hiring Team,</div>
+
+    <p class="body">
+      I am a full-stack developer specialising in React, Next.js and TypeScript, experienced in
+      leading digital projects from discovery and architecture through development, deployment
+      and CI/CD. At Inlight I maintained a year of zero-rollback releases for Nando&rsquo;s Australia
+      and New Zealand and built React Native experiences for Vicinity&rsquo;s award-winning Chadstone
+      app. Through my own studio, Digital Knight, I rebuilt SOGIF.au in under two months,
+      increasing engagement duration by 90% and reaching 100 scores across Google PageSpeed
+      Insights.
+    </p>
+
+    <p class="body">
+      AI-assisted development is a practical part of how I work, not a replacement for
+      engineering. On a DyFlex vendor portal for Hancock Iron Ore, a custom Figma-to-code
+      workflow let me deliver a pixel-accurate prototype in four days, which I then developed
+      into an SAP-integrated application with 80% Jest coverage. The tooling accelerates
+      prototyping and implementation; the architecture, testing and review standards stay the
+      same as any production project.
+    </p>
+
+    <p class="body">
+      I have recently moved to Erlangen and am looking for a web development team to build with,
+      particularly one open to making smart use of agentic tooling. I have spent my career
+      collaborating closely with designers, strategists and stakeholders across more than ten
+      digital brands, and I enjoy that side of the work as much as the code. I work confidently
+      in English and am actively building my German.
+    </p>
+
+    <p class="body">
+      My resume covers the detail, and <a href="https://digital-knight.au" style="color: var(--ink-iron); font-weight: 500; text-decoration-color: var(--ink-ember); text-underline-offset: 2.5px;">digital-knight.au</a>
+      shows the standard I hold my own work to. I would welcome a conversation about what your
+      team is building.
+    </p>
+
+    <div class="signoff">Kind regards,</div>
+    <div class="signature">Spencer McKnight</div>
+  </main>
+
+  <footer>
+    <span>Spencer McKnight</span>
+    <span>Cover Letter</span>
+  </footer>
+</div>
+</body>
+</html>

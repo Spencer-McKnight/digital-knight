@@ -1,0 +1,118 @@
+@use 'mixins' as *;
+
+// Every layer reads the root's progress (--p) and pointer (--px, --py).
+// --t is the enter ramp and --o the exit ramp, both 0 to 1, available to any
+// section style that targets [data-plate], [data-sequence] or [data-slot].
+@mixin windowed {
+  --a: -1;
+  --b: 2;
+  --f: 0.1;
+  --depth: 0;
+  --t: clamp(0, (var(--p) - var(--a)) / var(--f), 1);
+  --o: clamp(0, (var(--b) - var(--p)) / var(--f), 1);
+  --grow: calc(1 + max(var(--depth), -1 * var(--depth)) * var(--overscan));
+  --shift-x: calc(var(--px) * var(--depth) * var(--sway) * -1);
+  --shift-y: calc((var(--p) - 0.5) * var(--depth) * var(--travel) * -1);
+
+  opacity: var(--o);
+
+  &[data-enter='fade'] {
+    opacity: calc(var(--t) * var(--o));
+  }
+
+  &[data-enter='wipe'] {
+    clip-path: inset(calc((1 - var(--t)) * 100%) 0 0 0);
+  }
+
+  &[data-enter='iris'] {
+    clip-path: circle(calc(var(--t) * 75%) at var(--iris-x, 50%) var(--iris-y, 50%));
+  }
+}
+
+.root {
+  --p: 0;
+  --px: 0;
+  --py: 0;
+  --travel: 10svh;
+  --overscan: 0.1; // keep travel at or below overscan / 2 of the canvas height
+  --sway: 1.2vw;
+  --ratio-now: var(--ratio);
+
+  position: relative;
+  container-type: inline-size;
+
+  @include respond-below(md) {
+    --ratio-now: var(--ratio-mobile);
+  }
+}
+
+.root[data-driver='scrub'] {
+  height: calc(var(--length) * 100svh);
+}
+
+.stage {
+  position: relative;
+  height: var(--scene-height, 100svh);
+  overflow: hidden;
+}
+
+.root[data-driver='scrub'] .stage {
+  position: sticky;
+  top: 0;
+}
+
+// Covers the stage at the art's ratio, so canvas fractions map 1:1 to pixels
+// in the art. Keep slots inside the area that survives the crop.
+.canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, calc(var(--scene-height, 100svh) * var(--ratio-now)));
+  aspect-ratio: var(--ratio-now);
+  translate: -50% -50%;
+}
+
+.layer {
+  @include windowed;
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  translate: var(--shift-x) var(--shift-y);
+  scale: var(--grow);
+}
+
+.img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slot {
+  @include windowed;
+  --x-now: var(--x);
+  --y-now: var(--y);
+
+  position: absolute;
+  left: calc(50% + (var(--x-now) - 0.5) * 100% * var(--grow));
+  top: calc(50% + (var(--y-now) - 0.5) * 100% * var(--grow));
+  translate: calc(var(--ox) * -100% + var(--shift-x)) calc(var(--oy) * -100% + var(--shift-y));
+
+  @include respond-below(md) {
+    --x-now: var(--mx);
+    --y-now: var(--my);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root[data-driver='scrub'] {
+    height: auto;
+  }
+
+  .root[data-driver='scrub'] .stage {
+    position: relative;
+  }
+}
