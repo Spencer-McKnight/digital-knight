@@ -1,0 +1,106 @@
+@use 'mixins' as *;
+
+.root {
+  @include hairline(bottom);
+}
+
+.inner {
+  @include container;
+}
+
+// ── Narrow: one line that opens all four ─────────────────────────────────────
+
+.summary {
+  @include type(meta);
+  @include target;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  padding-block: var(--space-3);
+  text-align: left;
+
+  @include respond-to(md) {
+    display: none;
+  }
+}
+
+.summaryHere,
+.summaryNext {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.summaryNext {
+  color: var(--ink-muted);
+}
+
+.caret {
+  width: 0.5em;
+  height: 0.5em;
+  margin-left: auto;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--dur-state) var(--ease-house);
+
+  [aria-expanded='true'] > & {
+    transform: rotate(-135deg);
+  }
+}
+
+// ── The four stops ───────────────────────────────────────────────────────────
+
+.stops {
+  display: none;
+  padding-bottom: var(--space-4);
+
+  &[data-open] {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  @include respond-to(md) {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--grid-gutter);
+    padding-block: var(--space-4);
+  }
+}
+
+.stop {
+  @include respond-to(md) {
+    @include hairline(left);
+    padding-left: var(--space-3);
+  }
+}
+
+.link {
+  display: grid;
+  gap: var(--space-1);
+  min-height: 2.75rem;
+  padding-block: var(--space-2);
+  color: var(--ink-muted);
+  transition: color var(--dur-state) var(--ease-house);
+
+  &:hover,
+  .stop[data-state='current'] &,
+  .stop[data-state='next'] & {
+    color: var(--ink-text);
+  }
+}
+
+.label {
+  @include type(meta);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.promise {
+  @include type(body);
+  font-size: var(--t-meta);
+  color: var(--ink-muted);
+  letter-spacing: 0;
+}

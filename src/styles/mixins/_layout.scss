@@ -6,6 +6,8 @@
 //   grid()               the 12-column grid inside a container.
 //   section-pad($size)   block breathing room: sm | md | lg | xl | act | hero.
 //   hairline($side)      the one divider: 1px `--ink-rule`.
+//   block-pad            the vertical rhythm every block shares.
+//   link                 an underlined text link that thickens on hover.
 //   focus-ring           2px `--ink-focus`, 3px offset, square.
 //   sr-only              hidden visually, kept for assistive tech.
 // =============================================================================
@@ -81,4 +83,21 @@
 @mixin target {
   min-height: 2.75rem;
   min-width: 2.75rem;
+}
+
+@mixin block-pad {
+  padding-block: var(--space-section);
+}
+
+@mixin link {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  transition: text-decoration-color var(--dur-state) var(--ease-house);
+
+  &:hover {
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 2px;
+  }
 }

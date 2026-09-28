@@ -1,0 +1,84 @@
+@use 'mixins' as *;
+
+// The picture sits a knight's move off the text: two columns across, one
+// band down.
+
+.root {
+  @include block-pad;
+}
+
+.inner {
+  @include container;
+  @include grid;
+  row-gap: var(--space-6);
+}
+
+.text {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+
+  @include respond-to(lg) {
+    grid-column: 1 / span 4;
+  }
+}
+
+.client {
+  @include type(meta);
+}
+
+.body {
+  @include type(body);
+  display: grid;
+  gap: var(--space-3);
+  max-width: var(--t-measure-body);
+}
+
+.inline {
+  @include link;
+}
+
+.link {
+  @include type(meta);
+  @include link;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+.figure {
+  position: relative;
+  grid-column: 1 / -1;
+
+  @include respond-to(lg) {
+    grid-column: 6 / -1;
+    margin-top: var(--space-9);
+  }
+}
+
+.frame {
+  background: var(--ink-carbon);
+  padding: var(--space-4);
+
+  @include respond-to(md) {
+    padding: var(--space-6);
+  }
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sticker {
+  position: absolute;
+  top: calc(var(--space-6) * -1);
+  left: calc(var(--space-3) * -1);
+
+  @include respond-to(lg) {
+    left: calc(var(--space-6) * -1);
+  }
+}

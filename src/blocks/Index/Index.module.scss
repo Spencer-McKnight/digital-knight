@@ -1,0 +1,113 @@
+@use 'mixins' as *;
+
+.root {
+  @include block-pad;
+}
+
+.inner {
+  @include container;
+  @include grid;
+  row-gap: var(--space-6);
+}
+
+.head {
+  grid-column: 1 / -1;
+
+  @include respond-to(lg) {
+    grid-column: 1 / span 4;
+  }
+}
+
+.rows {
+  grid-column: 1 / -1;
+  @include hairline(bottom);
+
+  @include respond-to(lg) {
+    grid-column: 6 / -1;
+  }
+
+  .root[data-variant='full'] & {
+    @include respond-to(lg) {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.row {
+  @include hairline(top);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'client kind'
+    'title title';
+  gap: var(--space-1) var(--space-4);
+  align-items: baseline;
+  padding-block: var(--space-4);
+  transition: background-color var(--dur-state) var(--ease-house);
+
+  @include respond-to(md) {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) auto;
+    grid-template-areas: 'client title kind';
+  }
+
+  .root[data-variant='full'] & {
+    grid-template-columns: 6rem minmax(0, 1fr) auto;
+    grid-template-areas:
+      'thumb client kind'
+      'thumb title title';
+    align-items: center;
+
+    @include respond-to(md) {
+      grid-template-columns: 11rem minmax(0, 2fr) minmax(0, 3fr) auto;
+      grid-template-areas: 'thumb client title kind';
+    }
+  }
+
+  &:hover .client,
+  &:focus-visible .client {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+  }
+}
+
+.thumb {
+  grid-area: thumb;
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--ink-carbon);
+}
+
+.thumbImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0;
+  filter: grayscale(1);
+  transition: filter var(--dur-element) var(--ease-house);
+
+  .row:hover &,
+  .row:focus-visible & {
+    filter: none;
+  }
+}
+
+.client {
+  @include type(section);
+  grid-area: client;
+  font-size: var(--t-lede);
+}
+
+.title {
+  @include type(body);
+  grid-area: title;
+  color: var(--ink-muted);
+}
+
+.kind {
+  @include type(meta);
+  grid-area: kind;
+  justify-self: end;
+  color: var(--ink-muted);
+}

@@ -1,0 +1,55 @@
+@use 'mixins' as *;
+
+.root {
+  @include block-pad;
+}
+
+.inner {
+  @include container;
+  @include grid;
+  row-gap: var(--space-6);
+}
+
+.head {
+  grid-column: 1 / -1;
+
+  @include respond-to(lg) {
+    grid-column: 1 / span 4;
+  }
+}
+
+.rows {
+  grid-column: 1 / -1;
+  @include hairline(bottom);
+
+  @include respond-to(lg) {
+    grid-column: 6 / -1;
+  }
+}
+
+.row {
+  @include hairline(top);
+  display: grid;
+  gap: var(--space-1) var(--grid-gutter);
+  padding-block: var(--space-3);
+
+  @include respond-to(md) {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: baseline;
+  }
+}
+
+.term {
+  @include type(body);
+  font-weight: 600;
+
+  .root[data-variant='terms'] & {
+    @include type(lede);
+    font-weight: 700;
+  }
+}
+
+.detail {
+  @include type(body);
+  color: var(--ink-muted);
+}

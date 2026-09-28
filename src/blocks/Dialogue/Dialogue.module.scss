@@ -1,0 +1,51 @@
+@use 'mixins' as *;
+
+.root {
+  @include block-pad;
+}
+
+.inner {
+  @include container;
+  @include grid;
+  row-gap: var(--space-6);
+}
+
+.head {
+  grid-column: 1 / -1;
+
+  @include respond-to(lg) {
+    grid-column: 1 / span 4;
+  }
+}
+
+.exchanges {
+  grid-column: 1 / -1;
+
+  @include respond-to(lg) {
+    grid-column: 6 / -1;
+  }
+}
+
+.exchange {
+  @include hairline(top);
+  display: grid;
+  gap: var(--space-3);
+  padding-block: var(--space-5) var(--space-6);
+}
+
+.question {
+  @include type(lede);
+  font-weight: 700;
+  max-width: 34ch;
+}
+
+.answer {
+  @include type(body);
+  display: grid;
+  gap: var(--space-3);
+  max-width: var(--t-measure-body);
+}
+
+.link {
+  @include link;
+}

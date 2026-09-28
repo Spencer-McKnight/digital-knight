@@ -1,0 +1,122 @@
+@use 'mixins' as *;
+
+// A sequence told by its names. The rule on the left runs the length of the
+// work, from listening to evolving.
+
+.root {
+  @include block-pad;
+}
+
+.inner {
+  @include container;
+  @include grid;
+  row-gap: var(--space-7);
+}
+
+.head {
+  grid-column: 1 / -1;
+
+  @include respond-to(lg) {
+    grid-column: 1 / span 5;
+  }
+}
+
+.phases {
+  grid-column: 1 / -1;
+  @include hairline(left);
+  padding-left: var(--space-4);
+
+  @include respond-to(md) {
+    padding-left: var(--space-6);
+  }
+
+  @include respond-to(lg) {
+    grid-column: 2 / -1;
+  }
+}
+
+.phase {
+  display: grid;
+  gap: var(--space-3);
+  padding-bottom: var(--space-7);
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    column-gap: var(--grid-gutter);
+  }
+}
+
+.name {
+  @include type(title);
+}
+
+.content {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+
+  @include respond-to(lg) {
+    padding-top: var(--space-3);
+  }
+}
+
+.lede {
+  @include type(lede);
+  max-width: var(--t-measure-lede);
+}
+
+.body {
+  @include type(body);
+  display: grid;
+  gap: var(--space-3);
+  max-width: var(--t-measure-body);
+}
+
+.questions {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.questionsHeading {
+  @include type(body);
+  font-weight: 600;
+}
+
+.questionList {
+  @include type(body);
+  display: grid;
+  gap: var(--space-1);
+
+  li {
+    @include hairline(top);
+    padding-top: var(--space-2);
+  }
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+
+  li {
+    @include type(meta);
+    color: var(--ink-muted);
+  }
+}
+
+.link {
+  @include link;
+}
+
+.proof {
+  @include type(meta);
+  @include link;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}

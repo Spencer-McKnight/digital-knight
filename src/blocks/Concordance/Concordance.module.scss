@@ -1,0 +1,121 @@
+@use 'mixins' as *;
+
+.root {
+  @include block-pad;
+}
+
+.inner {
+  @include container;
+  @include grid;
+  row-gap: var(--space-6);
+}
+
+.head {
+  grid-column: 1 / -1;
+}
+
+.terms {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  align-content: start;
+
+  @include respond-to(lg) {
+    grid-column: 1 / span 7;
+  }
+}
+
+.termItem {
+  display: contents;
+
+  @include respond-below(lg) {
+    display: block;
+  }
+}
+
+.term {
+  @include type(lede);
+  @include target;
+  padding-inline: var(--space-2);
+  color: var(--ink-muted);
+  border: 1px solid transparent;
+  transition:
+    color var(--dur-state) var(--ease-house),
+    border-color var(--dur-state) var(--ease-house);
+
+  &:hover,
+  &[data-lit] {
+    color: var(--ink-text);
+    border-color: var(--ink-text);
+  }
+}
+
+// Narrow: the matching cases open under the term.
+.inline {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-2) var(--space-3);
+
+  &[hidden] {
+    display: none;
+  }
+
+  @include respond-to(lg) {
+    display: none !important;
+  }
+}
+
+.inlineLink {
+  @include type(body);
+  @include link;
+}
+
+// Wide: the cases beside the terms, lit by the term in hand.
+.cases {
+  display: none;
+
+  @include respond-to(lg) {
+    display: block;
+    grid-column: 9 / -1;
+    @include hairline(bottom);
+    align-self: start;
+  }
+}
+
+.case {
+  @include hairline(top);
+  transition: color var(--dur-state) var(--ease-house);
+
+  .cases[data-lit] & {
+    color: var(--ink-muted);
+  }
+
+  .cases[data-lit] &[data-on] {
+    color: var(--ink-text);
+  }
+}
+
+.caseLink {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+}
+
+.client {
+  @include type(lede);
+  font-weight: 700;
+
+  .case[data-on] & {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.18em;
+  }
+}
+
+.kind {
+  @include type(meta);
+  color: inherit;
+}

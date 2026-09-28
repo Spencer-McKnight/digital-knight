@@ -103,3 +103,57 @@
   width: 1.4rem;
   height: 1.4rem;
 }
+
+// ── The block ────────────────────────────────────────────────────────────────
+
+.block {
+  position: relative;
+  @include block-pad;
+  overflow: hidden;
+
+  &[data-art] {
+    @include respond-to(md) {
+      min-height: min(52rem, 90svh);
+      display: grid;
+      align-items: end;
+    }
+  }
+}
+
+.surface {
+  position: absolute;
+  inset: 0;
+}
+
+.surfaceImage {
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+.blockInner {
+  @include container;
+  @include grid;
+  position: relative;
+  row-gap: var(--space-6);
+  align-items: end;
+}
+
+.blockHead {
+  grid-column: 1 / -1;
+
+  @include respond-to(md) {
+    grid-column: 1 / span 6;
+  }
+}
+
+.blockStub {
+  grid-column: 1 / -1;
+
+  @include respond-to(md) {
+    grid-column: 8 / -1;
+    justify-self: end;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+}

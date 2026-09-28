@@ -1,0 +1,34 @@
+@use 'mixins' as *;
+
+.root {
+  --tilt: 0deg;
+  display: inline-grid;
+  place-items: center;
+  width: clamp(5.5rem, 4.5rem + 3vw, 7.5rem);
+  aspect-ratio: 1;
+  filter: drop-shadow(0 0.2rem 0.25rem var(--shadow-object));
+  transform: rotate(var(--tilt));
+}
+
+.root[data-tilt='-3'] { --tilt: -3deg; }
+.root[data-tilt='-2'] { --tilt: -2deg; }
+.root[data-tilt='-1'] { --tilt: -1deg; }
+.root[data-tilt='1'] { --tilt: 1deg; }
+.root[data-tilt='2'] { --tilt: 2deg; }
+.root[data-tilt='3'] { --tilt: 3deg; }
+
+// The lifting edge: a sliver of the dot folds back at the lower right.
+.face {
+  @include type(meta);
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--space-3);
+  border-radius: 50%;
+  background: var(--ink-signal);
+  color: var(--ink-on-signal);
+  text-align: center;
+  line-height: 1.15;
+  clip-path: polygon(0 0, 100% 0, 100% 78%, 78% 100%, 0 100%);
+}

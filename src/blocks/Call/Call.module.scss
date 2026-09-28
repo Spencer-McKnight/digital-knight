@@ -1,0 +1,72 @@
+@use 'mixins' as *;
+
+.root {
+  @include block-pad;
+  @include hairline(top);
+
+  &[data-variant='quiet'] {
+    padding-block: var(--space-6);
+  }
+}
+
+.inner {
+  @include container;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.lead {
+  @include type(lede);
+  max-width: var(--t-measure-lede);
+  color: var(--ink-muted);
+
+  .root[data-variant='quiet'] & {
+    @include type(body);
+    color: var(--ink-muted);
+  }
+}
+
+.link {
+  @include type(title);
+  --next-mark-stroke: 2.2;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25em;
+  justify-self: start;
+  max-width: 22ch;
+
+  .root[data-variant='quiet'] & {
+    @include type(meta);
+    --next-mark-stroke: 1.9;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 2.75rem;
+  }
+}
+
+.label {
+  text-decoration: underline;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.12em;
+  text-decoration-color: transparent;
+  transition: text-decoration-color var(--dur-state) var(--ease-house);
+
+  .link:hover & {
+    text-decoration-color: currentColor;
+  }
+
+  .root[data-variant='quiet'] & {
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.35em;
+  }
+}
+
+.mark {
+  align-self: center;
+  transition: transform var(--dur-element) var(--ease-house);
+
+  .link:hover & {
+    transform: translate(0.08em, 0.04em);
+  }
+}

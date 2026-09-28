@@ -1,0 +1,70 @@
+@use 'mixins' as *;
+
+.root {
+  padding-block: var(--space-7);
+
+  @include respond-to(lg) {
+    padding-block: var(--space-8);
+  }
+}
+
+.inner {
+  @include container;
+  @include grid;
+  row-gap: var(--space-5);
+}
+
+.head {
+  grid-column: 1 / -1;
+
+  @include respond-to(lg) {
+    grid-column: 1 / span 4;
+  }
+}
+
+.body {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--space-4);
+  max-width: var(--t-measure-body);
+
+  @include respond-to(lg) {
+    grid-column: 6 / -1;
+  }
+}
+
+.paragraph {
+  @include type(body);
+
+  &:first-child {
+    @include type(lede);
+  }
+}
+
+.link {
+  @include link;
+}
+
+.list {
+  @include hairline(bottom);
+}
+
+.item,
+.entry {
+  @include type(body);
+  @include hairline(top);
+  padding-block: var(--space-3);
+}
+
+.entry {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.entryName {
+  font-weight: 600;
+}
+
+.entryText {
+  color: var(--ink-muted);
+}

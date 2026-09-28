@@ -1,0 +1,19 @@
+@use 'mixins' as *;
+
+.root {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+
+.title {
+  @include type(section);
+  max-width: 20ch;
+}
+
+.lede {
+  @include type(lede);
+  max-width: var(--t-measure-lede);
+  color: var(--ink-muted);
+  margin-top: var(--space-2);
+}
