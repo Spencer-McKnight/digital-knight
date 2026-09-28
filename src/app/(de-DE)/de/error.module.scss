@@ -1,0 +1,26 @@
+@use 'mixins' as *;
+
+.root {
+  @include block-pad;
+}
+
+.inner {
+  @include container;
+  display: grid;
+  gap: var(--space-5);
+  justify-items: start;
+  max-width: 48rem;
+  margin-inline: 0;
+}
+
+.title {
+  @include type(title);
+}
+
+.button {
+  @include type(meta);
+  min-height: 3.25rem;
+  padding-inline: var(--space-5);
+  background: var(--ink-text);
+  color: var(--ink-ground);
+}
