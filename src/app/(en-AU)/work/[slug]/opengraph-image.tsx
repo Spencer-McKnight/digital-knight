@@ -1,18 +1,19 @@
+import { caseCopy } from '@/content/case-page';
+import { CASES } from '@/content/cases';
+import { CASE_SLUGS, isCaseSlug } from '@/content/routes';
 import { OG_SIZE, ogCard } from '@/og/card';
-import { getAllSlugs, getCaseStudy } from './content';
 
 export const size = OG_SIZE;
 export const contentType = 'image/png';
 export const alt = 'Digital Knight case study';
-
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getAllSlugs().map((slug) => ({ slug }));
+  return CASE_SLUGS.map((slug) => ({ slug }));
 }
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const study = getCaseStudy(slug);
-  return ogCard({ kicker: study?.label ?? 'Work', title: study?.title ?? 'Selected work' });
+  if (!isCaseSlug(slug)) return ogCard({ kicker: 'Work', title: 'Digital Knight' });
+  return ogCard({ kicker: CASES[slug].client, title: caseCopy('en-AU', slug).h1.split(': ')[1] ?? caseCopy('en-AU', slug).h1 });
 }

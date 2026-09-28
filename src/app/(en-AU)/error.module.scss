@@ -1,78 +1,26 @@
-@use '@/styles/mixins' as *;
+@use 'mixins' as *;
 
 .root {
-  @include ground-invert;
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-8) var(--space-6);
+  @include block-pad;
 }
 
 .inner {
-  max-width: 40rem;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
+  @include container;
+  display: grid;
+  gap: var(--space-5);
+  justify-items: start;
+  max-width: 48rem;
+  margin-inline: 0;
 }
 
-.eyebrow {
-  @include type(meta);
-  color: var(--ink-iron);
-  opacity: 0.45;
-  margin: 0;
-}
-
-.heading {
-  @include type(hero);
-  color: var(--ink-iron);
-  margin: 0;
-}
-
-.ember {
-  color: var(--ink-ember);
-  font-style: normal;
-}
-
-.note {
-  @include type(lede);
-  color: var(--ink-iron);
-  opacity: 0.7;
-  max-width: 38ch;
-  margin: 0;
-
-  a {
-    color: var(--ink-ember);
-    opacity: 1;
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-    transition: opacity var(--dur-state);
-
-    &:hover {
-      opacity: 0.75;
-    }
-  }
+.title {
+  @include type(title);
 }
 
 .button {
-  @include type(ui);
-  align-self: flex-start;
-  padding: var(--space-3) var(--space-5);
-  border: 1px solid var(--ink-iron);
-  background: transparent;
-  color: var(--ink-iron);
-  cursor: pointer;
-  transition:
-    background var(--dur-element) var(--ease-house),
-    color var(--dur-element) var(--ease-house);
-
-  &:hover {
-    background: var(--ink-iron);
-    color: var(--ink-page);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--ink-ember);
-    outline-offset: 3px;
-  }
+  @include type(meta);
+  min-height: 3.25rem;
+  padding-inline: var(--space-5);
+  background: var(--ink-text);
+  color: var(--ink-ground);
 }

@@ -1,107 +1,50 @@
-import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getCaseStudy, getAllSlugs, type CaseStudy } from './content';
-import { CaseStudyPage } from './CaseStudyPage';
+import { Call } from '@/blocks/Call/Call';
+import { Ledger } from '@/blocks/Ledger/Ledger';
+import { Loupe } from '@/blocks/Loupe/Loupe';
+import { Narrative } from '@/blocks/Narrative/Narrative';
+import { Plates } from '@/blocks/Plates/Plates';
+import { Proof } from '@/blocks/Proof/Proof';
+import { Statement } from '@/blocks/Statement/Statement';
+import { Trail } from '@/blocks/Trail/Trail';
+import { JsonLd } from '@/components/StructuredData';
+import { caseCopy, caseGraph, casePage } from '@/content/case-page';
+import { CASE_SLUGS, isCaseSlug, pageMetadata } from '@/content/routes';
 
 type Props = { params: Promise<{ slug: string }> };
 
-// Unknown slugs fall through to the global 404; see global-not-found.tsx.
 export const dynamicParams = false;
 
-export async function generateStaticParams() {
-  return getAllSlugs().map((slug) => ({ slug }));
+export function generateStaticParams() {
+  return CASE_SLUGS.map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const study = getCaseStudy(slug);
-  if (!study) return {};
-
-  return {
-    title: `${study.label} — ${study.title}`,
-    description: study.tagline,
-    alternates: { canonical: `/work/${slug}` },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-        'max-video-preview': -1,
-      },
-    },
-    openGraph: {
-      type: 'article',
-      url: `/work/${slug}`,
-      title: `${study.title} — ${study.label} · Digital Knight`,
-      description: study.tagline,
-    },
-  };
+  if (!isCaseSlug(slug)) return {};
+  return pageMetadata({ id: 'case', locale: 'en-AU', slug, ...caseCopy('en-AU', slug).meta });
 }
 
-const BASE = 'https://digital-knight.au';
-
-function caseStudyGraph(study: CaseStudy) {
-  const url = `${BASE}/work/${study.slug}`;
-  const pageId = `${url}#webpage`;
-  const workId = `${url}#work`;
-  const lead = study.figures.find((f) => f.variant === 'lead');
-
-  return {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'WebPage',
-        '@id': pageId,
-        url,
-        name: `${study.label} — ${study.title}`,
-        description: study.tagline,
-        isPartOf: { '@id': `${BASE}/#website` },
-        inLanguage: 'en-AU',
-        ...(lead ? { primaryImageOfPage: `${BASE}${lead.src}` } : {}),
-        mainEntity: { '@id': workId },
-      },
-      {
-        '@type': 'CreativeWork',
-        '@id': workId,
-        name: `${study.label} — ${study.title}`,
-        headline: study.title,
-        abstract: study.tagline,
-        description: study.lede,
-        url,
-        ...(lead ? { image: `${BASE}${lead.src}` } : {}),
-        keywords: study.technologies.join(', '),
-        inLanguage: 'en-AU',
-        mainEntityOfPage: { '@id': pageId },
-        creator: { '@id': `${BASE}/#organization` },
-        about: study.technologies.map((t) => ({ '@type': 'Thing', name: t })),
-      },
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: BASE },
-          { '@type': 'ListItem', position: 2, name: 'Work', item: `${BASE}/work` },
-          { '@type': 'ListItem', position: 3, name: study.label, item: url },
-        ],
-      },
-    ],
-  };
-}
-
-export default async function WorkPage({ params }: Props) {
+export default async function Case({ params }: Props) {
   const { slug } = await params;
-  const study = getCaseStudy(slug);
-  if (!study) notFound();
+  if (!isCaseSlug(slug)) notFound();
+  const c = casePage('en-AU', slug);
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(caseStudyGraph(study)) }}
-      />
-      <CaseStudyPage study={study} />
+      <JsonLd data={caseGraph('en-AU', slug)} />
+      <Trail locale="en-AU" current="work" />
+      <Statement {...c.statement} />
+      <Proof {...c.proof} />
+      {c.loupe ? <Loupe {...c.loupe} /> : null}
+      <Narrative {...c.context} />
+      <Narrative {...c.criteria} />
+      {c.engagements ? <Narrative {...c.engagements} /> : null}
+      <Narrative {...c.outcomes} />
+      <Plates {...c.plates} />
+      <Ledger {...c.stack} />
+      <Call {...c.nextCase} />
+      <Call {...c.call} />
     </>
   );
 }

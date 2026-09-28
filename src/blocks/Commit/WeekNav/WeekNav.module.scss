@@ -1,0 +1,20 @@
+@use 'mixins' as *;
+
+.btn {
+  @include target;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--ink-rule);
+  color: var(--ink-text);
+  transition: border-color var(--dur-state) var(--ease-house);
+
+  &:hover:not(:disabled) {
+    border-color: var(--ink-text);
+  }
+
+  &:disabled {
+    color: var(--ink-muted);
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}

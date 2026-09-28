@@ -28,8 +28,10 @@ type Props = {
   arts: ReadonlyArray<NightlightArt>;
   /** Loupe: the second picture the pool of light shows. */
   after?: RefObject<HTMLImageElement | null>;
-  /** Lets a block drive the light itself (Loupe on touch). */
+  /** Lets a block drive the light itself (Loupe). */
   onScene?: (scene: NightlightScene | null) => void;
+  /** When false the block handles the pointer; the scene only renders. */
+  follow?: boolean;
   className?: string;
 };
 
@@ -65,7 +67,7 @@ function whenLoaded(img: HTMLImageElement, done: () => void): () => void {
  * first frame and removes itself if anything fails, so the still is always
  * what a visitor falls back to. Reduced motion never mounts it.
  */
-export function Nightlight({ host, image, arts, after, onScene, className }: Props) {
+export function Nightlight({ host, image, arts, after, onScene, follow = true, className }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [armed, setArmed] = useState(false);
   const [ready, setReady] = useState(false);
@@ -155,7 +157,9 @@ export function Nightlight({ host, image, arts, after, onScene, className }: Pro
         return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height];
       };
 
-      if (fine) {
+      if (!follow) {
+        // The block drives the light.
+      } else if (fine) {
         const move = (e: PointerEvent) => e.pointerType === 'mouse' && s.aim(box(e), LAG.element);
         const leave = () => s.rest(LAG.scene);
         hostEl.addEventListener('pointermove', move);
@@ -197,7 +201,7 @@ export function Nightlight({ host, image, arts, after, onScene, className }: Pro
       scene?.destroy();
       setReady(false);
     };
-  }, [armed, failed, source, arts, after, host, image]);
+  }, [armed, failed, source, arts, after, host, image, follow]);
 
   if (!armed || failed) return null;
 

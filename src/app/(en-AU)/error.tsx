@@ -1,37 +1,23 @@
 'use client';
 
 import { useEffect } from 'react';
+import { ErrorBar } from '@/components/ErrorBar/ErrorBar';
 import styles from './error.module.scss';
 
-export default function RouteError({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+export default function RouteError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error('[route error]', error);
-    }
+    if (process.env.NODE_ENV !== 'production') console.error('[route error]', error);
   }, [error]);
 
   return (
-    <div className={styles.root}>
+    <section className={styles.root} data-ground="paper">
       <div className={styles.inner}>
-        <p className={styles.eyebrow}>Error</p>
-        <h1 className={styles.heading}>
-          Broke it.. <em className={styles.ember}>sorry!</em>.
-        </h1>
-        <p className={styles.note}>
-          I&apos;m testing new features — this one slipped through. Email{' '}
-          <a href="mailto:hello@digital-knight.au">hello@digital-knight.au</a>
-          {' '}and I&apos;ll get you sorted directly.
-        </p>
+        <h1 className={styles.title}>This page did not load.</h1>
+        <ErrorBar>Something went wrong on the server. Try again, or email hello@digital-knight.au.</ErrorBar>
         <button type="button" onClick={reset} className={styles.button}>
           Try again
         </button>
       </div>
-    </div>
+    </section>
   );
 }

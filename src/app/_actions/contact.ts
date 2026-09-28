@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { Resend } from 'resend';
 import { env, requireEnv } from '@/lib/env';
 import { isDisposableEmail } from '@/lib/booking/disposableEmailDomains';
-import { MIN_DWELL_MS } from '@/components/contact/ContactForm/contactConfig';
+import { MIN_DWELL_MS } from '@/lib/contact/config';
 import ContactNotification from '@/emails/ContactNotification';
 
 const ContactInput = z.object({
@@ -14,6 +14,7 @@ const ContactInput = z.object({
   message:      z.string().trim().min(1, 'Message is required').max(2000),
   website:      z.string().optional().default(''),
   formDwellMs:  z.number().finite().min(0).max(7 * 24 * 60 * 60 * 1000),
+  locale:       z.enum(['en-AU', 'de-DE']).optional().default('en-AU'),
 });
 
 export type ContactResult =
@@ -76,12 +77,13 @@ async function sendContactEmail(data: ContactData): Promise<boolean> {
   const { error } = await resend.emails.send({
     from: `Digital Knight <${requireEnv('BOOKING_FROM_EMAIL')}>`,
     to: toEmail,
-    subject: `New enquiry from ${data.name}`,
+    subject: `${data.locale === 'de-DE' ? '[DE] ' : ''}New enquiry from ${data.name}`,
     replyTo: data.email,
     react: ContactNotification({
       name: data.name,
       email: data.email,
       message: data.message,
+      locale: data.locale,
     }),
   });
 

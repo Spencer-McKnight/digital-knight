@@ -120,3 +120,18 @@ describe('createBooking — happy path', () => {
     expect(insertSingle).not.toHaveBeenCalled();
   });
 });
+
+describe('createBooking — market', () => {
+  it('accepts a German booking', async () => {
+    const result = await createBooking({ ...validPayload(), locale: 'de-DE' });
+    expect(result.ok).toBe(true);
+    expect(insertSingle).toHaveBeenCalledTimes(1);
+  });
+
+  it('rejects an unknown market as a validation failure', async () => {
+    const result = await createBooking({ ...validPayload(), locale: 'fr-FR' as 'de-DE' });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toBe('validation');
+    expect(insertSingle).not.toHaveBeenCalled();
+  });
+});

@@ -1,14 +1,4 @@
-import {
-  Body,
-  Container,
-  Head,
-  Hr,
-  Html,
-  Link,
-  Preview,
-  Section,
-  Text,
-} from '@react-email/components';
+import { Body, Container, Head, Hr, Html, Link, Preview, Section, Text } from '@react-email/components';
 import {
   MEETING_DIAL_IN_COUNTRY,
   MEETING_DIAL_IN_NUMBER,
@@ -16,112 +6,132 @@ import {
   MEETING_LOCATION_URL,
   MEETING_PIN,
 } from '@/lib/booking/config';
+import { e } from './palette';
 
 /**
- * BookingConfirmation — React Email template.
- *
- *   Intentionally minimal for v1 — brand ink palette, one ember hairline, no
- *   imagery. A later pass will layer structured content (agenda, joining
- *   link, host bio). The contract today is: an unambiguous confirmation that
- *   renders correctly in Apple Mail, Gmail, and Outlook web.
- *
- *   All copy and dates arrive pre-rendered from the server action — the
- *   template itself does no timezone math, so previewing this file in
- *   `react-email dev` gives an exact WYSIWYG of what the visitor receives.
+ * The booking confirmation, in the visitor's market language. Times arrive
+ * pre-formatted from the server action; the template does no time-zone maths,
+ * so the preview is exactly what the visitor receives.
  */
 
 export type BookingConfirmationProps = {
+  locale?: 'en-AU' | 'de-DE';
   name: string;
-  /** e.g. "Wed 29 Apr 2026 · 10:30 AM" */
+  /** In the visitor's zone. */
   whenVisitor: string;
-  /** e.g. "10:30–11:00 Australia/Melbourne" */
+  /** In Melbourne time. */
   whenBusiness: string;
-  /** Visitor's resolved IANA timezone, shown in small print. */
   visitorTimezone: string;
   hostEmail: string;
 };
 
-// Inline styles only — React Email has limited CSS support across clients.
-// Hex values match the design tokens at compile time.
-const INK_PAGE = '#FFEDD7';
-const INK_IRON = '#1B1B1A';
-const INK_STONE = '#403D39';
-const INK_EMBER = '#DD6637';
+const COPY = {
+  'en-AU': {
+    preview: 'Your call with Digital Knight is booked.',
+    title: 'The call is booked.',
+    lede: (name: string) => `Thanks, ${name}. The details are below, and the attached calendar file carries the link.`,
+    whenYours: 'When, your time',
+    whenMelbourne: 'Melbourne time',
+    length: 'Length',
+    lengthValue: '30 minutes',
+    join: 'Join on Google Meet',
+    dialIn: `Dial in (${MEETING_DIAL_IN_COUNTRY})`,
+    pin: 'PIN',
+    ics: 'The attached .ics file adds the call to Apple Calendar, Google Calendar or Outlook, with the link and dial-in.',
+    prepare: 'If you want to prepare, three things are worth a thought:',
+    points: [
+      'What your website does for the business today, and what you wish it did.',
+      'Anything you or your team do by hand that feels like it should be automatic.',
+      'Where you want the business to be in a year.',
+    ],
+    noObligation: 'There is no obligation either way.',
+    footer: (tz: string) => `Times shown in your zone (${tz}). To move the call, reply to this email or write to`,
+  },
+  'de-DE': {
+    preview: 'Ihr Erstgespräch mit Digital Knight ist gebucht.',
+    title: 'Das Gespräch ist gebucht.',
+    lede: (name: string) => `Vielen Dank, ${name}. Die Details stehen unten, die angehängte Kalenderdatei enthält den Link.`,
+    whenYours: 'Wann, Ihre Zeit',
+    whenMelbourne: 'Zeit in Melbourne',
+    length: 'Dauer',
+    lengthValue: '30 Minuten',
+    join: 'Über Google Meet teilnehmen',
+    dialIn: `Einwahl (${MEETING_DIAL_IN_COUNTRY})`,
+    pin: 'PIN',
+    ics: 'Die angehängte .ics-Datei trägt das Gespräch mit Link und Einwahl in Apple Kalender, Google Kalender oder Outlook ein.',
+    prepare: 'Wenn Sie sich vorbereiten möchten, lohnen sich drei Fragen:',
+    points: [
+      'Was Ihre Website heute für das Unternehmen leistet, und was sie leisten sollte.',
+      'Was Sie oder Ihr Team von Hand erledigen, obwohl es automatisch laufen könnte.',
+      'Wo Ihr Unternehmen in einem Jahr stehen soll.',
+    ],
+    noObligation: 'Das Gespräch ist unverbindlich.',
+    footer: (tz: string) => `Zeiten in Ihrer Zeitzone (${tz}). Um den Termin zu verschieben, antworten Sie auf diese E-Mail oder schreiben Sie an`,
+  },
+} as const;
 
-const SERIF_STACK = "'Reforma 1969', Georgia, 'Times New Roman', serif";
-const SANS_STACK =
-  "'Plus Jakarta Sans', system-ui, 'Helvetica Neue', Arial, sans-serif";
-
-export default function BookingConfirmation(props: BookingConfirmationProps) {
-  const { name, whenVisitor, whenBusiness, visitorTimezone, hostEmail } = props;
-
+export default function BookingConfirmation({
+  locale = 'en-AU',
+  name,
+  whenVisitor,
+  whenBusiness,
+  visitorTimezone,
+  hostEmail,
+}: BookingConfirmationProps) {
+  const t = COPY[locale];
   return (
-    <Html>
+    <Html lang={locale}>
       <Head />
-      <Preview>Your Digital Knight strategy call is confirmed.</Preview>
-      <Body style={body}>
-        <Container style={container}>
-          <Text style={eyebrow}>DIGITAL KNIGHT · CONFIRMED</Text>
+      <Preview>{t.preview}</Preview>
+      <Body style={e.body}>
+        <Container style={e.container}>
+          <Text style={e.wordmark}>Digital Knight</Text>
+          <Text style={e.title}>{t.title}</Text>
+          <Section style={e.signal} />
+          <Text style={e.lede}>{t.lede(name)}</Text>
 
-          <Text style={title}>The call is booked.</Text>
-          <Hr style={emberRule} />
-
-          <Text style={lede}>
-            Thank you, Spencer McKnight has confirmed the consult.
-            Add the event to your calendar, or use the details below.
-          </Text>
-
-          <Section style={details}>
-            <Text style={detailsLabel}>WHEN (YOUR TIME)</Text>
-            <Text style={detailsValue}>{whenVisitor}</Text>
-
-
-            <Text style={detailsLabel}>DURATION</Text>
-            <Text style={detailsValue}>30 minutes</Text>
+          <Section>
+            <Text style={e.label}>{t.whenYours}</Text>
+            <Text style={e.value}>{whenVisitor}</Text>
+            <Text style={e.label}>{t.whenMelbourne}</Text>
+            <Text style={e.value}>{whenBusiness}</Text>
+            <Text style={e.label}>{t.length}</Text>
+            <Text style={e.value}>{t.lengthValue}</Text>
           </Section>
 
-          <Hr style={rule} />
+          <Hr style={e.rule} />
 
-          <Section style={details}>
-            <Text style={detailsLabel}>JOIN GOOGLE MEET</Text>
-            <Text style={detailsValue}>
-              <Link href={MEETING_LOCATION_URL} style={link}>
+          <Section>
+            <Text style={e.label}>{t.join}</Text>
+            <Text style={e.value}>
+              <Link href={MEETING_LOCATION_URL} style={e.link}>
                 {MEETING_LOCATION_LABEL}
               </Link>
             </Text>
-
-            <Text style={detailsLabel}>DIAL-IN ({MEETING_DIAL_IN_COUNTRY})</Text>
-            <Text style={detailsValue}>{MEETING_DIAL_IN_NUMBER}</Text>
-
-            <Text style={detailsLabel}>PIN</Text>
-            <Text style={detailsValue}>{MEETING_PIN}</Text>
+            <Text style={e.label}>{t.dialIn}</Text>
+            <Text style={e.value}>{MEETING_DIAL_IN_NUMBER}</Text>
+            <Text style={e.label}>{t.pin}</Text>
+            <Text style={e.value}>{MEETING_PIN}</Text>
           </Section>
 
-          <Hr style={rule} />
+          <Hr style={e.rule} />
 
-          <Text style={body1}>
-            A <strong>.ics</strong>&nbsp;file is attached. With one tap, it&apos;ll add the meeting to
-            Apple Calendar, Google Calendar, or Outlook — the Meet link and dial-in
-            details travel with it.
-          </Text>
+          <Text style={e.text}>{t.ics}</Text>
+          <Text style={e.text}>{t.prepare}</Text>
+          {t.points.map((p) => (
+            <Text key={p} style={{ ...e.text, margin: '0 0 6px', paddingLeft: '14px' }}>
+              {p}
+            </Text>
+          ))}
+          <Text style={{ ...e.text, marginTop: '14px' }}>{t.noObligation}</Text>
 
-          <Text style={body1}>
-            If you’d like to prepare for the call, please consider:
-            <br />- Is your website generating leads, and representing your current goals?
-            <br />- Would you like to modernise your design, add new features, attract new business?
-            <br />- Are there things you do manually that you suspect should be automatic?
-            <br /> During the call, we’ll discuss some context and I’ll provide candid ideas for your business.
-            <br />No obligation either way, I’d be happy to meet you just to connect, learn and share.
-          </Text>
+          <Hr style={e.rule} />
 
-          <Hr style={rule} />
-
-          <Text style={small}>
-            Shown in your time ({visitorTimezone}). Need to reschedule?{' '}
-            Just reply to this email, or reach me at{' '}
-            <a href={`mailto:${hostEmail}`} style={link}>
+          <Text style={e.small}>
+            {t.footer(visitorTimezone)}{' '}
+            <Link href={`mailto:${hostEmail}`} style={e.link}>
               {hostEmail}
-            </a>
+            </Link>
             .
           </Text>
         </Container>
@@ -129,96 +139,3 @@ export default function BookingConfirmation(props: BookingConfirmationProps) {
     </Html>
   );
 }
-
-const body: React.CSSProperties = {
-  backgroundColor: INK_STONE,
-  color: INK_PAGE,
-  fontFamily: SANS_STACK,
-  margin: 0,
-  padding: '40px 16px',
-};
-
-const container: React.CSSProperties = {
-  backgroundColor: INK_PAGE,
-  color: INK_IRON,
-  maxWidth: '560px',
-  margin: '0 auto',
-  padding: '48px 40px',
-};
-
-const eyebrow: React.CSSProperties = {
-  fontSize: '11px',
-  letterSpacing: '0.12em',
-  textTransform: 'uppercase',
-  color: INK_IRON,
-  margin: 0,
-  fontWeight: 500,
-};
-
-const title: React.CSSProperties = {
-  fontSize: '32px',
-  lineHeight: 1,
-  letterSpacing: '-0.02em',
-  color: INK_IRON,
-  margin: '20px 0 16px',
-  fontWeight: 500,
-  fontFamily: SERIF_STACK,
-};
-
-const emberRule: React.CSSProperties = {
-  border: 0,
-  borderTop: `1px solid ${INK_EMBER}`,
-  margin: '0 0 24px',
-  width: '64px',
-};
-
-const lede: React.CSSProperties = {
-  fontSize: '17px',
-  lineHeight: 1.5,
-  margin: '0 0 32px',
-};
-
-const details: React.CSSProperties = {
-  padding: '20px 0',
-};
-
-const detailsLabel: React.CSSProperties = {
-  fontSize: '11px',
-  letterSpacing: '0.12em',
-  textTransform: 'uppercase',
-  color: INK_STONE,
-  margin: '12px 0 4px',
-  fontWeight: 500,
-};
-
-const detailsValue: React.CSSProperties = {
-  fontSize: '16px',
-  color: INK_IRON,
-  margin: 0,
-  fontWeight: 500,
-};
-
-const rule: React.CSSProperties = {
-  border: 0,
-  borderTop: `1px solid rgba(27,27,26,0.12)`,
-  margin: '28px 0',
-};
-
-const body1: React.CSSProperties = {
-  fontSize: '15px',
-  lineHeight: 1.55,
-  margin: '0 0 16px',
-};
-
-const small: React.CSSProperties = {
-  fontSize: '13px',
-  lineHeight: 1.5,
-  color: INK_STONE,
-  margin: 0,
-};
-
-const link: React.CSSProperties = {
-  color: INK_EMBER,
-  textDecoration: 'none',
-  fontWeight: 500,
-};

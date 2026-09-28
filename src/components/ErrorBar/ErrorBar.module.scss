@@ -1,0 +1,17 @@
+@use 'mixins' as *;
+
+.root {
+  @include type(body);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--ink-text);
+  color: var(--ink-ground);
+}
+
+.glyph {
+  @include wordmark;
+  font-size: var(--t-lede);
+  line-height: 1;
+}

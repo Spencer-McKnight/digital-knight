@@ -1,0 +1,151 @@
+@use 'mixins' as *;
+
+.root {
+  padding-bottom: var(--space-section);
+}
+
+.inner {
+  @include container;
+  @include grid;
+}
+
+.form,
+.success {
+  grid-column: 1 / -1;
+
+  @include respond-to(lg) {
+    grid-column: 1 / span 8;
+  }
+}
+
+.form {
+  display: grid;
+  gap: var(--space-5) var(--grid-gutter);
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.wide {
+  @include respond-to(md) {
+    grid-column: 1 / -1;
+  }
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.label {
+  @include type(meta);
+}
+
+.input,
+.textarea {
+  @include type(body);
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--ink-text);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-text);
+
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.input {
+  min-height: 3.25rem;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 10rem;
+}
+
+.honeypot {
+  @include sr-only;
+  left: -10000px;
+}
+
+.submit,
+.book {
+  @include type(meta);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  justify-self: start;
+  min-height: 3.25rem;
+  padding-inline: var(--space-5);
+  background: var(--ink-text);
+  color: var(--ink-ground);
+  transition: background-color var(--dur-state) var(--ease-house);
+
+  &:hover:not(:disabled) {
+    background: var(--ink-muted);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: progress;
+  }
+}
+
+.success {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+}
+
+.successTitle {
+  @include type(title);
+}
+
+.successBody {
+  @include type(lede);
+  color: var(--ink-muted);
+}
+
+.offer {
+  @include type(body);
+  @include hairline(top);
+  padding-top: var(--space-5);
+  margin-top: var(--space-3);
+  width: 100%;
+}
+
+.booking {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-4);
+
+  @include respond-to(md) {
+    padding: var(--space-7);
+  }
+}
+
+.bookingBar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.bookingAs {
+  @include type(body);
+}
+
+.back {
+  @include type(meta);
+  @include link;
+  @include target;
+}

@@ -1,27 +1,30 @@
 import '@/styles/index.scss';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Call } from '@/blocks/Call/Call';
+import { Statement } from '@/blocks/Statement/Statement';
 import { fontVariables } from './fonts';
 
 export const metadata: Metadata = {
   title: 'Page not found | Digital Knight',
+  robots: { index: false, follow: true },
 };
 
-// Two root layouts leave no single layout to compose a 404 from, and this
-// page cannot see the request path, so it speaks to both markets at once.
-// Interim markup; composed from Statement and Call once those blocks exist.
+// Two root layouts leave no single layout to compose a 404 from, and this page
+// cannot see the request path, so it offers both markets.
 export default function GlobalNotFound() {
   return (
     <html lang="en-AU" className={fontVariables}>
       <body>
         <main id="main">
-          <h1>Page not found</h1>
-          <Link href="/">Home</Link>
+          <Statement
+            variant="page"
+            folio="404"
+            title="This page is not here."
+            lede="The address may have changed in the redesign. Start from the cover, or read the work."
+          />
+          <Call link={{ href: '/', label: 'Back to the cover' }} />
           <div lang="de">
-            <p>Diese Seite gibt es nicht.</p>
-            <Link href="/de" hrefLang="de-DE">
-              Zur Startseite
-            </Link>
+            <Call variant="quiet" lead="Diese Seite gibt es nicht." link={{ href: '/de', label: 'Zur deutschen Startseite' }} />
           </div>
         </main>
       </body>

@@ -1,0 +1,106 @@
+@use 'mixins' as *;
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-3));
+  }
+}
+
+.root {
+  display: grid;
+  gap: var(--space-5);
+  max-width: 44rem;
+  animation: settle var(--dur-scene) var(--ease-house) both;
+}
+
+.title {
+  @include type(title);
+}
+
+.lede {
+  @include type(lede);
+  color: var(--ink-muted);
+  max-width: var(--t-measure-lede);
+}
+
+.details {
+  display: grid;
+  gap: var(--space-4) var(--grid-gutter);
+  @include hairline(top);
+  padding-top: var(--space-4);
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.detail {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.detailLabel {
+  @include type(meta);
+  color: var(--ink-muted);
+}
+
+.detailValue {
+  @include type(lede);
+  display: grid;
+  overflow-wrap: anywhere;
+}
+
+.detailSub {
+  @include type(body);
+  color: var(--ink-muted);
+}
+
+.add {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.addLabel {
+  @include type(meta);
+  color: var(--ink-muted);
+}
+
+.addList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.addLink {
+  @include type(meta);
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding-inline: var(--space-4);
+  border: 1px solid var(--ink-text);
+  transition:
+    background-color var(--dur-state) var(--ease-house),
+    color var(--dur-state) var(--ease-house);
+
+  &:hover {
+    background: var(--ink-text);
+    color: var(--ink-ground);
+  }
+}
+
+.next {
+  @include type(meta);
+  @include link;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-self: start;
+  min-height: 2.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    animation-name: none;
+  }
+}

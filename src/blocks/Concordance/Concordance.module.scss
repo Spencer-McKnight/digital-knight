@@ -118,4 +118,5 @@
 .kind {
   @include type(meta);
   color: inherit;
+  white-space: nowrap;
 }

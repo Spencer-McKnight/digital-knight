@@ -1,0 +1,116 @@
+@use 'mixins' as *;
+
+// Arrows flank the day headers. The time rail sits in the left gutter and an
+// empty right gutter mirrors it, so the cells stay centred whatever the width
+// of the time labels.
+//
+//   [ <  ] [ MON  TUE  WED  THU  FRI ] [  > ]
+//   [rail] [        cells            ] [    ]
+
+.root {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.range {
+  @include type(meta);
+  @include tabular;
+  color: var(--ink-muted);
+}
+
+.gridFrame {
+  --_rail: clamp(3.5rem, 12vw, 6.5rem);
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--_rail) minmax(0, 1fr) var(--_rail);
+  grid-template-areas:
+    'prev headers next'
+    '.    grid    .';
+  transition: opacity var(--dur-element) var(--ease-house);
+
+  &[aria-busy='true'] {
+    opacity: 0.55;
+  }
+
+  @include respond-below(sm) {
+    --_rail: 3.25rem;
+  }
+}
+
+.prevArrow {
+  grid-area: prev;
+  align-self: center;
+  justify-self: start;
+}
+
+.nextArrow {
+  grid-area: next;
+  align-self: center;
+  justify-self: end;
+}
+
+.dayHeaders {
+  grid-area: headers;
+  display: grid;
+  grid-template-columns: repeat(var(--_day-cols), minmax(0, 1fr));
+}
+
+.dayHeader {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding-block: var(--space-2) var(--space-3);
+}
+
+.dayName {
+  @include type(meta);
+}
+
+.dayDate {
+  @include type(meta);
+  @include tabular;
+  color: var(--ink-muted);
+  letter-spacing: 0.02em;
+}
+
+.timeRail {
+  position: absolute;
+  grid-area: grid;
+  right: 100%;
+  top: 0;
+  bottom: 0;
+  width: var(--_rail);
+  display: grid;
+  grid-template-rows: repeat(var(--_time-rows), minmax(0, 1fr));
+  padding-right: var(--space-2);
+}
+
+.timeTick {
+  @include type(meta);
+  @include tabular;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: var(--ink-muted);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.grid {
+  grid-area: grid;
+  display: grid;
+  grid-template-columns: repeat(var(--_day-cols), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--_time-rows), minmax(2.75rem, auto));
+  border-top: 1px solid var(--ink-rule);
+  border-left: 1px solid var(--ink-rule);
+}
+
+.error {
+  max-width: 40rem;
+}
+
+.noscript {
+  @include type(body);
+  color: var(--ink-muted);
+}

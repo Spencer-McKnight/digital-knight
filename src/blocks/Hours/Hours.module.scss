@@ -1,0 +1,124 @@
+@use 'mixins' as *;
+
+.root {
+  @include block-pad;
+
+  &[data-variant='compact'] {
+    padding-block: var(--space-6);
+    @include hairline(top);
+  }
+
+  &[data-variant='full'] {
+    padding-top: var(--space-5);
+  }
+}
+
+.inner {
+  @include container;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.head {
+  margin-bottom: var(--space-3);
+}
+
+.next {
+  @include type(lede);
+  font-weight: 700;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+// Wide screens: the visitor's day as a 24-hour strip. Narrow: the lines alone.
+.figure {
+  display: none;
+
+  @include respond-to(md) {
+    display: grid;
+    gap: var(--space-5);
+    padding-top: var(--space-6);
+  }
+}
+
+.strip {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+  height: 3rem;
+  border-block: 1px solid var(--ink-rule);
+}
+
+.cell {
+  border-left: 1px solid var(--ink-rule);
+
+  &:first-child {
+    border-left: 0;
+  }
+}
+
+// The call window, a solid band through the middle of the day.
+.band {
+  position: absolute;
+  top: 30%;
+  bottom: 30%;
+  background: var(--ink-muted);
+}
+
+// The next free slot: a solid bar the length of a call.
+.slot {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: calc(100% / 48);
+  background: var(--ink-text);
+}
+
+.now {
+  position: absolute;
+  top: -0.5rem;
+  bottom: -0.5rem;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--ink-text);
+}
+
+.nowLabel {
+  @include type(meta);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-bottom: var(--space-1);
+  white-space: nowrap;
+}
+
+.hour {
+  @include type(meta);
+  @include tabular;
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  transform: translateX(-50%);
+  color: var(--ink-muted);
+
+  &:first-of-type {
+    transform: none;
+  }
+
+  &:last-of-type {
+    transform: translateX(-100%);
+  }
+}
+
+.caption {
+  @include type(meta);
+  color: var(--ink-muted);
+  padding-top: var(--space-4);
+}
+
+.windowLine {
+  @include type(body);
+  color: var(--ink-muted);
+  max-width: var(--t-measure-body);
+}

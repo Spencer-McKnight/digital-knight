@@ -35,8 +35,3 @@
   background-color: var(--ink-ground);
   color: var(--ink-text);
 }
-
-// Legacy name used by pre-redesign components.
-@mixin ground-invert {
-  @include ground(carbon);
-}

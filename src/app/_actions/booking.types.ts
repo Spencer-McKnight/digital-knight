@@ -48,6 +48,8 @@ export type BookingInput = {
   formDwellMs: number;
   /** Honeypot — a hidden field humans never fill in. Leave empty. */
   company?: string;
+  /** Market the booking came from; picks the confirmation email's language. */
+  locale?: 'en-AU' | 'de-DE';
 };
 
 export type BookingResult =

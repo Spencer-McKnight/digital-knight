@@ -14,7 +14,7 @@
     line-height: var(--t-leading-monument);
     letter-spacing: var(--t-tracking-monument);
     text-wrap: balance;
-  } @else if $role == title or $role == hero or $role == hero-display {
+  } @else if $role == title {
     font-family: var(--t-family-display);
     font-size: var(--t-title);
     font-weight: 700;
@@ -22,7 +22,7 @@
     line-height: var(--t-leading-title);
     letter-spacing: var(--t-tracking-title);
     text-wrap: balance;
-  } @else if $role == section or $role == subsection or $role == card-title {
+  } @else if $role == section {
     font-family: var(--t-family-display);
     font-size: var(--t-section);
     font-weight: 700;
@@ -46,7 +46,7 @@
     line-height: var(--t-leading-body);
     letter-spacing: 0;
     text-wrap: pretty;
-  } @else if $role == meta or $role == ui {
+  } @else if $role == meta {
     font-family: var(--t-family-text);
     font-size: var(--t-meta);
     font-weight: 600;
@@ -73,38 +73,4 @@
 // Figures that line up in columns: times, counts, folios.
 @mixin tabular {
   font-variant-numeric: tabular-nums;
-}
-
-// ── Legacy helpers ───────────────────────────────────────────────────────────
-// Kept only so pre-redesign components compile. Remove with `tokens/_legacy`.
-
-@mixin type-size($role) {
-  @if $role == monument { font-size: var(--t-monument); }
-  @else if $role == lede { font-size: var(--t-lede); }
-  @else if $role == body { font-size: var(--t-body); }
-  @else if $role == meta or $role == ui { font-size: var(--t-meta); }
-  @else if $role == section or $role == subsection or $role == card-title { font-size: var(--t-section); }
-  @else { font-size: var(--t-title); }
-}
-
-@mixin type-weight($weight) {
-  @if $weight == bold { font-weight: 700; }
-  @else if $weight == semibold { font-weight: 600; }
-  @else if $weight == medium { font-weight: 500; }
-  @else { font-weight: 400; }
-}
-
-@mixin type-heading {
-  line-height: var(--t-leading-section);
-  letter-spacing: var(--t-tracking-section);
-}
-
-@mixin type-prose {
-  line-height: var(--t-leading-body);
-  letter-spacing: 0;
-}
-
-@mixin type-trim {
-  text-box-trim: trim-both;
-  text-box-edge: cap alphabetic;
 }

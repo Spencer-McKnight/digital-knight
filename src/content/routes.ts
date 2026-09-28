@@ -183,3 +183,19 @@ export function pageMetadata({ id, locale, slug, title, absoluteTitle, descripti
     twitter: { card: 'summary_large_image', title: fullTitle, description },
   };
 }
+
+/** ContactPage graph for the contact route in a market. */
+export function contactGraph(locale: Locale, meta: { title: string; description: string }) {
+  const url = absoluteUrl(href('contact', locale));
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    '@id': `${url}#contactpage`,
+    url,
+    name: meta.title,
+    description: meta.description,
+    inLanguage: locale,
+    about: { '@id': `${SITE_URL}/#organization` },
+    mainEntity: { '@id': `${SITE_URL}/#organization` },
+  };
+}

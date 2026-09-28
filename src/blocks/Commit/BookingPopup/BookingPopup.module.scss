@@ -1,0 +1,62 @@
+@use 'mixins' as *;
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-4));
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+// The page falls away to carbon; the form arrives like a card being laid down.
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: end center;
+  overflow-y: auto;
+  animation: fade var(--dur-element) var(--ease-house) both;
+
+  @include respond-to(md) {
+    place-items: center;
+    padding: var(--space-6);
+  }
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  padding: var(--space-6) var(--grid-margin) var(--space-7);
+  animation: rise var(--dur-scene) var(--ease-house) both;
+
+  @include respond-to(md) {
+    width: min(34rem, 100%);
+    padding: var(--space-6);
+  }
+}
+
+.close {
+  @include target;
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: grid;
+  place-items: center;
+}
+
+.closeIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .container {
+    animation-name: fade;
+  }
+}

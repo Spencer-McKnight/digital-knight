@@ -81,6 +81,8 @@ export type BookingInput = {
   formDwellMs: number;
   /** Honeypot — a hidden field humans never fill in. Leave empty. */
   company?: string;
+  /** Market the booking came from; picks the confirmation email's language. */
+  locale?: 'en-AU' | 'de-DE';
 };
 
 export type BookingResult =
@@ -113,6 +115,7 @@ const bookingInputSchema = z.object({
   slotToken: z.string().min(1).max(128),
   formDwellMs: z.number().finite().min(0).max(7 * 24 * 60 * 60 * 1000),
   company: z.string().max(200).optional().default(''),
+  locale: z.enum(['en-AU', 'de-DE']).optional().default('en-AU'),
 });
 
 /** Max token age honoured by `verifySlotToken`. Matches the 30-min slot size. */
@@ -400,6 +403,7 @@ export async function createBooking(input: BookingInput): Promise<BookingResult>
     endAtUTC: endAtISO,
     visitorTimezone: data.visitorTimezone,
     icsBase64,
+    locale: data.locale,
   }).catch((e) => {
     console.error('[booking] Resend failed', e);
     return false;
@@ -431,6 +435,7 @@ type SendConfirmationInput = {
   endAtUTC: string;
   visitorTimezone: string;
   icsBase64: string;
+  locale: 'en-AU' | 'de-DE';
 };
 
 async function sendConfirmation(payload: SendConfirmationInput): Promise<boolean> {
@@ -441,16 +446,18 @@ async function sendConfirmation(payload: SendConfirmationInput): Promise<boolean
 
   const resend = new Resend(requireEnv('RESEND_API_KEY'));
 
-  const whenVisitor = formatMeetingTime(payload.startAtUTC, payload.visitorTimezone);
-  const whenBusiness = formatMeetingTime(payload.startAtUTC, env.BUSINESS_TIMEZONE);
+  const german = payload.locale === 'de-DE';
+  const whenVisitor = formatMeetingTime(payload.startAtUTC, payload.visitorTimezone, payload.locale);
+  const whenBusiness = formatMeetingTime(payload.startAtUTC, env.BUSINESS_TIMEZONE, payload.locale);
 
   const { error } = await resend.emails.send({
     from: `${env.BOOKING_HOST_NAME} <${requireEnv('BOOKING_FROM_EMAIL')}>`,
     to: payload.email,
     bcc: env.BOOKING_HOST_EMAIL,
-    subject: 'Your Digital Knight strategy call is booked',
+    subject: german ? 'Ihr Erstgespräch mit Digital Knight ist gebucht' : 'Your Digital Knight strategy call is booked',
     replyTo: env.BOOKING_HOST_EMAIL,
     react: BookingConfirmation({
+      locale: payload.locale,
       name: payload.name,
       whenVisitor,
       whenBusiness,
@@ -475,19 +482,20 @@ async function sendConfirmation(payload: SendConfirmationInput): Promise<boolean
   return true;
 }
 
-/** "Wed 29 Apr 2026 · 10:30 – 11:00 AM" in the given timezone. */
-function formatMeetingTime(startAtUTC: string, tz: string): string {
+/** "Wed 29 Apr 2026 · 10:30–11:00 Australia/Melbourne" in the given zone and language. */
+function formatMeetingTime(startAtUTC: string, tz: string, locale: 'en-AU' | 'de-DE' = 'en-AU'): string {
   const start = new Date(startAtUTC);
   const end = new Date(start.getTime() + SLOT_MINUTES * 60_000);
 
-  const dayFmt = new Intl.DateTimeFormat('en-GB', {
+  const lang = locale === 'de-DE' ? 'de-DE' : 'en-GB';
+  const dayFmt = new Intl.DateTimeFormat(lang, {
     weekday: 'short',
     day: '2-digit',
     month: 'short',
     year: 'numeric',
     timeZone: tz,
   });
-  const timeFmt = new Intl.DateTimeFormat('en-GB', {
+  const timeFmt = new Intl.DateTimeFormat(lang, {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,

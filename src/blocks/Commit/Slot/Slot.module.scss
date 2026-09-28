@@ -1,0 +1,78 @@
+@use 'mixins' as *;
+
+// Free cells are open squares on the grid; taken and past ones recede. The
+// chosen cell fills with signal from the left at element speed.
+
+.root {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 2.75rem;
+  border-right: 1px solid var(--ink-rule);
+  border-bottom: 1px solid var(--ink-rule);
+  overflow: hidden;
+  transition: background-color var(--dur-state) var(--ease-house);
+
+  &[data-state='free']:hover {
+    background: var(--ink-rule);
+  }
+
+  &[data-state='taken'],
+  &[data-state='past'] {
+    cursor: not-allowed;
+  }
+
+  &[data-state='taken']::after,
+  &[data-state='past']::after {
+    content: '';
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    top: 50%;
+    height: 1px;
+    background: var(--ink-rule);
+  }
+
+  &:focus-visible {
+    z-index: 1;
+    outline-offset: -2px;
+  }
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  background: var(--ink-signal);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-element) var(--ease-house);
+
+  [data-state='selected'] > &,
+  [data-state='submitting'] > & {
+    transform: scaleX(1);
+  }
+
+  [data-state='submitting'] > & {
+    animation: pending var(--dur-epic) var(--ease-house) infinite alternate;
+  }
+}
+
+@keyframes pending {
+  to {
+    transform: scaleX(0.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transform: none;
+    opacity: 0;
+    transition: opacity var(--dur-state) var(--ease-house);
+
+    [data-state='selected'] > &,
+    [data-state='submitting'] > & {
+      opacity: 1;
+      animation: none;
+    }
+  }
+}

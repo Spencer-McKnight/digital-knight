@@ -115,10 +115,12 @@ const FRAGMENT = /* glsl */ `
     vec3 lit;
 
     if (uReveal > 0.5) {
+      // Loupe: the room dims as the light comes up, and the pool shows the after.
       vec2 uvAfter = uCropAfter.xy + box * uCropAfter.zw;
       vec3 after = toLinear(texture2D(uAfter, uvAfter).rgb);
       float edge = 1.0 - smoothstep(RADIUS * 0.95, RADIUS * 1.1, sqrt(d2));
-      lit = mix(dark, after * (0.88 + 0.22 * lambert), edge * uStrength);
+      vec3 room = before * mix(1.0, EXPOSURE, uStrength);
+      lit = mix(room, after * (0.88 + 0.22 * lambert), edge * uStrength);
     } else {
       vec3 developed = pow(before, vec3(0.62)) * 1.06;
       lit = mix(dark, developed, pool);
@@ -246,7 +248,7 @@ export function createNightlight(opts: Options): NightlightScene {
       const k = Math.min((now - tween.start) / tween.duration, 1);
       const e = houseCurve(k);
       current = [tween.from[0] + (tween.to[0] - tween.from[0]) * e, tween.from[1] + (tween.to[1] - tween.from[1]) * e];
-      rest = e * e;
+      if (!after) rest = e * e;
       if (k < 1) moving = true;
       else tween = null;
     } else {
@@ -303,7 +305,7 @@ export function createNightlight(opts: Options): NightlightScene {
       current = [from[0], from[1]];
       target = [to[0], to[1]];
       rest = 0;
-      restTarget = 1;
+      restTarget = after ? 0 : 1;
       tween = { from, to, start: performance.now(), duration: durationMs };
       schedule();
     },

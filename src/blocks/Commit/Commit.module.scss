@@ -1,0 +1,37 @@
+@use 'mixins' as *;
+
+.root {
+  @include block-pad;
+  scroll-margin-top: var(--masthead-h);
+}
+
+.inner {
+  @include container;
+}
+
+.layout {
+  display: grid;
+  gap: var(--space-6);
+
+  @include respond-to(xl) {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    column-gap: var(--grid-gutter);
+    align-items: start;
+  }
+}
+
+.head {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+}
+
+.subtitle {
+  @include type(body);
+  color: var(--ink-muted);
+  max-width: 34ch;
+}
+
+.grid {
+  min-width: 0;
+}
