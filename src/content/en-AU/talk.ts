@@ -1,7 +1,9 @@
 import type { AgendaProps } from '@/blocks/Agenda/Agenda';
 import type { CallProps } from '@/blocks/Call/Call';
 import type { StatementProps } from '@/blocks/Statement/Statement';
+import { scenes } from '../art';
 import { href } from '../routes';
+import { ticket } from './ticket';
 
 const L = 'en-AU' as const;
 
@@ -15,7 +17,10 @@ export const statement: StatementProps = {
   folio: 'Book a call',
   title: 'Free strategy call. 30 minutes.',
   lede: 'Pick a slot, add your name and email, done. No obligation. Times show in your own time zone.',
-  ground: 'carbon',
+  art: (() => {
+    const s = scenes.conversation('Two plain chairs facing each other across a narrow concrete table, a hard light between them.');
+    return { picture: s.picture, object: { kind: 'ticket', content: ticket, href: '#book', tilt: -1, at: s.at } };
+  })(),
 };
 
 export const agenda: AgendaProps = {

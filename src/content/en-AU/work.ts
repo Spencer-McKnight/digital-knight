@@ -4,6 +4,7 @@ import type { IndexProps } from '@/blocks/Index/Index';
 import type { ProofProps } from '@/blocks/Proof/Proof';
 import type { StatementProps } from '@/blocks/Statement/Statement';
 import { concordanceData, indexRows, proofOf } from '../proof';
+import { scenes } from '../art';
 import { href } from '../routes';
 
 const L = 'en-AU' as const;
@@ -19,6 +20,10 @@ export const statement: StatementProps = {
   folio: 'Work',
   title: 'What was built, and why.',
   lede: 'Four clients and one tenure. Each case says what the client needed, what was built and what happened next.',
+  art: (() => {
+    const s = scenes.proof('A stack of printed proofs on concrete, the top sheet under a hard light.');
+    return { picture: s.picture, object: { kind: 'sticker', label: 'Rebuild', at: s.at } };
+  })(),
 };
 
 export const proof: ProofProps = proofOf(L, 'sogif', 'Lead case', { href: href('case', L, 'sogif'), label: 'Read the SOGIF fund rebuild' });

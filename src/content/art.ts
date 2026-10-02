@@ -1,4 +1,5 @@
 import type { CoverArt } from '@/blocks/Statement/Statement';
+import type { Picture } from './types';
 
 /**
  * Where things sit in each photograph, in image coordinates (0 to 1, origin
@@ -24,3 +25,18 @@ export function coverArt(alt: string): CoverArt {
     },
   };
 }
+
+const scene = (name: string, alt: string): Picture => ({
+  src: `/images/studio-night/${name}.avif`,
+  width: 2752,
+  height: 1536,
+  alt,
+});
+
+/** Studio-night scenes 3 to 6, and where each one's object is pressed. */
+export const scenes = {
+  orientation: (alt: string) => ({ picture: scene('orientation', alt), at: [0.75, 0.52] as const }),
+  proof: (alt: string) => ({ picture: scene('proof', alt), at: [0.33, 0.57] as const }),
+  offer: (alt: string) => ({ picture: scene('offer', alt), at: [0.42, 0.66] as const }),
+  conversation: (alt: string) => ({ picture: scene('conversation', alt), at: [0.66, 0.5] as const }),
+};

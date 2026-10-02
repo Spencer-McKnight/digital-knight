@@ -1,7 +1,9 @@
 import type { AgendaProps } from '@/blocks/Agenda/Agenda';
 import type { CallProps } from '@/blocks/Call/Call';
 import type { StatementProps } from '@/blocks/Statement/Statement';
+import { scenes } from '../art';
 import { href } from '../routes';
+import { ticket } from './ticket';
 
 const L = 'de-DE' as const;
 
@@ -15,7 +17,10 @@ export const statement: StatementProps = {
   folio: 'Erstgespräch',
   title: 'Kostenloses Erstgespräch. 30 Minuten.',
   lede: 'Termin wählen, Name und E-Mail eintragen, fertig. Unverbindlich. Alle Zeiten erscheinen in Ihrer Zeitzone.',
-  ground: 'carbon',
+  art: (() => {
+    const s = scenes.conversation('Zwei schlichte Stühle an einem schmalen Betontisch, zwischen ihnen hartes Licht.');
+    return { picture: s.picture, object: { kind: 'ticket', content: ticket, href: '#book', tilt: -1, at: s.at } };
+  })(),
 };
 
 export const agenda: AgendaProps = {

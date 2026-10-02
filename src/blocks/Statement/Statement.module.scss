@@ -55,6 +55,71 @@ $cover-wide: '(min-aspect-ratio: 501/400)';
   text-underline-offset: 0.45em;
 }
 
+// ── Page with a photograph ───────────────────────────────────────────────────
+// The photograph keeps its 16:9 so the pressed object stays on its surface.
+// Wide screens set the headline in the photograph's dark upper left; narrow
+// screens set it below.
+
+.root[data-art] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+
+  @include respond-to(md) {
+    > * {
+      grid-area: 1 / 1;
+    }
+  }
+}
+
+.band {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  max-height: 88svh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--ink-carbon);
+}
+
+.bandImage {
+  object-fit: cover;
+}
+
+.object {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-50%, -50%);
+  width: max-content;
+
+  @include respond-below(md) {
+    scale: 0.6;
+
+    // A shrunken ticket reads badly; the page's own action is close below.
+    &[data-kind='ticket'] {
+      display: none;
+    }
+  }
+}
+
+.root[data-art] .inner {
+  position: relative;
+  z-index: 1;
+
+  @include respond-to(md) {
+    align-self: start;
+    padding-top: var(--space-7);
+    padding-right: 58%;
+  }
+
+  @include respond-to(xl) {
+    padding-top: var(--space-8);
+  }
+}
+
+.root[data-art] .title {
+  max-width: none;
+}
+
 // ── Cover ────────────────────────────────────────────────────────────────────
 // Stacked on portrait: the headline over the photo's dark upper band, then the
 // ticket on carbon. Landscape: both over the photograph, the ticket pressed

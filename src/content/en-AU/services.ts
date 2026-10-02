@@ -2,6 +2,7 @@ import type { CallProps } from '@/blocks/Call/Call';
 import type { FitProps } from '@/blocks/Fit/Fit';
 import type { OfferProps } from '@/blocks/Offer/Offer';
 import type { StatementProps } from '@/blocks/Statement/Statement';
+import { scenes } from '../art';
 import { href } from '../routes';
 import { practices } from './common';
 
@@ -18,6 +19,10 @@ export const statement: StatementProps = {
   folio: 'What I do',
   title: 'Strategy, websites and AI. One partner.',
   lede: 'Four practices, all from one accountable person in Melbourne, from the first plan to the code that runs it.',
+  art: (() => {
+    const s = scenes.orientation('Four sheets of paper on black glass, one of them under a hard light.');
+    return { picture: s.picture, object: { kind: 'pin', label: 'Start here', at: s.at } };
+  })(),
 };
 
 export const offer: OfferProps = {

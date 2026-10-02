@@ -4,6 +4,7 @@ import type { LedgerProps } from '@/blocks/Ledger/Ledger';
 import type { MethodProps } from '@/blocks/Method/Method';
 import type { StatementProps } from '@/blocks/Statement/Statement';
 import type { TicketProps } from '@/blocks/Ticket/Ticket';
+import { scenes } from '../art';
 import { href } from '../routes';
 import { credential } from './common';
 import { ticket as ticketContent } from './ticket';
@@ -157,4 +158,5 @@ export const ticket: TicketProps = {
   title: 'Beginnen Sie mit einem kostenlosen Erstgespräch.',
   lede: 'Dreißig Minuten über Ihr Unternehmen, mit Ideen, die Sie in jedem Fall nutzen können.',
   ticket: { content: ticketContent, href: href('talk', L), tilt: 2 },
+  art: scenes.offer('Ein einzelner Aluminiumschlüssel auf schwarzem Glas unter hartem Licht.'),
 };

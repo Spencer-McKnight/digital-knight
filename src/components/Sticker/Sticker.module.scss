@@ -2,10 +2,11 @@
 
 .root {
   --tilt: 0deg;
+  position: relative;
   display: inline-grid;
   place-items: center;
   width: clamp(5.5rem, 4.5rem + 3vw, 7.5rem);
-  aspect-ratio: 1;
+  aspect-ratio: 756 / 782;
   filter: drop-shadow(0 0.2rem 0.25rem var(--shadow-object));
   transform: rotate(var(--tilt));
 }
@@ -17,18 +18,21 @@
 .root[data-tilt='2'] { --tilt: 2deg; }
 .root[data-tilt='3'] { --tilt: 3deg; }
 
-// The lifting edge: a sliver of the dot folds back at the lower right.
 .face {
-  @include type(meta);
-  display: grid;
-  place-items: center;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  padding: var(--space-3);
-  border-radius: 50%;
-  background: var(--ink-signal);
+}
+
+// Carbon type on the signal face, set a little up and left of centre so it
+// clears the lifting edge.
+.label {
+  @include type(meta);
+  position: relative;
+  margin: -8% 0 0 -6%;
+  padding: 0 var(--space-3);
   color: var(--ink-on-signal);
   text-align: center;
   line-height: 1.15;
-  clip-path: polygon(0 0, 100% 0, 100% 78%, 78% 100%, 0 100%);
 }

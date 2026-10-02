@@ -2,6 +2,7 @@ import type { CallProps } from '@/blocks/Call/Call';
 import type { FitProps } from '@/blocks/Fit/Fit';
 import type { OfferProps } from '@/blocks/Offer/Offer';
 import type { StatementProps } from '@/blocks/Statement/Statement';
+import { scenes } from '../art';
 import { href } from '../routes';
 import { practices } from './common';
 
@@ -18,6 +19,10 @@ export const statement: StatementProps = {
   folio: 'Leistungen',
   title: 'Strategie, Website, KI. Ein Ansprechpartner.',
   lede: 'Vier Disziplinen, verantwortet von einer Person in Melbourne, vom ersten Plan bis zum Code, der ihn umsetzt.',
+  art: (() => {
+    const s = scenes.orientation('Vier Blatt Papier auf schwarzem Glas, eines davon unter hartem Licht.');
+    return { picture: s.picture, object: { kind: 'pin', label: 'Hier starten', at: s.at } };
+  })(),
 };
 
 export const offer: OfferProps = {

@@ -4,6 +4,7 @@ import type { IndexProps } from '@/blocks/Index/Index';
 import type { ProofProps } from '@/blocks/Proof/Proof';
 import type { StatementProps } from '@/blocks/Statement/Statement';
 import { concordanceData, indexRows, proofOf } from '../proof';
+import { scenes } from '../art';
 import { href } from '../routes';
 
 const L = 'de-DE' as const;
@@ -19,6 +20,10 @@ export const statement: StatementProps = {
   folio: 'Referenzen',
   title: 'Was gebaut wurde, und warum.',
   lede: 'Vier Kunden aus Australien und eine Anstellung davor. Jede Referenz zeigt, was gebraucht wurde, was entstand und wie es weiterging.',
+  art: (() => {
+    const s = scenes.proof('Ein Stapel gedruckter Entwürfe auf Beton, das oberste Blatt unter hartem Licht.');
+    return { picture: s.picture, object: { kind: 'sticker', label: 'Relaunch', at: s.at } };
+  })(),
 };
 
 export const proof: ProofProps = proofOf(L, 'sogif', 'Leitprojekt', {
