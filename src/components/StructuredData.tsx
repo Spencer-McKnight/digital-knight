@@ -42,7 +42,6 @@ const siteNavLinks: Array<{ name: string; url: string }> = [
   { name: 'DyFlex Case Study', url: `${BASE}/work/dyflex` },
   { name: 'PropertyInvesting Case Study', url: `${BASE}/work/propertyinvesting` },
   { name: 'SteveMcKnight Case Study', url: `${BASE}/work/stevemcknight` },
-  { name: 'Inlight Case Study', url: `${BASE}/work/inlight` },
 ];
 
 const graph = {

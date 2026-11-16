@@ -105,27 +105,6 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
               </ul>
             </Reveal>
 
-            {/* Engagements (Inlight) */}
-            {study.engagements && study.engagements.length > 0 && (
-              <Reveal
-                as="section"
-                enabled
-                amount="md"
-                className={styles.beat}
-                aria-label="Engagements"
-              >
-                <h2 className={styles.beatHeading}>Engagements</h2>
-                <dl className={styles.engagementList}>
-                  {study.engagements.map((eng) => (
-                    <div key={eng.name} className={styles.engagementItem}>
-                      <dt className={styles.engagementName}>{eng.name}</dt>
-                      <dd className={styles.engagementDesc}>{eng.description}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </Reveal>
-            )}
-
             {/* Outcomes */}
             <Reveal as="section" enabled amount="md" className={styles.beat} aria-label="Outcomes">
               <h2 className={styles.beatHeading}>Outcomes</h2>

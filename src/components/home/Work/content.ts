@@ -8,7 +8,7 @@ export type WorkItem = {
   backdrop?: ImageDef;
 };
 
-const WORK_ORDER = ['sogif', 'dyflex', 'inlight', 'propertyinvesting', 'stevemcknight'] as const;
+const WORK_ORDER = ['sogif', 'dyflex', 'propertyinvesting', 'stevemcknight'] as const;
 
 const OVERRIDES: Record<string, { label?: string; backdrop?: ImageDef }> = {
   sogif: {

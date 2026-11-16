@@ -23,7 +23,6 @@ const SITEMAP = [
       { label: 'DyFlex', href: '/work/dyflex' },
       { label: 'PropertyInvesting', href: '/work/propertyinvesting' },
       { label: 'SteveMcKnight', href: '/work/stevemcknight' },
-      { label: 'Inlight', href: '/work/inlight' },
     ],
   },
   {

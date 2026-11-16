@@ -102,9 +102,10 @@ export const FAQS: FAQItem[] = [
           <a href="https://inlight.com.au" target="_blank" rel="noopener noreferrer">
             Inlight
           </a>
-          , one of Melbourne's leading digital product agencies. That tenure involved shipping
-          production code for clients including Chadstone, Nando's AU and NZ, Urban Rest, and AHM.
-          He was awarded the Inlight Rising Star Award for accelerated growth and performance.
+          , one of Melbourne's leading digital product agencies. As part of Inlight's delivery
+          teams, he contributed to Inlight client projects including Chadstone, Nando's AU and NZ,
+          Urban Rest, and AHM. While employed there, Spencer personally received Inlight's Rising
+          Star Award for accelerated growth and performance.
         </p>
         <p>
           Digital Knight is intentionally structured as a personal agency. With AI dramatically

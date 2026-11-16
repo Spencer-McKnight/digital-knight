@@ -20,11 +20,6 @@ export type StackRow = {
   useCase: string;
 };
 
-export type Engagement = {
-  name: string;
-  description: string;
-};
-
 export type CaseStudy = {
   slug: string;
   label: string;
@@ -39,7 +34,6 @@ export type CaseStudy = {
   outcomes: string[];
   stack: StackRow[];
   figures: Figure[];
-  engagements?: Engagement[];
   nextSlug: string;
 };
 
@@ -333,76 +327,6 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
         width: 523,
         height: 109,
         caption: 'PageSpeed Insights',
-      },
-    ],
-    nextSlug: 'inlight',
-  },
-
-  {
-    slug: 'inlight',
-    label: 'Inlight',
-    title: 'Developing in a modern digital agency',
-    tagline: 'Building expertise in modern development and agency agile.',
-    lede: 'A tenure, not a build. Two years as a Full Stack Developer at one of Melbourne\'s leading digital product agencies, absorbing the rhythms of real delivery and watching products ship to real users at scale.',
-    siteUrl: 'https://inlight.com.au',
-    stats: [
-      { value: 'Award', label: 'Inlight Rising Star Award for accelerated growth' },
-    ],
-    technologies: ['React', 'Next.js', 'React Native', 'TypeScript', 'AWS', 'GraphQL', 'Docker', 'Node.js'],
-    context: [
-      'Inlight is a Melbourne-based digital product agency that champions composable architecture, continuous evolution, and lasting digital value. Their client portfolio spans retail, automotive, food and beverage, health, government, travel and logistics.',
-      'This was the environment in which Digital Knight\'s technical foundation was forged. Before operating independently, years as a Full Stack Developer at Inlight, absorbing the rhythms of agency delivery, building confidence across entirely new stacks, and watching real products ship to real users at scale.',
-    ],
-    criteria: [
-      'Deliver polished digital experiences for high-profile clients under strict deadlines',
-      'Cross-functional collaboration across design, strategy, delivery and engineering',
-      'Build across the entire stack of multiple industry-leading digital products',
-      'Performance and security optimisation for enterprise-scale applications',
-    ],
-    outcomes: [
-      'Hundreds of agile tickets delivered in combination with strategy, design, leadership and testing across multiple client engagements.',
-      'A type-generating, optimised, secure mediation layer between APIs and front-end was built, bridging the gap between complex backend services and clean UI consumption.',
-      'Engaging presentations delivered to clients with demonstrations and reflections, alongside internal knowledge sharing.',
-      'Digital Knight was awarded the Inlight Rising Star Award for accelerated growth and performance.',
-    ],
-    engagements: [
-      {
-        name: 'Vicinity\'s Chadstone Mobile App',
-        description: 'Cultivated refined React Native componentry for the Chadstone shopping experience, contributing to a 59% increase in app downloads and the project winning the 2024 Australian Web Awards.',
-      },
-      {
-        name: 'Nando\'s AU & NZ',
-        description: 'Fostered a smooth year with zero rollback deployments across both web and React Native mobile feature releases through careful green/blue deployment design and robust testing.',
-      },
-      {
-        name: 'Urban Rest',
-        description: 'Created the check-in flow end-to-end, delivering a client-ready prototype in two weeks. Then led a small-team AI workshop to build a recommendation engine for accommodation matching.',
-      },
-      {
-        name: 'AHM',
-        description: 'Migrated their custom-built Sanity v2 CMS repository to Sanity v3, including a Node 14 to 20 upgrade and full package modernisation, wrapped in careful risk management.',
-      },
-    ],
-    stack: [
-      { technology: 'React + Next.js + TypeScript', useCase: 'Web application development and SSR' },
-      { technology: 'React Native', useCase: 'Cross-platform mobile app development' },
-      { technology: 'AWS', useCase: 'Cloud infrastructure, staging environments, databases' },
-      { technology: 'Vercel', useCase: 'Web deployment and hosting' },
-      { technology: 'PHP', useCase: 'Legacy and CMS-driven backend work' },
-      { technology: 'GraphQL', useCase: 'API query language for content and data layers' },
-      { technology: 'DatoCMS / CraftCMS / SanityCMS', useCase: 'Headless and structured content management' },
-      { technology: 'Auth0 + JWT', useCase: 'Authentication and secure token management' },
-      { technology: 'Docker', useCase: 'Containerised development and deployment' },
-      { technology: 'Node.js', useCase: 'Server-side scripting and API mediation' },
-      { technology: 'GitHub Actions', useCase: 'CI/CD pipeline automation' },
-    ],
-    figures: [
-      {
-        variant: 'image',
-        src: '/images/inlight/inlight-showcase.avif',
-        alt: 'Inlight agency website hero showing their composable architecture philosophy',
-        width: 1412,
-        height: 1140,
       },
     ],
     nextSlug: 'sogif',
