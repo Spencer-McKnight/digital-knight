@@ -20,6 +20,12 @@ export type StackRow = {
   useCase: string;
 };
 
+export type Highlight = {
+  heading: string;
+  body: string[];
+  figure?: ImageDef;
+};
+
 export type CaseStudy = {
   slug: string;
   label: string;
@@ -31,6 +37,7 @@ export type CaseStudy = {
   technologies: string[];
   context: string[];
   criteria: string[];
+  highlights?: Highlight[];
   outcomes: string[];
   stack: StackRow[];
   figures: Figure[];
@@ -122,6 +129,124 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
         width: 380,
         height: 94,
         caption: 'PageSpeed Insights',
+      },
+    ],
+    nextSlug: 'ftrgtr',
+  },
+
+  {
+    slug: 'ftrgtr',
+    label: 'FTRGTR',
+    title: 'A sample pack store you can play',
+    tagline: 'A playable storefront, checkout and booking system for guitarist Adyn Young and his first sample pack.',
+    lede: 'A complete product launch for Melbourne session guitarist Adyn Young: a design identity, an in-browser sampler, a two-currency store and session bookings, built as one system.',
+    siteUrl: 'https://ftrgtr.com',
+    stats: [
+      { value: '99', label: 'Lighthouse performance score at launch' },
+      { value: '100', label: 'Accessibility, best practices and SEO' },
+      { value: '3/3', label: 'Agentic browsing checks passed' },
+    ],
+    technologies: ['Next.js', 'React 19', 'TypeScript', 'Web Audio', 'Stripe', 'Supabase', 'Cloudflare R2', 'Vercel'],
+    context: [
+      'Adyn Young is a Melbourne session guitarist and sound designer. FTRGTR, short for Future Guitar, is his first sample pack: 60 sounds across six folders, every one made with a guitar and processed until it sounds like something else.',
+      'The pack needed a home. Somewhere to hear it, buy it and download it, and somewhere his session clients could book him without leaving for another service.',
+      'Because the product is digital, the website had to be the proof. Digital Knight designed and built the whole thing, from the identity through to the checkout.',
+    ],
+    criteria: [
+      'Let people play with the sounds before they buy, without giving the files away',
+      'A bold, clean, futuristic identity with a low visual load, so the product does the talking',
+      'A short and obvious path to the cart from anywhere on the site, with prices stated plainly',
+      'Fair pricing and low payment fees for Australian and international buyers',
+      'Well abstracted code and content that can grow into new packs, a CMS or other languages',
+    ],
+    highlights: [
+      {
+        heading: 'A sampler in the hero',
+        body: [
+          'The first thing on the page is an instrument. Visitors pick a sound from each folder, jump between eight slices of the waveform, repitch it, change the tempo and warp its body, all in real time in the browser.',
+          'It runs on the Web Audio API with a WebAssembly time-stretch engine, so pitch and speed move independently, the way they do in a producer\'s own software. The engine only loads when someone first touches it, which keeps the page quick for everyone else.',
+          'The sampler is also the only place the pack can be heard. The store lists every file name, key and tempo in place of audio previews, so buyers know exactly what they are getting and the files can\'t be recorded one by one.',
+        ],
+      },
+      {
+        heading: 'An identity taken from his own gear',
+        body: [
+          'The palette comes from Adyn\'s Ableton session: onyx, white, purple and teal. Each section is one flat field of colour from edge to edge, and the header changes colour with the chapter beneath it.',
+          'Type carries the brand, set wide, heavy and uppercase like the wordmarks on his touring cases. Purple marks what can be bought and teal marks what is live. Everything else stays black and white, which leaves room for the product.',
+        ],
+      },
+      {
+        heading: 'Three ways into the pack',
+        body: [
+          'The store sells one pack at three levels of commitment, and each is drawn as its own object instead of a row of matching cards. The full pack is a record sleeve with a strip of tape across the artwork. The lucky dip is a set of reels that spin through the folders, and what they land on is what you buy. The free sample drops out of a gumball machine in exchange for an email address.',
+          'Prices are round numbers with no crossed-out originals. Australians pay in Australian dollars and everyone else in US dollars, chosen by where the visitor is and served from the same address.',
+        ],
+        figure: {
+          src: '/images/ftrgtr/ftrgtr-store.avif',
+          alt: 'FTRGTR store showing the full pack sleeve and the lucky dip reels with their prices',
+          width: 1680,
+          height: 1348,
+        },
+      },
+      {
+        heading: 'Clear paths to the cart',
+        body: [
+          'The route to the cart is short from anywhere. On desktop the buy button sits in the header on every page. On a phone, a strap rises from the bottom edge once the hero has scrolled past, carrying the full pack and the cart.',
+          'Adding a product sends a small purple chip flying to the cart, and the button becomes a shortcut to open it. Inside the cart, anyone holding the lucky dip sees what it costs to step up to the full pack, worked out in their own currency. A note in the corner mentions recent purchases, and it only ever reads from real orders.',
+        ],
+        figure: {
+          src: '/images/ftrgtr/ftrgtr-mobile.avif',
+          alt: 'Four phone screens of FTRGTR: the sampler, the store with its bottom buy strap, the cart offering the full pack upgrade, and the session booking page',
+          width: 1764,
+          height: 909,
+        },
+      },
+      {
+        heading: 'Bookings on the same rails',
+        body: [
+          'Adyn also sells session days, so the site took over from his separate scheduling page. Clients pick a day from his real Google Calendar availability, choose a remote, half day or full day session, and pay a deposit through the same Stripe account.',
+          'The slot is held while they pay and the session lands in his calendar once they have. The balance is drafted as an invoice the morning after, ready for him to review and send. Every booking includes the pack for free, so each product introduces the other.',
+        ],
+        figure: {
+          src: '/images/ftrgtr/ftrgtr-booking.avif',
+          alt: 'FTRGTR session booking page with a live availability calendar and three session types',
+          width: 1680,
+          height: 1050,
+        },
+      },
+      {
+        heading: 'One system underneath',
+        body: [
+          'Everything reads from one typed catalogue. Counts, prices, file names and structured data are all computed from it, so the copy can\'t drift from what is actually for sale. Checkout prices are set on the server, the files sit in private storage behind short-lived links, and receipts arrive with the download ready.',
+          'Search engines and AI assistants get the same care as human visitors, with structured data on every page and a plain-text briefing generated from the catalogue. Cookie-free analytics follow each step from the first sampler play to a paid order.',
+        ],
+      },
+    ],
+    outcomes: [
+      'FTRGTR launched in November 2026 as a complete product. The sampler, the store, session bookings and the mailing list all run on one site, with one checkout and one voice.',
+      'At launch the site scored 99 for performance and 100 for accessibility, best practices and SEO in Lighthouse, on a page that carries a live audio engine and video.',
+      'It is too early for sales figures. The funnel is measured from the first sampler play through to the paid order, so the next round of decisions will rest on evidence.',
+    ],
+    stack: [
+      { technology: 'Next.js (App Router)', useCase: 'Full-stack React framework, with every page built once per market' },
+      { technology: 'React 19 + TypeScript', useCase: 'UI and strict typing across the catalogue, content and commerce' },
+      { technology: 'CSS Modules + design tokens', useCase: 'Colour chapters, type scale and motion from a single token file' },
+      { technology: 'Web Audio + Signalsmith Stretch', useCase: 'Real-time pitch and time-stretch in the hero sampler (WebAssembly)' },
+      { technology: 'Zustand', useCase: 'Cart state shared by the header, mobile strap and drawer' },
+      { technology: 'Stripe', useCase: 'Hosted checkout in AUD and USD, booking deposits and balance invoices' },
+      { technology: 'Supabase', useCase: 'Orders, subscribers and bookings (Postgres)' },
+      { technology: 'Cloudflare R2', useCase: 'Private storage for the pack files with short-lived signed downloads' },
+      { technology: 'Resend', useCase: 'Receipts, free sample delivery and booking emails' },
+      { technology: 'Google Calendar API', useCase: 'Live session availability and confirmed bookings' },
+      { technology: 'Vercel', useCase: 'Hosting, market routing, scheduled jobs and cookie-free analytics' },
+    ],
+    figures: [
+      {
+        variant: 'lead',
+        src: '/images/ftrgtr/ftrgtr-showcase.avif',
+        alt: 'FTRGTR home page with the Future Guitar headline and the sampler playing a waveform',
+        width: 1680,
+        height: 1050,
       },
     ],
     nextSlug: 'dyflex',

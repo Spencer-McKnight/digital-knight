@@ -105,6 +105,35 @@ export function CaseStudyPage({ study }: { study: CaseStudy }) {
               </ul>
             </Reveal>
 
+            {study.highlights?.map((item) => (
+              <Reveal
+                key={item.heading}
+                as="section"
+                enabled
+                amount="md"
+                className={styles.beat}
+                aria-label={item.heading}
+              >
+                <h2 className={styles.beatHeading}>{item.heading}</h2>
+                {item.body.map((para, i) => (
+                  <p key={i} className={styles.prose}>
+                    {para}
+                  </p>
+                ))}
+                {item.figure && (
+                  <Image
+                    src={item.figure.src}
+                    alt={item.figure.alt}
+                    width={item.figure.width}
+                    height={item.figure.height}
+                    sizes="(min-width: 1024px) 55vw, 90vw"
+                    className={styles.beatImg}
+                    loading="lazy"
+                  />
+                )}
+              </Reveal>
+            ))}
+
             {/* Outcomes */}
             <Reveal as="section" enabled amount="md" className={styles.beat} aria-label="Outcomes">
               <h2 className={styles.beatHeading}>Outcomes</h2>

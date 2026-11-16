@@ -25,6 +25,7 @@ This is the official Digital Knight (digital-knight.au), the registered digital 
 ## Case Studies
 
 - [SOGIF.au](https://digital-knight.au/work/sogif): Full website rebuild for an investment fund. 90% engagement increase, 3.2x higher conversion. Next.js, React 19, GraphQL, Vercel.
+- [FTRGTR](https://digital-knight.au/work/ftrgtr): Playable sample pack store for session guitarist Adyn Young. In-browser sampler, Stripe checkout in AUD and USD, session bookings synced to Google Calendar. Next.js, Web Audio, Stripe, Supabase, Cloudflare R2.
 - [DyFlex](https://digital-knight.au/work/dyflex): SAP-integrated vendor SES portal. Pixel-perfect prototype delivered in 4 days against an 8-week timeline using AI-driven workflows.
 - [PropertyInvesting.com](https://digital-knight.au/work/propertyinvesting): Strategic consultation uncovering 97% bot traffic and projecting 90% cost reduction. Led directly to the SOGIF engagement.
 - [SteveMcKnight.com](https://digital-knight.au/work/stevemcknight): Complete website from concept to live in a single day, $0 ongoing cost. AI-assisted build preserving the client's voice.

@@ -1,4 +1,4 @@
-Digital Knight has completed three digital projects to date.
+Digital Knight case studies, in the order they appear on the site.
 
 # SOGIF.au
 
@@ -46,6 +46,46 @@ Stack
 | papaparse | CSV parsing (performance data ingestion) |
 | Vitest | Unit testing framework |
 | Vercel Analytics / Speed Insights | Performance monitoring and Core Web Vitals |
+
+# FTRGTR.com
+
+A sample pack store you can play. Client: Adyn Young, Melbourne session guitarist and sound designer.
+
+public/images/ftrgtr
+
+At a glance
+Lighthouse at launch: 99 performance, 100 accessibility, 100 best practices, 100 SEO, 3/3 agentic browsing
+No conversion figures yet (launched November 2026)
+
+Case Study:
+
+Context
+FTRGTR, short for Future Guitar, is Adyn's first sample pack: 60 sounds across six folders, all made with guitar.
+The pack needed somewhere to be heard, bought and downloaded, and his session clients needed a way to book him on the same site.
+Digital Knight designed and built everything from the identity through to the checkout.
+
+Features
+Hero sampler: pick a sound per folder, eight slices, pitch, speed and warp in real time (Web Audio, WebAssembly time-stretch). The only place the pack can be heard.
+Identity: colour chapters from his Ableton session, wide heavy type, purple for buying, teal for live.
+Store: full pack sleeve, lucky dip reels, free sample gumball machine. AUD in Australia, USD elsewhere.
+Paths to cart: header buy on desktop, bottom strap on phones, fly-to-cart, upgrade offer in the cart, recent purchase note from real orders only.
+Bookings: Google Calendar availability, Stripe deposit, balance invoice drafted the morning after, free pack with every booking.
+Architecture: one typed catalogue drives copy, prices, structured data and llms.txt. Server-side pricing, private file storage, cookie-free funnel analytics.
+
+Stack
+| Technology | Use Case |
+| --------------------------------- | -------------------------------------------- |
+| Next.js (App Router) | Full-stack React framework, every page built once per market |
+| React 19 + TypeScript | UI and strict typing across catalogue, content and commerce |
+| CSS Modules + design tokens | Colour chapters, type scale and motion from one token file |
+| Web Audio + Signalsmith Stretch | Real-time pitch and time-stretch in the hero sampler |
+| Zustand | Cart state shared by header, mobile strap and drawer |
+| Stripe | Hosted checkout in AUD and USD, booking deposits, balance invoices |
+| Supabase | Orders, subscribers and bookings |
+| Cloudflare R2 | Private storage for the pack files, signed downloads |
+| Resend | Receipts, free sample delivery and booking emails |
+| Google Calendar API | Session availability and confirmed bookings |
+| Vercel | Hosting, market routing, scheduled jobs, analytics |
 
 # DyFlex.com.au | Hancock Iron Ore (HIO) Service Portal
 

@@ -186,6 +186,16 @@
   }
 }
 
+// A beat's own screenshot, under its copy.
+.beatImg {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+  margin-top: var(--space-4);
+  border-radius: 8px;
+}
+
 // ── Success criteria (ember-dash list) ──────────────────────────────────────
 .criteriaList {
   list-style: none;
