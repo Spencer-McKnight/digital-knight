@@ -20,6 +20,7 @@ const SITEMAP = [
     heading: 'Case studies',
     links: [
       { label: 'SOGIF', href: '/work/sogif' },
+      { label: 'Fundstate', href: '/work/fundstate' },
       { label: 'FTRGTR', href: '/work/ftrgtr' },
       { label: 'DyFlex', href: '/work/dyflex' },
       { label: 'PropertyInvesting', href: '/work/propertyinvesting' },

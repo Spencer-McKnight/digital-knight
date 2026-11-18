@@ -47,6 +47,49 @@ Stack
 | Vitest | Unit testing framework |
 | Vercel Analytics / Speed Insights | Performance monitoring and Core Web Vitals |
 
+# Fundstate.com.au
+
+An audit trail for unlisted funds. Digital Knight's own venture, founded and built by Spencer McKnight.
+
+public/images/fundstate
+
+At a glance
+0 tax file numbers stored (removed before a file is saved)
+6 services in the whole stack, every record stored in Sydney
+42 published pages on the rules for unlisted funds, each citing primary sources
+No customer figures yet (pilot phase, November 2026)
+
+Case Study:
+
+Context
+About one in four SMSFs hold an unlisted trust. Those funds report by PDF and portal, and every 30 June someone has to prove each unit's value and its source.
+The ATO wrote to funds with unchanged unlisted values and expects auditors to see objective evidence of market value. Accountants still rekey figures into BGL and Class.
+Spencer founded Fundstate and built it end to end: business case, compliance rules, product design, brand and code.
+
+Features
+Statement reading: AI reads forwarded statements, each figure tied to the words on its source page. Schema check, exact decimal arithmetic check, second-model re-read of unsure fields, a person decides differences. A figure without a source can't render.
+Redaction: TFNs and bank details found and painted out on arrival, page re-read to prove it, unprovable files refused. Cloudflare worker stores nothing; data in Sydney; hash-chained audit log; RLS with a pgTAP test per rule.
+Evidence Pack: one page per fund at 30 June with value, unit price and date, source page and valuation basis, each line beside the rule that asks for it. Unchanged values flagged. BGL and Class files in pilot.
+SEO: research showed demand on documents and dates. Answer-first guides, answers, glossary, news, free tools and BGL vs Class, each with primary sources, author and real update dates. AI crawlers allowed, Markdown copies, one page list feeds sitemap, llms.txt and menus.
+Conversion: homepage shows one statement travelling to a finished year; any window opens the real app as a no-email demo that saves nothing. One green Get started with Google beside it. Free to the auditor, A$80 a year to send figures on, prices on the buttons.
+Architecture: rules written where AI agents read them first (requirements, design system, 60+ decision records). Custom lint rules for advice words, colours and data access. Every screen runs on sample data; services behind ports; the AI model is a setting.
+
+Stack
+| Technology | Use Case |
+| --------------------------------- | -------------------------------------------- |
+| Next.js 16 (App Router) | Site and app in one codebase |
+| React 19 + TypeScript | Strict typing, Zod schemas shared across forms, actions, AI output and API |
+| Tailwind CSS v4 + Base UI | Owned components on design tokens |
+| Supabase (Sydney) | Postgres, RLS with pgTAP, auth, storage, queues, realtime |
+| AI SDK + Vercel AI Gateway | Statement extraction with zero retention, in-app assistant |
+| unpdf, pdf-lib + canvas | PDF reading, redaction, page images |
+| Cloudflare Email Workers | Receiving forwarded statements without storing them |
+| Stripe | Checkout, plans, credits, GST tax invoices |
+| Resend + React Email | Transactional email, mailing list |
+| Content Collections + MDX | Written pages with sources and dates |
+| Vitest, Playwright + Biome | Unit, end to end and custom lint rules |
+| Vercel (Sydney) | Hosting, pipeline worker, firewall, analytics |
+
 # FTRGTR.com
 
 A sample pack store you can play. Client: Adyn Young, Melbourne session guitarist and sound designer.

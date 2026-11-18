@@ -39,6 +39,7 @@ const siteNavLinks: Array<{ name: string; url: string }> = [
   { name: 'About', url: `${BASE}/#meet` },
   { name: 'Contact', url: `${BASE}/contact` },
   { name: 'SOGIF Case Study', url: `${BASE}/work/sogif` },
+  { name: 'Fundstate Case Study', url: `${BASE}/work/fundstate` },
   { name: 'FTRGTR Case Study', url: `${BASE}/work/ftrgtr` },
   { name: 'DyFlex Case Study', url: `${BASE}/work/dyflex` },
   { name: 'PropertyInvesting Case Study', url: `${BASE}/work/propertyinvesting` },

@@ -131,6 +131,133 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
         caption: 'PageSpeed Insights',
       },
     ],
+    nextSlug: 'fundstate',
+  },
+
+  {
+    slug: 'fundstate',
+    label: 'Fundstate',
+    title: 'An audit trail for unlisted funds',
+    tagline: 'Software that reads private fund statements, keeps every figure with the page it came from and sends it on to the auditor and accountant.',
+    lede: 'An Australian fintech venture founded, designed and built by Spencer McKnight: an AI statement reader, a 30 June evidence product for SMSF audits, a demo workspace anyone can open and a search-led public site, all in one system.',
+    siteUrl: 'https://fundstate.com.au',
+    stats: [
+      { value: '0', label: 'Tax file numbers stored, as each one is removed before a file is saved' },
+      { value: '6', label: 'Services in the whole stack, with every record stored in Sydney' },
+      { value: '42', label: 'Published pages on the rules for unlisted funds, each citing its primary sources' },
+    ],
+    technologies: ['Next.js', 'React 19', 'TypeScript', 'Supabase', 'AI SDK', 'Stripe', 'Cloudflare', 'Vercel'],
+    context: [
+      'About one in four Australian self-managed super funds holds units in an unlisted trust, such as a private property fund, a credit fund or a syndicate. Those funds report through PDFs and a separate portal each, and every 30 June someone has to show what each unit was worth and where that number came from.',
+      'The ATO has started asking. It wrote to funds whose unlisted trusts sat at the same value year after year, and it expects auditors to see objective evidence of market value. The work lands on trustees, their accountants and their auditors, who still copy figures by hand into software like BGL and Class.',
+      'Fundstate is Digital Knight\'s own venture. Spencer founded it to close that gap and built it end to end: the business case, the compliance rules, the product design, the brand and the code.',
+    ],
+    criteria: [
+      'Every figure on screen traceable to the statement, page and words it was read from',
+      'Facts only, with no advice, rankings or fund comparisons, so the product stays clear of financial advice rules',
+      'Tax file numbers and bank details removed before anything is stored, and all data kept in Australia',
+      'Fit the software accountants and auditors already use, without asking them to switch',
+      'A site that answers what people actually search, and a way to try the product without an account',
+      'An architecture one developer, directing AI coding agents, can build quickly and keep correct',
+    ],
+    highlights: [
+      {
+        heading: 'A source behind every number',
+        body: [
+          'Investors forward a statement from any fund, or drop the file in. Fundstate reads it with AI and ties each figure to the exact words on the page it came from. Select a unit price and the original statement opens beside it with that line highlighted.',
+          'The AI never has the last word. Its output is checked against the same schema the ledger uses, units times price is worked out again in exact decimal maths, and a second model re-reads any field the first was unsure of. When the two disagree, a person decides. In the code, a figure without a source can\'t be displayed at all.',
+        ],
+        figure: {
+          src: '/images/fundstate/fundstate-statement.avif',
+          alt: 'Fundstate showing a distribution statement read into figures, with the value at 30 June highlighted on the original page and the tax file number deleted before storage',
+          width: 1680,
+          height: 1283,
+        },
+      },
+      {
+        heading: 'Tax file numbers never reach the database',
+        body: [
+          'Fund statements carry tax file numbers and bank details. As each file arrives, Fundstate finds them, paints over them and reads the page again to prove they are gone. A file it can\'t prove clean is refused. Only the redacted copy is ever stored, shown, exported or sent to a model.',
+          'Forwarded emails pass through a Cloudflare worker that keeps nothing and streams each message straight to storage in Sydney. Every view, share and export is written to a tamper-evident log, and every database table is locked to the people allowed to see it, with a test for each rule.',
+        ],
+      },
+      {
+        heading: 'Evidence an auditor can check',
+        body: [
+          'At the centre of the product is the 30 June Evidence Pack. It has one page per unlisted fund: the value, the unit price and its date, the statement page it was read from and the fund\'s own stated valuation basis. Beside each line sits the regulation or ATO guidance that asks for it, so an auditor can tick it off line by line.',
+          'Values that have sat unchanged across years are flagged before the auditor finds them. For accountants, a file for BGL Simple Fund 360 or Class carrying the same figures and their source PDFs is in pilot.',
+        ],
+        figure: {
+          src: '/images/fundstate/fundstate-evidence-pack.avif',
+          alt: 'Fundstate Evidence Pack page for an example infrastructure trust, with each 30 June figure beside the regulation or ATO guidance that asks for it',
+          width: 1680,
+          height: 770,
+        },
+      },
+      {
+        heading: 'Search built on real questions',
+        body: [
+          'Research into Australian searches found the demand sits on documents and dates, like when AMMA statements arrive or how the Division 296 cost base reset works, not on software names. So the site is built around answers: guides, short answers, a glossary, dated news briefs on new tax law, free browser tools and a sourced comparison of BGL and Class.',
+          'Each page opens on the answer, links the Act or ATO page it relies on with the date it was read, and names its author and its last real update. AI assistants now answer many finance questions before anyone clicks, so the aim is to be the source they quote. Search and AI crawlers are welcomed by name, written pages have a plain Markdown copy, and the sitemap, llms.txt and every menu read from one page list, so no link points at a page that doesn\'t exist.',
+        ],
+        figure: {
+          src: '/images/fundstate/fundstate-answer.avif',
+          alt: 'Fundstate answer page for when AMMA statements come out, opening on the date 30 September with its legislative source, author and update date',
+          width: 1680,
+          height: 1209,
+        },
+      },
+      {
+        heading: 'Try the product before trusting it',
+        body: [
+          'Few people will send their tax statements to a new company on a promise. So the homepage shows the product working instead of describing it. One sample statement travels from arrival to a finished year across four live windows, and selecting any window opens the real app as a demo workspace, with no email asked.',
+          'The demo runs on the production app with sample funds. Each visit rebuilds its own copy, so nothing is saved and no visitor sees another\'s clicks. Anything that would send or store something asks the visitor to sign up instead.',
+          'Every page has one green button, Get started, with Google sign-in beside it. Pricing is plain: free all the way to the auditor, then A$80 a year to send figures on to other software. Each paid step shows its price on the button itself.',
+        ],
+        figure: {
+          src: '/images/fundstate/fundstate-mobile.avif',
+          alt: 'Four phone screens of Fundstate: the homepage, the statement walkthrough, the demo workspace and an answer page',
+          width: 1764,
+          height: 909,
+        },
+      },
+      {
+        heading: 'One developer, directing the agents',
+        body: [
+          'Fundstate is a full product team\'s worth of software built by one person. It stays correct because its rules are written where AI coding agents read them first: numbered requirements, a design system and a register of more than sixty recorded decisions, each with what was chosen, why, and what lost.',
+          'The rules that matter are enforced by code. Custom lint rules reject words like "best" or "outperform" in anything a user reads, block colours outside the design tokens and stop any screen from touching the database directly. Every screen runs on sample data with no database, so a screen can be built and tested end to end, then switched to live data by configuration.',
+          'Outside services sit behind interfaces too. The AI model, email, payments and each connected app can change without touching a screen, and the model itself is a setting rather than code.',
+        ],
+      },
+    ],
+    outcomes: [
+      'Fundstate is in its pilot phase. The signed-in app runs end to end, from sign-in and statement intake to review, Evidence Packs, sharing with an auditor or accountant, billing and connected apps, and forwarded statements are received on their own domain.',
+      'The public site is live at fundstate.com.au with product, role, integration and pricing pages, over forty sourced written pages and four free tools.',
+      'Next, Evidence Packs are tested on live audits ahead of a public launch. There are no customer figures to report yet.',
+    ],
+    stack: [
+      { technology: 'Next.js 16 (App Router)', useCase: 'Site and app in one codebase, with Server Components and cached pages' },
+      { technology: 'React 19 + TypeScript', useCase: 'Strict typing, with Zod schemas shared by forms, actions, AI output and the API' },
+      { technology: 'Tailwind CSS v4 + Base UI', useCase: 'Owned components on design tokens, with lint rules that block raw colours' },
+      { technology: 'Supabase (Sydney)', useCase: 'Postgres with row-level security tested in pgTAP, auth, file storage, queues and realtime' },
+      { technology: 'AI SDK + Vercel AI Gateway', useCase: 'Statement extraction with zero data retention, and the in-app assistant' },
+      { technology: 'unpdf, pdf-lib + canvas', useCase: 'Reading PDFs, redacting pages and drawing page images' },
+      { technology: 'Cloudflare Email Workers', useCase: 'Receiving forwarded statements without storing them' },
+      { technology: 'Stripe', useCase: 'Checkout, plans, credits and GST tax invoices' },
+      { technology: 'Resend + React Email', useCase: 'Transactional email and the mailing list' },
+      { technology: 'Content Collections + MDX', useCase: 'Guides, answers, glossary and news, each with sources and dates' },
+      { technology: 'Vitest, Playwright + Biome', useCase: 'Unit tests, end to end tests on desktop and mobile, and custom lint rules' },
+      { technology: 'Vercel (Sydney)', useCase: 'Hosting, the scheduled pipeline worker, firewall and analytics' },
+    ],
+    figures: [
+      {
+        variant: 'lead',
+        src: '/images/fundstate/fundstate-showcase.avif',
+        alt: 'Fundstate homepage with a distribution statement feeding an example super fund\'s workspace, its Evidence Pack ready for the auditor',
+        width: 1680,
+        height: 1633,
+      },
+    ],
     nextSlug: 'ftrgtr',
   },
 
@@ -336,18 +463,10 @@ export const CASE_STUDIES: ReadonlyArray<CaseStudy> = [
     figures: [
       {
         variant: 'lead',
-        src: '/images/propertyinvesting/propertyinvesting-showcase.avif',
-        alt: 'PropertyInvesting.com project scope and strategy document',
-        width: 1461,
-        height: 1170,
-      },
-      {
-        variant: 'image',
         src: '/images/propertyinvesting/propertyinvest-mockup-courses.avif',
         alt: 'Mockup design for a modern courses section',
         width: 1167,
         height: 1098,
-        caption: 'Courses',
       },
       {
         variant: 'image',

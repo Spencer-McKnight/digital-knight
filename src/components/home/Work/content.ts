@@ -8,7 +8,7 @@ export type WorkItem = {
   backdrop?: ImageDef;
 };
 
-const WORK_ORDER = ['sogif', 'ftrgtr', 'dyflex', 'propertyinvesting', 'stevemcknight'] as const;
+const WORK_ORDER = ['sogif', 'fundstate', 'ftrgtr', 'dyflex', 'stevemcknight'] as const;
 
 const OVERRIDES: Record<string, { label?: string; backdrop?: ImageDef }> = {
   sogif: {
@@ -17,6 +17,14 @@ const OVERRIDES: Record<string, { label?: string; backdrop?: ImageDef }> = {
       alt: '',
       width: 1024,
       height: 768,
+    },
+  },
+  fundstate: {
+    backdrop: {
+      src: '/images/fundstate/fundstate-background.avif',
+      alt: '',
+      width: 712,
+      height: 721,
     },
   },
   ftrgtr: {
