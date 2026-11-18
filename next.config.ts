@@ -21,6 +21,10 @@ const config: NextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
 
+  async redirects() {
+    return [{ source: '/work/inlight', destination: '/', permanent: true }];
+  },
+
   async headers() {
     return [
       {
